@@ -1,3 +1,4 @@
 [deps]
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+Org = "587fedb0-ad84-11e9-2bd6-d15ea4be1f9e"
 XDG = "cf316f05-2ad2-44c5-9b4f-65a35e6ed6f5"

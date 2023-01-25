@@ -1,0 +1,11 @@
+#+title: XDG
+
+This package exists to help you /put and look for files in the appropriate place(s)/.
+
+It is essentially an implementation of the XDG (Cross-Desktop Group) directory
+specifications, with analogues for Windows and MacOS for cross-platform. More
+specifically, this is a hybrid of:
++ The [[https://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html][XDG base directory]] and the [[https://www.freedesktop.org/wiki/Software/xdg-user-dirs/][XDG user directory]] specifications on Linux
++ The [[https://msdn.microsoft.com/en-us/library/windows/desktop/dd378457.aspx][Known Folder]] API on Windows
++ The [[https://developer.apple.com/library/content/documentation/FileManagement/Conceptual/FileSystemProgrammingGuide/FileSystemOverview/FileSystemOverview.html#//apple_ref/doc/uid/TP40010672-CH2-SW6][Standard Directories]] guidelines on macOS
+

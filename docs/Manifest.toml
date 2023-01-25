@@ -2,7 +2,7 @@
 
 julia_version = "1.8.5"
 manifest_format = "2.0"
-project_hash = "feb0355b9fcd19b917a61de9b6d438594f99eac5"
+project_hash = "f3fc236c923b4673a7f8fb440170522bd44abef6"
 
 [[deps.ANSIColoredPrinters]]
 git-tree-sha1 = "574baf8110975760d391c710b6341da1afa48d8c"
@@ -61,6 +61,12 @@ uuid = "a63ad114-7e13-5084-954f-fe012c677804"
 [[deps.NetworkOptions]]
 uuid = "ca575930-c2e3-43a9-ace4-1e988b2c1908"
 version = "1.2.0"
+
+[[deps.Org]]
+deps = ["Dates", "Markdown"]
+git-tree-sha1 = "42420c80e07340085bce6ccde8739dfbc301fe76"
+uuid = "587fedb0-ad84-11e9-2bd6-d15ea4be1f9e"
+version = "0.3.3"
 
 [[deps.Parsers]]
 deps = ["Dates", "SnoopPrecompile"]

@@ -1,7 +1,18 @@
 using XDG
 using Documenter
+using Org
 
-DocMeta.setdocmeta!(XDG, :DocTestSetup, :(using XDG); recursive=true)
+orgfiles = filter(f -> endswith(f, ".org"),
+                  readdir(joinpath(@__DIR__, "src"), join=true))
+
+for orgfile in orgfiles
+    mdfile = replace(orgfile, r"\.org$" => ".md")
+    read(orgfile, String) |>
+        c -> Org.parse(OrgDoc, c) |>
+        o -> sprint(markdown, o) |>
+        s -> replace(s, r"\.org]" => ".md]") |>
+        m -> write(mdfile, m)
+end
 
 makedocs(;
     modules=[XDG],
@@ -15,7 +26,8 @@ makedocs(;
         assets=String[],
     ),
     pages=[
-        "Home" => "index.md",
+        "Introduction" => "index.md",
+        "Prior Art" => "others.md",
     ],
 )
 
