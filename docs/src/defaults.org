@@ -5,16 +5,16 @@ Trying to take the best of those, these are the defaults that XDG.jl uses.
 
 * Base directories
 
-| Common Name      | EnvVar                    | Linux                        | MacOS                                            | Windows (KnownPath)                             |
-|------------------+---------------------------+------------------------------+--------------------------------------------------+-------------------------------------------------|
-| User data        | =XDG_DATA_HOME=             | =~/.local/share=               | =~/Library/Application Support=                    | =RoamingAppData=                                  |
-| System data      | =XDG_DATA_DIRS=             | =/usr/local/share=, =/usr/share= | =/Library/Application Support=                     | =ProgramData=                                     |
-| User config      | =XDG_CONFIG_HOME=           | =~/.config=                    | =~/Library/Application Support=                    | =RoamingAppData=                                  |
-| System config    | =XDG_CONFIG_DIRS=           | =/etc/xdg=                     | =/Library/Application Support=                     | =ProgramData=                                     |
-| State            | =XDG_STATE_HOME=            | =~/.local/state=               | =~/Library/Application Support=                    | =LocalAppData=                                    |
-| User executables | =XDG_BIN_HOME= [fn:binhome] | =~/.local/bin=                 | =~/.local/bin= or =/opt/local/bin= or =/usr/local/bin= | =~\bin= or =RoamingAppData\bin= or =AppData\bin= or - |
-| Cache            | =XDG_CACHE_HOME=            | =~/.cache=                     | =~/Library/Caches/=                                | =LocalAppData\cache=                              |
-| Runtime          | =XDG_RUNTIME_DIR=           | =/run/user/$UID=               | =~/Library/Application Support=                    | =LocalAppData=                                    |
+| Common Name      | EnvVar              | Linux                        | MacOS                                            | Windows (KnownPath)                                 |
+|------------------+---------------------+------------------------------+--------------------------------------------------+-----------------------------------------------------|
+| User data        | =XDG_DATA_HOME=       | =~/.local/share=               | =~/Library/Application Support=                    | =RoamingAppData=                                      |
+| System data      | =XDG_DATA_DIRS=       | =/usr/local/share=, =/usr/share= | =/Library/Application Support=                     | =ProgramData=                                         |
+| User config      | =XDG_CONFIG_HOME=     | =~/.config=                    | =~/Library/Application Support=                    | =RoamingAppData=                                      |
+| System config    | =XDG_CONFIG_DIRS=     | =/etc/xdg=                     | =/Library/Application Support=                     | =ProgramData=                                         |
+| State            | =XDG_STATE_HOME=      | =~/.local/state=               | =~/Library/Application Support=                    | =LocalAppData=                                        |
+| User executables | =XDG_BIN_HOME= [fn:binhome] | =~/.local/bin=                 | =~/.local/bin= or =/opt/local/bin= or =/usr/local/bin= | =~\bin= or =RoamingAppData\bin= or =AppData\bin= or ~pwd()~ |
+| Cache            | =XDG_CACHE_HOME=      | =~/.cache=                     | =~/Library/Caches/=                                | =LocalAppData\cache=                                  |
+| Runtime          | =XDG_RUNTIME_DIR=     | =/run/user/$UID=               | =~/Library/Application Support=                    | =LocalAppData=                                        |
 
 [fn:binhome] While =XDG_BIN_HOME= is not yet standard, it seems like the most
 likely name to be given to =~/.local/bin= (see [[https://gitlab.freedesktop.org/xdg/xdg-specs/-/issues/14][this issue]]), and I think it is

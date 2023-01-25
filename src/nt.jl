@@ -251,7 +251,7 @@ function reload()
                     joinpath(rf.RoamingAppData, "bin"),
                     joinpath(rf.AppData, "bin")]
         Iterators.flatten((Iterators.filter(p -> p in path, binmaybe),
-                           "")) |> first
+                           pwd())) |> first
     end
     # User directories
     @setxdg DESKTOP_DIR rf.Desktop

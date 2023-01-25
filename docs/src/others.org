@@ -250,7 +250,9 @@ Windows doesn't have anywhere that user executable files are supposed to go.
 ***** Resolution
 
 Like with MacOS, check for locations that users seem to use for this purpose
- which are also on the path, namely =~\bin=, =RoamingAppData\bin=, and =AppData\bin=
+which are also on the path, namely =~\bin=, =RoamingAppData\bin=, and =AppData\bin=.
+If none of these exist, use the current working directory as at least that way
+the provided path [[https://learn.microsoft.com/en-gb/windows/win32/shell/app-registration#finding-an-application-executable][will be callable]] in the state at the time.
 
 ** User directories
 
