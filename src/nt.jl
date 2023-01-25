@@ -237,15 +237,22 @@ end
 
 function reload()
     rf = relevantfolders()
-    joinhome(dir) = joinpath(homedir(), dir)
     # Base directories
-    @setxdg DATA_HOME rf.LocalAppData
-    @setxdgs DATA_DIRS [rf.RoamingAppData, rf.ProgramData]
-    @setxdg CONFIG_HOME rf.LocalAppData
-    @setxdgs CONFIG_DIRS [rf.ProgramData, rf.RoamingAppData]
+    @setxdg DATA_HOME rf.RoamingAppData
+    @setxdgs DATA_DIRS [rf.ProgramData]
+    @setxdg CONFIG_HOME rf.RoamingAppData
+    @setxdgs CONFIG_DIRS [rf.ProgramData]
     @setxdg STATE_HOME rf.LocalAppData
     @setxdg CACHE_HOME joinpath(rf.LocalAppData, "cache")
     @setxdg RUNTIME_DIR rf.LocalAppData
+    @setxdg BIN_HOME let
+        path = split(get(ENV, "PATH", ""), ';')
+        binmaybe = [joinpath(homedir(), "bin"),
+                    joinpath(rf.RoamingAppData, "bin"),
+                    joinpath(rf.AppData, "bin")]
+        Iterators.flatten((Iterators.filter(p -> p in path, binmaybe),
+                           "")) |> first
+    end
     # User directories
     @setxdg DESKTOP_DIR rf.Desktop
     @setxdg DOWNLOAD_DIR rf.Downloads

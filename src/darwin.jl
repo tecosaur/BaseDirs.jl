@@ -4,12 +4,17 @@ function reload()
     @setxdg DATA_HOME appsupport
     @setxdgs DATA_DIRS ["/Library/Application Support"]
     @setxdg CONFIG_HOME appsupport
-    @setxdgs CONFIG_DIRS [expanduser(appsupport),
-                          "/Library/Application Support",
-                          "/Library/Preferences"]
+    @setxdgs CONFIG_DIRS ["/Library/Application Support"]
     @setxdg STATE_HOME appsupport
     @setxdg CACHE_HOME "~/Library/Caches"
     @setxdg RUNTIME_DIR appsupport
+    @setxdg BIN_HOME let
+        path = split(get(ENV, "PATH", ""), ':')
+        binmaybe = [expanduser("~/.local/bin"),
+                    "/opt/local/bin"]
+        Iterators.flatten((Iterators.filter(p -> p in path, binmaybe),
+                           "/usr/local/bin")) |> first
+    end
     # User directories
     @setxdg DESKTOP_DIR "~/Desktop"
     @setxdg DOWNLOAD_DIR "~/Downloads"

@@ -35,6 +35,7 @@ function reload()
     @setxdg CONFIG_HOME "~/.config"
     @setxdgs CONFIG_DIRS ["/etc/xdg"]
     @setxdg STATE_HOME "~/.local/state"
+    @setxdg BIN_HOME "~/.local/bin"
     @setxdg CACHE_HOME "~/.cache"
     @setxdg RUNTIME_DIR joinpath("/run/user", read(`id -u`, String))
     # User directories

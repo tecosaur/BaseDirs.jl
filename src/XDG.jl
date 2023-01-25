@@ -6,6 +6,7 @@ const DATA_HOME = Ref("")
 const DATA_DIRS = Ref([""])
 const CONFIG_HOME = Ref("")
 const CONFIG_DIRS = Ref([""])
+const BIN_HOME = Ref("") # Not yet standardized.
 const STATE_HOME = Ref("")
 const CACHE_HOME = Ref("")
 const RUNTIME_DIR = Ref("")
