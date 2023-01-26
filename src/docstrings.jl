@@ -28,6 +28,28 @@ and system directories.
                         :module => @__MODULE__)),
                Union{})
 
+@doc """
+A representation of a "Project", namely the essential components of naming
+information used to produce platform-appropriate project paths.
+
+    Project(name::AbstractString;
+            org::AbstractString="julia", qualifier::AbstractString="org")
+      -> Project
+
+The information needed, and the platforms that make use of it, are as follows:
+- `name`, the name of the project (Linux, MacOS, Windows)
+- `org` (`"julia"`), the organisation the project belongs to (MacOS, Windows)
+- `qualifier` (`"org"`), the nature of the organisation, usually a TLD (MacOS)
+
+The resulting "project path components" take one of the following forms:
+
+| Platform | Project path form         |
+|----------|---------------------------|
+| Linux    | `"\$name"`                 |
+| MacOS    | `"\$qualifier.\$org.\$name"` |
+| Windows  | `"\$org\\\$name"`           |
+""" Project
+
 # ---------
 
 @doc """
@@ -158,6 +180,68 @@ in it.
 # ---------
 
 @doc """
+**DESKTOP_DIR** (`XDG_DESKTOP_DIR`)
+
+The user's desktop directory.
+""" DESKTOP_DIR
+
+@doc """
+**DOWNLOAD_DIR** (`XDG_DOWNLOAD_DIR`)
+
+The user's downloads directory.
+""" DOWNLOAD_DIR
+
+@doc """
+**DOCUMENTS_DIR** (`XDG_DOCUMENTS_DIR`)
+
+The user's documents directory.
+""" DOCUMENTS_DIR
+
+@doc """
+**MUSIC_DIR** (`XDG_MUSIC_DIR`)
+
+The user's music directory.
+""" MUSIC_DIR
+
+@doc """
+**PICTURES_DIR** (`XDG_PICTURES_DIR`)
+
+The user's pictures directory.
+""" PICTURES_DIR
+
+@doc """
+**VIDEOS_DIR** (`XDG_VIDEOS_DIR`)
+
+The user's videos directory.
+""" VIDEOS_DIR
+
+@doc """
+**TEMPLATES_DIR** (`XDG_TEMPLATES_DIR`)
+
+The user's templates directory.
+""" TEMPLATES_DIR
+
+@doc """
+**PUBLICSHARE_DIR** (`XDG_PUBLICSHARE_DIR`)
+
+The user's public directory.
+""" PUBLICSHARE_DIR
+
+@doc """
+**APPLICATIONS_DIRS**
+
+A list of locations in which application files may be found/placed.
+""" APPLICATIONS_DIRS
+
+@doc """
+**FONTS_DIRS**
+
+A list of locations in which font files may be found.
+""" FONTS_DIRS
+
+# ---------
+
+@doc """
 **XDG.User**
 
 This module containes accessor functions for user-specific directories.
@@ -251,7 +335,7 @@ The music directory is based on the variable `XDG.MUSIC_DIR`, which see.
 
 Join the pictures directory with zero or more path components (`parts`).
 
-The pictures directory is based on the variable `XDG.pictures_DIR`, which see.
+The pictures directory is based on the variable `XDG.PICTURES_DIR`, which see.
 """ User.pictures
 
 @doc """

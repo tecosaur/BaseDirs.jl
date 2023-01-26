@@ -1,0 +1,193 @@
+#+title: Usage
+
+* Variables
+
+** Base directories
+
+#+begin_src @docs
+XDG.DATA_HOME
+#+end_src
+
+#+begin_src @docs
+XDG.DATA_DIRS
+#+end_src
+
+#+begin_src @docs
+XDG.CONFIG_HOME
+#+end_src
+
+#+begin_src @docs
+XDG.CONFIG_DIRS
+#+end_src
+
+#+begin_src @docs
+XDG.BIN_HOME
+#+end_src
+
+#+begin_src @docs
+XDG.STATE_HOME
+#+end_src
+
+#+begin_src @docs
+XDG.CACHE_HOME
+#+end_src
+
+#+begin_src @docs
+XDG.RUNTIME_DIR
+#+end_src
+
+** User directories
+
+#+begin_src @docs
+XDG.DESKTOP_DIR
+#+end_src
+
+#+begin_src @docs
+XDG.DOWNLOAD_DIR
+#+end_src
+
+#+begin_src @docs
+XDG.DOCUMENTS_DIR
+#+end_src
+
+#+begin_src @docs
+XDG.PICTURES_DIR
+#+end_src
+
+#+begin_src @docs
+XDG.VIDEOS_DIR
+#+end_src
+
+#+begin_src @docs
+XDG.TEMPLATES_DIR
+#+end_src
+
+#+begin_src @docs
+XDG.PUBLICSHARE_DIR
+#+end_src
+
+** Other directories
+
+#+begin_src @docs
+XDG.APPLICATIONS_DIRS
+#+end_src
+
+#+begin_src @docs
+XDG.FONTS_DIRS
+#+end_src
+
+* Functions
+
+** User
+
+#+begin_src @docs
+XDG.User
+#+end_src
+
+#+begin_src @docs
+XDG.User.data
+#+end_src
+
+#+begin_src @docs
+XDG.User.config
+#+end_src
+
+#+begin_src @docs
+XDG.User.executabledir
+#+end_src
+
+#+begin_src @docs
+XDG.User.state
+#+end_src
+
+#+begin_src @docs
+XDG.User.cache
+#+end_src
+
+#+begin_src @docs
+XDG.User.runtime
+#+end_src
+
+-----
+
+#+begin_src @docs
+XDG.User.desktop
+#+end_src
+
+#+begin_src @docs
+XDG.User.downloads
+#+end_src
+
+#+begin_src @docs
+XDG.User.documents
+#+end_src
+
+#+begin_src @docs
+XDG.User.music
+#+end_src
+
+#+begin_src @docs
+XDG.User.pictures
+#+end_src
+
+#+begin_src @docs
+XDG.User.videos
+#+end_src
+
+#+begin_src @docs
+XDG.User.templates
+#+end_src
+
+#+begin_src @docs
+XDG.User.public
+#+end_src
+
+-----
+
+#+begin_src @docs
+XDG.User.fonts
+#+end_src
+
+#+begin_src @docs
+XDG.User.applications
+#+end_src
+
+** System
+
+#+begin_src @docs
+XDG.System
+#+end_src
+
+#+begin_src @docs
+XDG.System.data
+#+end_src
+
+#+begin_src @docs
+XDG.System.config
+#+end_src
+
+#+begin_src @docs
+XDG.System.fonts
+#+end_src
+
+#+begin_src @docs
+XDG.System.applications
+#+end_src
+
+** Combined
+
+#+begin_src @docs
+XDG.data
+#+end_src
+
+#+begin_src @docs
+XDG.config
+#+end_src
+
+#+begin_src @docs
+XDG.fonts
+#+end_src
+
+#+begin_src @docs
+XDG.applications
+#+end_src

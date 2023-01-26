@@ -27,6 +27,7 @@ makedocs(;
     ),
     pages=[
         "Introduction" => "index.md",
+        "Usage" => "usage.md",
         "Defaults" => "defaults.md",
         "Prior Art" => "others.md",
     ],
