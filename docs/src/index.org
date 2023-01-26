@@ -9,3 +9,18 @@ specifically, this is a hybrid of:
 + The [[https://msdn.microsoft.com/en-us/library/windows/desktop/dd378457.aspx][Known Folder]] API on Windows
 + The [[https://developer.apple.com/library/content/documentation/FileManagement/Conceptual/FileSystemProgrammingGuide/FileSystemOverview/FileSystemOverview.html#//apple_ref/doc/uid/TP40010672-CH2-SW6][Standard Directories]] guidelines on macOS
 
+* Why should I care?
+
+It may be easy to treat file paths haphazardly, but for the user in particular
+abiding by the standards/conventions of the their platform has a number of major
+benefits, such as:
++ Improved ease of backups, since it is easier to make rules for which folders
+  need to be backed up.
++ Improved configuration portability, since it is easier to identify and share
+  the relevant configuration files.
++ Ease of isolating application state, by containing state to a single directory
+  it is easy to avoid sharing it.
++ Decreased reliance on hard-coded paths, improving flexibility and composability.
+
+It is worth noting that these considerations apply to /both/ graphical and
+command-line desktop applications.
