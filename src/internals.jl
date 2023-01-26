@@ -48,18 +48,32 @@ function resolvedirpath(basedir::String, pathcomponents::Union{Tuple, AbstractVe
     end
 end
 
-resolvedirpaths(basedirs::Vector{String}, pathcomponents::Union{Tuple, AbstractVector}; create::Bool=false) =
-    resolvedirpath.(basedirs, Ref(pathcomponents); create)
+function resolvedirpaths(basedirs::Vector{String}, pathcomponents::Union{Tuple, AbstractVector}; create::Bool=false, existent::Bool=false)
+    allpaths = resolvedirpath.(basedirs, Ref(pathcomponents); create)
+    if existent
+        filter(ispath, allpaths)
+    else
+        allpaths
+    end
+end
 
-macro defaccessor(fnname::Symbol, var::Symbol)
-    dirvar = Expr(:ref, Expr(:., :XDG, QuoteNode(var)))
-    resolver = if getfield(XDG, var) isa Ref{Vector{String}}
-        :resolvedirpaths else :resolvedirpath end
+macro defaccessor(fnname::Symbol, var::Union{Symbol, Expr})
+    dirvar = if var isa Symbol
+        Expr(:ref, Expr(:., :XDG, QuoteNode(var)))
+    else esc(var) end
+    vecfns = (:vec, :vcat, :filter, :map, :push!, :pushfirst!) # a few that come to mind
+    resolver = if (var isa Symbol && getfield(XDG, var) isa Ref{Vector{String}}) ||
+          (var isa Expr && (var.head == :vect ||
+                            (var.head == :call && var.args[1] in vecfns)))
+        :resolvedirpaths
+    else
+        :resolvedirpath
+    end
     quote
-        $(esc(fnname))(pathcomponents...; create::Bool=false) =
-            $resolver($dirvar, pathcomponents; create)
-        $(esc(fnname))(project::XDG.Project, pathcomponents...; create::Bool=false) =
-            $(esc(fnname))(XDG.projectpath(project, $dirvar), pathcomponents...; create)
+        $(esc(fnname))(pathcomponents...; kwargs...) =
+            $resolver($dirvar, pathcomponents; kwargs...)
+        $(esc(fnname))(project::XDG.Project, pathcomponents...; kwargs...) =
+            $(esc(fnname))(XDG.projectpath(project, $dirvar), pathcomponents...; kwargs...)
     end
 end
 

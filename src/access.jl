@@ -16,6 +16,14 @@ end
 @defaccessor config CONFIG_HOME
 @defaccessor state STATE_HOME
 @defaccessor cache CACHE_HOME
+@defaccessor runtime RUNTIME_DIR
+
+fonts(pathcomponents...; kwargs...) =
+    Internals.resolvedirpaths(filter(p -> startswith(p, homedir()), XDG.FONTS_DIRS[]),
+                              pathcomponents...; kwargs...)
+applications(pathcomponents...; kwargs...) =
+    Internals.resolvedirpaths(filter(p -> startswith(p, homedir()), XDG.APPLICATIONS_DIRS[]),
+                              pathcomponents...; kwargs...)
 
 desktop(pathcomponents...)   = joinpath(XDG.DESKTOP_DIR[],   pathcomponents...)
 downloads(pathcomponents...) = joinpath(XDG.DOWNLOAD_DIR[],  pathcomponents...)
@@ -38,4 +46,18 @@ using ..Internals
 @defaccessor data DATA_DIRS
 @defaccessor config CONFIG_DIRS
 
+fonts(pathcomponents...; kwargs...) =
+    Internals.resolvedirpaths(filter(p -> !startswith(p, homedir()), XDG.FONTS_DIRS[]),
+                              pathcomponents...; kwargs...)
+applications(pathcomponents...; kwargs...) =
+    Internals.resolvedirpaths(filter(p -> !startswith(p, homedir()), XDG.APPLICATIONS_DIRS[]),
+                              pathcomponents...; kwargs...)
+
 end
+
+# ---------
+
+@defaccessor data vcat(DATA_HOME[], DATA_DIRS[])
+@defaccessor config vcat(CONFIG_HOME[], CONFIG_DIRS[])
+@defaccessor fonts FONTS_DIRS
+@defaccessor applications APPLICATIONS_DIRS
