@@ -32,6 +32,8 @@ else
     error("Unsupported platform")
 end
 
+include("docstrings.jl")
+
 __init__() = reload()
 
 end
