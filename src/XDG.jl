@@ -32,6 +32,6 @@ else
     error("Unsupported platform")
 end
 
-reload()
+__init__() = reload()
 
 end
