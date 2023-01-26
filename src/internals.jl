@@ -8,16 +8,20 @@ export @defaccessor, @setxdg, @setxdgs
 
 @static if Sys.isunix()
     macro setxdg(envvar::Symbol, default)
-        quote $(esc(envvar))[] = get(ENV, $("XDG_$envvar"), expanduser($(esc(default)))) end
+        quote $(esc(envvar))[] = if haskey(ENV, $("XDG_$envvar")) && !isempty(ENV[$("XDG_$envvar")])
+            ENV[$("XDG_$envvar")] else expanduser($(esc(default))) end
+        end
     end
 else
     macro setxdg(envvar::Symbol, default)
-        quote $(esc(envvar))[] = get(ENV, $("XDG_$envvar"), $(esc(default))) end
+        quote $(esc(envvar))[] = if haskey(ENV, $("XDG_$envvar")) && !isempty(ENV[$("XDG_$envvar")])
+            ENV[$("XDG_$envvar")] else $(esc(default)) end
+        end
     end
 end
 
 macro setxdgs(envvar::Symbol, defaults)
-    quote $(esc(envvar))[] = if haskey(ENV, $("XDG_$envvar"))
+    quote $(esc(envvar))[] = if haskey(ENV, $("XDG_$envvar")) && !isempty(ENV[$("XDG_$envvar")])
         split(ENV[$("XDG_$envvar")], ':')
     else $(esc(defaults)) end
     end
