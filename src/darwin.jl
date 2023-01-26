@@ -33,3 +33,8 @@ function reload()
     APPLICATIONS_DIRS[] = ["/Applications"]
     nothing
 end
+
+projectpath(p::Project, _) = projectpath(p)
+projectpath(p::Project) = string(join(split(p.qualifier, '.') |> reverse, '.'), '.',
+                                 replace(p.org, r"[^A-Za-z0-9_-]" => '-'), '.',
+                                 replace(p.name, r"[^A-Za-z0-9_-]" => '-'), '/')

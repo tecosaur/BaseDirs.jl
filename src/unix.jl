@@ -59,3 +59,6 @@ function reload()
                 joinpath.(DATA_DIRS[], "applications")) |> unique!
     nothing
 end
+
+projectpath(p::Project, _) = projectpath(p)
+projectpath(p::Project) = string(lowercase(replace(p.name, r"[^A-Za-z0-9_-]" => "")), '/')

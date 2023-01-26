@@ -267,3 +267,17 @@ function reload()
     APPLICATIONS_DIRS[] = [rf.Programs, rf.CommonPrograms]
     nothing
 end
+
+projectpath(p::Project, parent::String) =
+    joinpath(projectpath(p), if parent === DATA_HOME[] || parent in DATA_DIRS[]
+                 "data"
+             elseif parent == CONFIG_HOME[] || parent in CONFIG_DIRS[]
+                 "config"
+             elseif parent == CACHE_HOME[]
+                 "cache"
+             elseif parent == STATE_HOME[]
+                 "state"
+             else
+                 ""
+             end)
+projectpath(p::Project) = joinpath(p.org, p.name, "")

@@ -28,23 +28,21 @@ const APPLICATIONS_DIRS = Ref([""])
 const FONTS_DIRS = Ref([""])
 
 function reload end
+function projectpath end
 
-@static if Sys.isunix()
-    macro setxdg(envvar::Symbol, default)
-        quote $(esc(envvar))[] = get(ENV, $("XDG_$envvar"), expanduser($(esc(default)))) end
-    end
-else
-    macro setxdg(envvar::Symbol, default)
-        quote $(esc(envvar))[] = get(ENV, $("XDG_$envvar"), $(esc(default))) end
-    end
+struct Project
+    name::AbstractString
+    org::AbstractString
+    qualifier::AbstractString
 end
+Project(name::AbstractString; org::AbstractString="julia", qualifier::AbstractString="org") =
+    Project(name, org, qualifier)
 
-macro setxdgs(envvar::Symbol, defaults)
-    quote $(esc(envvar))[] = if haskey(ENV, $("XDG_$envvar"))
-        split(ENV[$("XDG_$envvar")], ':')
-    else $(esc(defaults)) end
-    end
-end
+include("internals.jl")
+
+using ..Internals
+
+include("access.jl")
 
 @static if Sys.isapple()
     const PLATFORM = :darwin
