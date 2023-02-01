@@ -43,7 +43,7 @@ The user and system forms of the various accessor functions are split into the
 + User
   - ~data~
   - ~config~
-    - ~executabledir~
+    - ~bin~
   - ~state~
   - ~cache~
   - ~runtime~
@@ -180,7 +180,7 @@ XDG.User.config
 #+end_src
 
 #+begin_src @docs
-XDG.User.executabledir
+XDG.User.bin
 #+end_src
 
 #+begin_src @docs

@@ -5,7 +5,7 @@ module User
 using ..XDG
 using ..Internals
 
-function executabledir(; create::Bool=false)
+function bin(; create::Bool=false)
     if create && !isdir(XDG.BIN_HOME)
         mkpath(XDG.BIN_HOME, mode=Internals.NEW_BASEDIR_MODE)
     end
