@@ -24,3 +24,7 @@ benefits, such as:
 
 It is worth noting that these considerations apply to /both/ graphical and
 command-line desktop applications.
+
+* Choosing the appropriate base directory
+
+[[file:xdg-flowchart.svg]]
