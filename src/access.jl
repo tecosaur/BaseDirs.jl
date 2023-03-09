@@ -5,12 +5,11 @@ module User
 using ..XDG
 using ..Internals
 
-function bin(; create::Bool=false)
-    if create && !isdir(XDG.BIN_HOME)
-        mkpath(XDG.BIN_HOME, mode=Internals.NEW_BASEDIR_MODE)
-    end
-    XDG.BIN_HOME
-end
+bin(; create::Bool=false) = Internals.resolvedirpath(XDG.BIN_HOME[], (); create)
+bin(name; create::Bool=false) =
+    Internals.resolvedirpath(XDG.BIN_HOME[], (name,); create)
+bin(project::XDG.Project; create::Bool=false) =
+    Internals.resolvedirpath(XDG.BIN_HOME[], (project.name,); create)
 
 @defaccessor data DATA_HOME
 @defaccessor config CONFIG_HOME
@@ -20,10 +19,10 @@ end
 
 fonts(pathcomponents...; kwargs...) =
     Internals.resolvedirpaths(filter(p -> startswith(p, homedir()), XDG.FONTS_DIRS[]),
-                              pathcomponents...; kwargs...)
+                              pathcomponents; kwargs...)
 applications(pathcomponents...; kwargs...) =
     Internals.resolvedirpaths(filter(p -> startswith(p, homedir()), XDG.APPLICATIONS_DIRS[]),
-                              pathcomponents...; kwargs...)
+                              pathcomponents; kwargs...)
 
 desktop(pathcomponents...)   = joinpath(XDG.DESKTOP_DIR[],   pathcomponents...)
 downloads(pathcomponents...) = joinpath(XDG.DOWNLOAD_DIR[],  pathcomponents...)
@@ -48,10 +47,10 @@ using ..Internals
 
 fonts(pathcomponents...; kwargs...) =
     Internals.resolvedirpaths(filter(p -> !startswith(p, homedir()), XDG.FONTS_DIRS[]),
-                              pathcomponents...; kwargs...)
+                              pathcomponents; kwargs...)
 applications(pathcomponents...; kwargs...) =
     Internals.resolvedirpaths(filter(p -> !startswith(p, homedir()), XDG.APPLICATIONS_DIRS[]),
-                              pathcomponents...; kwargs...)
+                              pathcomponents; kwargs...)
 
 end
 
