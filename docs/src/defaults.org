@@ -1,7 +1,7 @@
 #+title: Defaults
 
 From our [[file:../others][survey of other simlar packages]], we've seen a range of approaches.
-Trying to take the best of those, these are the defaults that XDG.jl uses.
+Trying to take the best of those, these are the defaults that BaseDirs.jl uses.
 
 * Base directories
 

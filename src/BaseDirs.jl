@@ -1,4 +1,4 @@
-module XDG
+module BaseDirs
 
 include("variables.jl")
 

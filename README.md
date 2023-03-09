@@ -1,8 +1,8 @@
-# XDG
+# BaseDirs
 
-[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://tecosaur.github.io/XDG.jl/stable/)
-[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://tecosaur.github.io/XDG.jl/dev/)
-[![Build Status](https://github.com/tecosaur/XDG.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/tecosaur/XDG.jl/actions/workflows/CI.yml?query=branch%3Amain)
+[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://tecosaur.github.io/BaseDirs.jl/stable/)
+[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://tecosaur.github.io/BaseDirs.jl/dev/)
+[![Build Status](https://github.com/tecosaur/BaseDirs.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/tecosaur/BaseDirs.jl/actions/workflows/CI.yml?query=branch%3Amain)
 
 This package exists to help you *put and look for files in the appropriate place(s)*.
 

@@ -2,14 +2,14 @@
 
 module User
 
-using ..XDG
+using ..BaseDirs
 using ..Internals
 
-bin(; create::Bool=false) = Internals.resolvedirpath(XDG.BIN_HOME[], (); create)
+bin(; create::Bool=false) = Internals.resolvedirpath(BaseDirs.BIN_HOME[], (); create)
 bin(name; create::Bool=false) =
-    Internals.resolvedirpath(XDG.BIN_HOME[], (name,); create)
-bin(project::XDG.Project; create::Bool=false) =
-    Internals.resolvedirpath(XDG.BIN_HOME[], (project.name,); create)
+    Internals.resolvedirpath(BaseDirs.BIN_HOME[], (name,); create)
+bin(project::BaseDirs.Project; create::Bool=false) =
+    Internals.resolvedirpath(BaseDirs.BIN_HOME[], (project.name,); create)
 
 @defaccessor data DATA_HOME
 @defaccessor config CONFIG_HOME
@@ -18,20 +18,20 @@ bin(project::XDG.Project; create::Bool=false) =
 @defaccessor runtime RUNTIME_DIR
 
 fonts(pathcomponents...; kwargs...) =
-    Internals.resolvedirpaths(filter(p -> startswith(p, homedir()), XDG.FONTS_DIRS[]),
+    Internals.resolvedirpaths(filter(p -> startswith(p, homedir()), BaseDirs.FONTS_DIRS[]),
                               pathcomponents; kwargs...)
 applications(pathcomponents...; kwargs...) =
-    Internals.resolvedirpaths(filter(p -> startswith(p, homedir()), XDG.APPLICATIONS_DIRS[]),
+    Internals.resolvedirpaths(filter(p -> startswith(p, homedir()), BaseDirs.APPLICATIONS_DIRS[]),
                               pathcomponents; kwargs...)
 
-desktop(pathcomponents...)   = joinpath(XDG.DESKTOP_DIR[],   pathcomponents...)
-downloads(pathcomponents...) = joinpath(XDG.DOWNLOAD_DIR[],  pathcomponents...)
-documents(pathcomponents...) = joinpath(XDG.DOWNLOADS_DIR[], pathcomponents...)
-music(pathcomponents...)     = joinpath(XDG.MUSIC_DIR[],     pathcomponents...)
-pictures(pathcomponents...)  = joinpath(XDG.PICTURES_DIR[],  pathcomponents...)
-videos(pathcomponents...)    = joinpath(XDG.VIDEOS_DIR[],    pathcomponents...)
-templates(pathcomponents...) = joinpath(XDG.TEMPLATES_DIR[], pathcomponents...)
-public(pathcomponents...)    = joinpath(XDG.PUBLIC_DIR[],    pathcomponents...)
+desktop(pathcomponents...)   = joinpath(BaseDirs.DESKTOP_DIR[],   pathcomponents...)
+downloads(pathcomponents...) = joinpath(BaseDirs.DOWNLOAD_DIR[],  pathcomponents...)
+documents(pathcomponents...) = joinpath(BaseDirs.DOWNLOADS_DIR[], pathcomponents...)
+music(pathcomponents...)     = joinpath(BaseDirs.MUSIC_DIR[],     pathcomponents...)
+pictures(pathcomponents...)  = joinpath(BaseDirs.PICTURES_DIR[],  pathcomponents...)
+videos(pathcomponents...)    = joinpath(BaseDirs.VIDEOS_DIR[],    pathcomponents...)
+templates(pathcomponents...) = joinpath(BaseDirs.TEMPLATES_DIR[], pathcomponents...)
+public(pathcomponents...)    = joinpath(BaseDirs.PUBLIC_DIR[],    pathcomponents...)
 
 end
 
@@ -39,17 +39,17 @@ end
 
 module System
 
-using ..XDG
+using ..BaseDirs
 using ..Internals
 
 @defaccessor data DATA_DIRS
 @defaccessor config CONFIG_DIRS
 
 fonts(pathcomponents...; kwargs...) =
-    Internals.resolvedirpaths(filter(p -> !startswith(p, homedir()), XDG.FONTS_DIRS[]),
+    Internals.resolvedirpaths(filter(p -> !startswith(p, homedir()), BaseDirs.FONTS_DIRS[]),
                               pathcomponents; kwargs...)
 applications(pathcomponents...; kwargs...) =
-    Internals.resolvedirpaths(filter(p -> !startswith(p, homedir()), XDG.APPLICATIONS_DIRS[]),
+    Internals.resolvedirpaths(filter(p -> !startswith(p, homedir()), BaseDirs.APPLICATIONS_DIRS[]),
                               pathcomponents; kwargs...)
 
 end

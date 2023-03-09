@@ -1,7 +1,7 @@
-name = "XDG"
-uuid = "cf316f05-2ad2-44c5-9b4f-65a35e6ed6f5"
-authors = ["TEC <git@tecosaur.net> and contributors"]
+name = "BaseDirs"
+uuid = "18cc8868-cbac-4acf-b575-c8ff214dc66f"
 version = "0.1.0"
+authors = ["TEC <git@tecosaur.net>"]
 
 [compat]
 julia = "1"

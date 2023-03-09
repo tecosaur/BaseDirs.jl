@@ -4,7 +4,7 @@ Base.Docs.doc!(@__MODULE__, # Please let me know if there's an easier way.
                Base.Docs.Binding(@__MODULE__, Symbol(@__MODULE__)),
                Base.Docs.docstr(
                    """
-**XDG**
+**BaseDirs**
 
 This module provides utilities to identify the appropriate locations for files.
 
@@ -242,7 +242,7 @@ A list of locations in which font files may be found.
 # ---------
 
 @doc """
-**XDG.User**
+**BaseDirs.User**
 
 This module containes accessor functions for user-specific directories.
 
@@ -259,7 +259,7 @@ This module containes accessor functions for user-specific directories.
 `fonts` and `applications` -> `Vector{String}`
 
 !!! note
-    Unlike the `System` and "combined" (XDG.\\*) acessors, the *Base* and *User*
+    Unlike the `System` and "combined" (BaseDirs.\\*) acessors, the *Base* and *User*
     acessors here return a single directory (`String`).
 """ User
 
@@ -302,7 +302,7 @@ $(Internals.acessordoc(:applications, name="user applications", plural=true))
 
 Join the desktop directory with zero or more path components (`parts`).
 
-The desktop directory is based on the variable `XDG.DESKTOP_DIR`, which see.
+The desktop directory is based on the variable `BaseDirs.DESKTOP_DIR`, which see.
 """ User.desktop
 
 
@@ -311,7 +311,7 @@ The desktop directory is based on the variable `XDG.DESKTOP_DIR`, which see.
 
 Join the downloads directory with zero or more path components (`parts`).
 
-The downloads directory is based on the variable `XDG.DOWNLOADS_DIR`, which see.
+The downloads directory is based on the variable `BaseDirs.DOWNLOADS_DIR`, which see.
 """ User.downloads
 
 @doc """
@@ -319,7 +319,7 @@ The downloads directory is based on the variable `XDG.DOWNLOADS_DIR`, which see.
 
 Join the documents directory with zero or more path components (`parts`).
 
-The documents directory is based on the variable `XDG.DOCUMENTS_DIR`, which see.
+The documents directory is based on the variable `BaseDirs.DOCUMENTS_DIR`, which see.
 """ User.documents
 
 @doc """
@@ -327,7 +327,7 @@ The documents directory is based on the variable `XDG.DOCUMENTS_DIR`, which see.
 
 Join the music directory with zero or more path components (`parts`).
 
-The music directory is based on the variable `XDG.MUSIC_DIR`, which see.
+The music directory is based on the variable `BaseDirs.MUSIC_DIR`, which see.
 """ User.music
 
 @doc """
@@ -335,7 +335,7 @@ The music directory is based on the variable `XDG.MUSIC_DIR`, which see.
 
 Join the pictures directory with zero or more path components (`parts`).
 
-The pictures directory is based on the variable `XDG.PICTURES_DIR`, which see.
+The pictures directory is based on the variable `BaseDirs.PICTURES_DIR`, which see.
 """ User.pictures
 
 @doc """
@@ -343,7 +343,7 @@ The pictures directory is based on the variable `XDG.PICTURES_DIR`, which see.
 
 Join the videos directory with zero or more path components (`parts`).
 
-The videos directory is based on the variable `XDG.VIDEOS_DIR`, which see.
+The videos directory is based on the variable `BaseDirs.VIDEOS_DIR`, which see.
 """ User.videos
 
 @doc """
@@ -351,7 +351,7 @@ The videos directory is based on the variable `XDG.VIDEOS_DIR`, which see.
 
 Join the templates directory with zero or more path components (`parts`).
 
-The templates directory is based on the variable `XDG.TEMPLATES_DIR`, which see.
+The templates directory is based on the variable `BaseDirs.TEMPLATES_DIR`, which see.
 """ User.templates
 
 @doc """
@@ -359,13 +359,13 @@ The templates directory is based on the variable `XDG.TEMPLATES_DIR`, which see.
 
 Join the public directory with zero or more path components (`parts`).
 
-The public directory is based on the variable `XDG.PUBLIC_DIR`, which see.
+The public directory is based on the variable `BaseDirs.PUBLIC_DIR`, which see.
 """ User.public
 
 # ---------
 
 @doc """
-**XDG.System**
+**BaseDirs.System**
 
 This module contains acessor functions for system directories.
 

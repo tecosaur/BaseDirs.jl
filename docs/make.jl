@@ -1,4 +1,4 @@
-using XDG
+using BaseDirs
 using Documenter
 using Org
 
@@ -15,13 +15,13 @@ for orgfile in orgfiles
 end
 
 makedocs(;
-    modules=[XDG],
+    modules=[BaseDirs],
     authors="TEC <git@tecosaur.net> and contributors",
-    repo="https://github.com/tecosaur/XDG.jl/blob/{commit}{path}#{line}",
-    sitename="XDG.jl",
+    repo="https://github.com/tecosaur/BaseDirs.jl/blob/{commit}{path}#{line}",
+    sitename="BaseDirs.jl",
     format=Documenter.HTML(;
         prettyurls=get(ENV, "CI", "false") == "true",
-        canonical="https://tecosaur.github.io/XDG.jl",
+        canonical="https://tecosaur.github.io/BaseDirs.jl",
         edit_link="main",
         assets=String[],
     ),
@@ -34,6 +34,6 @@ makedocs(;
 )
 
 deploydocs(;
-    repo="github.com/tecosaur/XDG.jl",
+    repo="github.com/tecosaur/BaseDirs.jl",
     devbranch="main",
 )

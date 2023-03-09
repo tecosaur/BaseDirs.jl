@@ -1,4 +1,4 @@
-#+title: XDG
+#+title: BaseDirs
 
 This package exists to help you /put and look for files in the appropriate place(s)/.
 

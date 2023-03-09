@@ -30,10 +30,10 @@ Two boolean keyword arguments are often supported:
   c. If the path is to a file (i.e. the path does not end with =/=), ~touch~​es the file.
 + =existent=, to filter the list of provided paths to ones that exist (when applicable)
 
-To give appropriate project-specific directories we can use a =XDG.Project=:
+To give appropriate project-specific directories we can use a =BaseDirs.Project=:
 
 #+begin_src @docs
-XDG.Project
+BaseDirs.Project
 #+end_src
 
 The user and system forms of the various accessor functions are split into the
@@ -72,18 +72,18 @@ The =User= submodule also provides a number of other "user folder" accessors, na
 * Example usage
 
 #+begin_src julia-repl
-julia> using XDG
+julia> using BaseDirs
 
-julia> XDG.CONFIG_HOME[]
+julia> BaseDirs.CONFIG_HOME[]
 "/home/tec/.config"
 
-julia> XDG.User.config()
+julia> BaseDirs.User.config()
 "/home/tec/.config"
 
-julia> XDG.User.config("sub", "dir/")
+julia> BaseDirs.User.config("sub", "dir/")
 "/home/tec/.config/sub/dir/"
 
-julia> XDG.User.config(XDG.Project("mything"), "config.conf", create=true)
+julia> BaseDirs.User.config(BaseDirs.Project("mything"), "config.conf", create=true)
 "/home/tec/.config/mything/config.conf"
 #+end_src
 
@@ -92,75 +92,75 @@ julia> XDG.User.config(XDG.Project("mything"), "config.conf", create=true)
 ** Base directories
 
 #+begin_src @docs
-XDG.DATA_HOME
+BaseDirs.DATA_HOME
 #+end_src
 
 #+begin_src @docs
-XDG.DATA_DIRS
+BaseDirs.DATA_DIRS
 #+end_src
 
 #+begin_src @docs
-XDG.CONFIG_HOME
+BaseDirs.CONFIG_HOME
 #+end_src
 
 #+begin_src @docs
-XDG.CONFIG_DIRS
+BaseDirs.CONFIG_DIRS
 #+end_src
 
 #+begin_src @docs
-XDG.BIN_HOME
+BaseDirs.BIN_HOME
 #+end_src
 
 #+begin_src @docs
-XDG.STATE_HOME
+BaseDirs.STATE_HOME
 #+end_src
 
 #+begin_src @docs
-XDG.CACHE_HOME
+BaseDirs.CACHE_HOME
 #+end_src
 
 #+begin_src @docs
-XDG.RUNTIME_DIR
+BaseDirs.RUNTIME_DIR
 #+end_src
 
 ** User directories
 
 #+begin_src @docs
-XDG.DESKTOP_DIR
+BaseDirs.DESKTOP_DIR
 #+end_src
 
 #+begin_src @docs
-XDG.DOWNLOAD_DIR
+BaseDirs.DOWNLOAD_DIR
 #+end_src
 
 #+begin_src @docs
-XDG.DOCUMENTS_DIR
+BaseDirs.DOCUMENTS_DIR
 #+end_src
 
 #+begin_src @docs
-XDG.PICTURES_DIR
+BaseDirs.PICTURES_DIR
 #+end_src
 
 #+begin_src @docs
-XDG.VIDEOS_DIR
+BaseDirs.VIDEOS_DIR
 #+end_src
 
 #+begin_src @docs
-XDG.TEMPLATES_DIR
+BaseDirs.TEMPLATES_DIR
 #+end_src
 
 #+begin_src @docs
-XDG.PUBLICSHARE_DIR
+BaseDirs.PUBLICSHARE_DIR
 #+end_src
 
 ** Other directories
 
 #+begin_src @docs
-XDG.APPLICATIONS_DIRS
+BaseDirs.APPLICATIONS_DIRS
 #+end_src
 
 #+begin_src @docs
-XDG.FONTS_DIRS
+BaseDirs.FONTS_DIRS
 #+end_src
 
 * Functions
@@ -168,113 +168,113 @@ XDG.FONTS_DIRS
 ** User
 
 #+begin_src @docs
-XDG.User
+BaseDirs.User
 #+end_src
 
 #+begin_src @docs
-XDG.User.data
+BaseDirs.User.data
 #+end_src
 
 #+begin_src @docs
-XDG.User.config
+BaseDirs.User.config
 #+end_src
 
 #+begin_src @docs
-XDG.User.bin
+BaseDirs.User.bin
 #+end_src
 
 #+begin_src @docs
-XDG.User.state
+BaseDirs.User.state
 #+end_src
 
 #+begin_src @docs
-XDG.User.cache
+BaseDirs.User.cache
 #+end_src
 
 #+begin_src @docs
-XDG.User.runtime
-#+end_src
-
------
-
-#+begin_src @docs
-XDG.User.desktop
-#+end_src
-
-#+begin_src @docs
-XDG.User.downloads
-#+end_src
-
-#+begin_src @docs
-XDG.User.documents
-#+end_src
-
-#+begin_src @docs
-XDG.User.music
-#+end_src
-
-#+begin_src @docs
-XDG.User.pictures
-#+end_src
-
-#+begin_src @docs
-XDG.User.videos
-#+end_src
-
-#+begin_src @docs
-XDG.User.templates
-#+end_src
-
-#+begin_src @docs
-XDG.User.public
+BaseDirs.User.runtime
 #+end_src
 
 -----
 
 #+begin_src @docs
-XDG.User.fonts
+BaseDirs.User.desktop
 #+end_src
 
 #+begin_src @docs
-XDG.User.applications
+BaseDirs.User.downloads
+#+end_src
+
+#+begin_src @docs
+BaseDirs.User.documents
+#+end_src
+
+#+begin_src @docs
+BaseDirs.User.music
+#+end_src
+
+#+begin_src @docs
+BaseDirs.User.pictures
+#+end_src
+
+#+begin_src @docs
+BaseDirs.User.videos
+#+end_src
+
+#+begin_src @docs
+BaseDirs.User.templates
+#+end_src
+
+#+begin_src @docs
+BaseDirs.User.public
+#+end_src
+
+-----
+
+#+begin_src @docs
+BaseDirs.User.fonts
+#+end_src
+
+#+begin_src @docs
+BaseDirs.User.applications
 #+end_src
 
 ** System
 
 #+begin_src @docs
-XDG.System
+BaseDirs.System
 #+end_src
 
 #+begin_src @docs
-XDG.System.data
+BaseDirs.System.data
 #+end_src
 
 #+begin_src @docs
-XDG.System.config
+BaseDirs.System.config
 #+end_src
 
 #+begin_src @docs
-XDG.System.fonts
+BaseDirs.System.fonts
 #+end_src
 
 #+begin_src @docs
-XDG.System.applications
+BaseDirs.System.applications
 #+end_src
 
 ** Combined
 
 #+begin_src @docs
-XDG.data
+BaseDirs.data
 #+end_src
 
 #+begin_src @docs
-XDG.config
+BaseDirs.config
 #+end_src
 
 #+begin_src @docs
-XDG.fonts
+BaseDirs.fonts
 #+end_src
 
 #+begin_src @docs
-XDG.applications
+BaseDirs.applications
 #+end_src

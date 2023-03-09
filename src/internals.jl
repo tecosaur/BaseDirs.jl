@@ -2,7 +2,7 @@
 
 module Internals
 
-using ..XDG
+using ..BaseDirs
 using Base.Docs
 
 export @defaccessor, @setxdg, @setxdgs
@@ -64,10 +64,10 @@ end
 
 macro defaccessor(fnname::Symbol, var::Union{Symbol, Expr})
     dirvar = if var isa Symbol
-        Expr(:ref, Expr(:., :XDG, QuoteNode(var)))
+        Expr(:ref, Expr(:., :BaseDirs, QuoteNode(var)))
     else esc(var) end
     vecfns = (:vec, :vcat, :filter, :map, :push!, :pushfirst!) # a few that come to mind
-    resolver = if (var isa Symbol && getfield(XDG, var) isa Ref{Vector{String}}) ||
+    resolver = if (var isa Symbol && getfield(BaseDirs, var) isa Ref{Vector{String}}) ||
           (var isa Expr && (var.head == :vect ||
                             (var.head == :call && var.args[1] in vecfns)))
         :resolvedirpaths
@@ -77,8 +77,8 @@ macro defaccessor(fnname::Symbol, var::Union{Symbol, Expr})
     quote
         $(esc(fnname))(pathcomponents...; kwargs...) =
             $resolver($dirvar, pathcomponents; kwargs...)
-        $(esc(fnname))(project::XDG.Project, pathcomponents...; kwargs...) =
-            $(esc(fnname))(XDG.projectpath(project, $dirvar), pathcomponents...; kwargs...)
+        $(esc(fnname))(project::BaseDirs.Project, pathcomponents...; kwargs...) =
+            $(esc(fnname))(BaseDirs.projectpath(project, $dirvar), pathcomponents...; kwargs...)
     end
 end
 
@@ -86,16 +86,16 @@ function acessordoc(finfo::Union{Symbol, Tuple{String, Symbol}},
                     var::Union{Nothing, Symbol, Vector{Symbol}}=nothing;
                     plural::Bool=if isnothing(var) false
                     elseif var isa Vector true
-                    else getfield(XDG, var) isa Ref{Vector{String}} end,
+                    else getfield(BaseDirs, var) isa Ref{Vector{String}} end,
                     name::String=String(if fname isa Symbol fname else last(fname) end))
     fprefix, fname = if finfo isa Symbol; ("", finfo) else finfo end
     rettype = ifelse(plural, "Vector{String}", "String")
     dirprefix, dirterm = ifelse(plural, ("all", "directories"), ("the", "directory"))
     existentkwarg = ifelse(plural, " - `existent::Bool` (default `false`), filter out paths that do not exist.", "")
-    vardoc = if var isa Vector && (dvars = filter(v -> haskey(Docs.meta(XDG), Docs.Binding(XDG, v)), var)) |> !isempty
-        "\nThe returned path is based on the variables $(join(map(v -> "`XDG.$v`", dvars), ", ", ", and ")), which see.\n"
-    elseif !isnothing(var) && haskey(Docs.meta(XDG), Docs.Binding(XDG, var))
-        "\nThe returned path is based on the variable `XDG.$var`, which see.\n"
+    vardoc = if var isa Vector && (dvars = filter(v -> haskey(Docs.meta(BaseDirs), Docs.Binding(BaseDirs, v)), var)) |> !isempty
+        "\nThe returned path is based on the variables $(join(map(v -> "`BaseDirs.$v`", dvars), ", ", ", and ")), which see.\n"
+    elseif !isnothing(var) && haskey(Docs.meta(BaseDirs), Docs.Binding(BaseDirs, var))
+        "\nThe returned path is based on the variable `BaseDirs.$var`, which see.\n"
     else "" end
     kwargs = ifelse(plural, "; create, existent", "; create")
     """
