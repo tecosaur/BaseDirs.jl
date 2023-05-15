@@ -8,7 +8,7 @@ struct StupidWindowsGUID
     d4::NTuple{8, UInt8}
 end
 
-const KNOWN_FOLDER_IDS = Dict{Symbol, UInt128}(
+const KNOWN_FOLDER_IDS = Dict{Symbol, StupidWindowsGUID}(
     :AccountPictures        => StupidWindowsGUID(0x008ca0b1, 0x55b4, 0x4c56, (0xb8, 0xa8, 0x4d, 0xe4, 0xb2, 0x99, 0xd3, 0xbe)),
     :AddNewPrograms         => StupidWindowsGUID(0xde61d971, 0x5ebc, 0x4f02, (0xa3, 0xa9, 0x6c, 0x82, 0x89, 0x5e, 0x5c, 0x04)),
     :AdminTools             => StupidWindowsGUID(0x724ef170, 0xa42d, 0x4fef, (0x9f, 0x26, 0xb6, 0x0e, 0x84, 0x6f, 0xba, 0x4f)),
@@ -169,7 +169,7 @@ function knownfolder(id::Symbol)
     ptr = Ref(Ptr{UInt16}())
     result =
         ccall((:SHGetKnownFolderPath, "shell32"), stdcall, UInt32,
-              (UInt128, Cuint, Ptr{Nothing}, Ptr{Ptr{UInt16}}),
+              (StupidWindowsGUID, Cuint, Ptr{Nothing}, Ptr{Ptr{UInt16}}),
               guid, 0, C_NULL, ptr)
     if result == zero(UInt32)
         unsafe_utf16string(ptr[])
