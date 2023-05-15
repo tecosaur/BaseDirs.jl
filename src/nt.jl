@@ -195,7 +195,7 @@ const RELEVANT_FOLDERS =
      :Desktop, :Downloads, :Documents, :Music, :Pictures,
      :Videos, :Templates, :Public, :Fonts)
 
-eval(Expr(:struct, false, :RelevantFolders,
+eval(Expr(:struct, true, :RelevantFolders,
           Expr(:block,
                map(f -> Expr(:(::), f, :String),
                    RELEVANT_FOLDERS)...)))
