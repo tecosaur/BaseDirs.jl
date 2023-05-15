@@ -189,7 +189,8 @@ end
 knownfolder(id::Symbol, default::String) = something(knownfolder(id), default)
 
 const RELEVANT_FOLDERS =
-    (:Windows, :ProgramData, :Programs, :CommonPrograms,
+    (:SystemDrive, :SystemRoot, :Windows,
+     :ProgramData, :Programs, :CommonPrograms,
      :UserProfiles, :RoamingAppData, :LocalAppData,
      :Desktop, :Downloads, :Documents, :Music, :Pictures,
      :Videos, :Templates, :Public, :Fonts)
