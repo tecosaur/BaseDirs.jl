@@ -248,11 +248,15 @@ function reload()
     @setxdg RUNTIME_DIR rf.LocalAppData
     @setxdg BIN_HOME let
         path = split(get(ENV, "PATH", ""), ';')
+        # REVIEW The list of checked directories here.
+        # - Should `LocalAppData` be added?
+        # - Should `<juliainstall>\bin` be (re-)used?
         binmaybe = [joinpath(homedir(), "bin"),
                     joinpath(rf.RoamingAppData, "bin"),
-                    joinpath(rf.AppData, "bin")]
-        Iterators.flatten((Iterators.filter(p -> p in path, binmaybe),
-                           pwd())) |> first
+                    joinpath(rf.LocalAppData, "bin")]
+        Iterators.flatten((Iterators.filter(p -> p in path,
+                                            binmaybe),
+                           (pwd(),))) |> first
     end
     # User directories
     @setxdg DESKTOP_DIR rf.Desktop
