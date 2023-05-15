@@ -229,7 +229,7 @@ function relevantfolders()
         :Templates, joinpath(rf.RoamingAppData, "Microsoft", "Windows", "Templates"))
     rf.Public = knownfolder(:Public, ["Public"], joinpath(rf.UserProfiles, "Public"))
     rf.Fonts = knownfolder(:Fonts, joinpath(rf.SystemRoot, "Fonts"))
-    rf.ProgramData = knownfolder(
+    rf.Programs = knownfolder(
         :Programs, joinpath(rf.RoamingAppData, "Microsoft", "Windows", "Start Menu", "Programs"))
     rf.CommonPrograms = knownfolder(
         :CommonPrograms, joinpath(rf.ProgramData, "Microsoft", "Windows", "Start Menu", "Programs"))
