@@ -158,7 +158,7 @@ function unsafe_utf16string(ptr::Ptr{UInt16})
         push!(chars, c)
         i += 1
     end
-    unsafe_wrap(Vector, ptr, i, own=true)
+    unsafe_wrap(Vector{UInt16}, ptr, i, own=true)
     if i > 1
         transcode(String, chars)
     end
