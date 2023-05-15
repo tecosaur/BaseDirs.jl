@@ -212,7 +212,7 @@ function relevantfolders()
     rf.SystemRoot = knownfolder(
         :Windows, ["SystemRoot", "windir"], joinpath(rf.SystemDrive, "Windows"))
     rf.ProgramData = knownfolder(
-        :ProgramData, ["ProgramData", "ALLUSERSPROFILE"], joinpath(rf,SystemDrive, "ProgramData"))
+        :ProgramData, ["ProgramData", "ALLUSERSPROFILE"], joinpath(rf.SystemDrive, "ProgramData"))
     rf.UserProfiles = knownfolder(
         :UserProfiles, joinpath(rf.SystemDrive, "Users"))
     rf.RoamingAppData = knownfolder(
