@@ -26,7 +26,7 @@ applications(pathcomponents...; kwargs...) =
 
 desktop(pathcomponents...)   = joinpath(BaseDirs.DESKTOP_DIR[],   pathcomponents...)
 downloads(pathcomponents...) = joinpath(BaseDirs.DOWNLOAD_DIR[],  pathcomponents...)
-documents(pathcomponents...) = joinpath(BaseDirs.DOWNLOADS_DIR[], pathcomponents...)
+documents(pathcomponents...) = joinpath(BaseDirs.DOCUMENTS_DIR[], pathcomponents...)
 music(pathcomponents...)     = joinpath(BaseDirs.MUSIC_DIR[],     pathcomponents...)
 pictures(pathcomponents...)  = joinpath(BaseDirs.PICTURES_DIR[],  pathcomponents...)
 videos(pathcomponents...)    = joinpath(BaseDirs.VIDEOS_DIR[],    pathcomponents...)
