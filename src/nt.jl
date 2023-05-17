@@ -158,7 +158,7 @@ function unsafe_utf16string(ptr::Ptr{UInt16})
         push!(chars, c)
         i += 1
     end
-    unsafe_wrap(Vector{UInt16}, ptr, i, own=false)
+    ccall((:CoTaskMemFree, :Ole32), Nothing, (Ptr{Nothing},), ptr)
     if i > 1
         transcode(String, chars)
     end
