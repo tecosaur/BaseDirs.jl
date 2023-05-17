@@ -158,7 +158,6 @@ function unsafe_utf16string(ptr::Ptr{UInt16})
         push!(chars, c)
         i += 1
     end
-    unsafe_wrap(Vector{UInt16}, ptr, i, own=true)
     if i > 1
         transcode(String, chars)
     end
@@ -169,11 +168,13 @@ function knownfolder(id::Symbol)
     ptr = Ref(Ptr{UInt16}())
     result =
         ccall((:SHGetKnownFolderPath, "shell32"), stdcall, UInt32,
-              (StupidWindowsGUID, Cuint, Ptr{Nothing}, Ptr{Ptr{UInt16}}),
+              (StupidWindowsGUID, Cuint, Ptr{Cvoid}, Ptr{Ptr{UInt16}}),
               guid, 0, C_NULL, ptr)
-    if result == zero(UInt32)
+    folder = if result == zero(UInt32)
         unsafe_utf16string(ptr[])
     end
+    ccall((:CoTaskMemFree, "ole32.dll"), Cvoid, (Ptr{Cvoid},), ptr[])
+    folder
 end
 
 function knownfolder(id::Symbol, envvars::Vector{String}, default::String)
