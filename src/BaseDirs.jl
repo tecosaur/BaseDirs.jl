@@ -36,7 +36,7 @@ end
 
 include("docstrings.jl")
 
-#__init__() = reload()
+__init__() = reload()
 
 
 end
