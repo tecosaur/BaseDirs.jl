@@ -17,6 +17,7 @@ include("internals.jl")
 
 using ..Internals
 
+
 include("access.jl")
 
 @static if Sys.isapple()
@@ -32,8 +33,10 @@ else
     error("Unsupported platform")
 end
 
+
 include("docstrings.jl")
 
-__init__() = reload()
+#__init__() = reload()
+
 
 end
