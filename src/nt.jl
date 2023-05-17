@@ -173,6 +173,11 @@ function knownfolder(id::Symbol)
               guid, 0, C_NULL, ptr)
     if result == zero(UInt32)
         unsafe_utf16string(ptr[])
+    else 
+        # Memory is already freed if we go to unsafe_utf16string. Just putting at the end of this 
+        # function, though, leads to issues when exiting unsafe_utf16string in the case above. 
+        # So we do need to repeat this line.
+        ccall((:CoTaskMemFree, :Ole32), Nothing, (Ptr{Nothing},), ptr)
     end
 end
 
