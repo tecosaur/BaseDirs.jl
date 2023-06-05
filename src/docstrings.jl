@@ -277,6 +277,10 @@ $(Internals.acessordoc(:state, :STATE_HOME, name="state data"))
 
 @doc """
 $(Internals.acessordoc(:bin, :BIN_HOME, name="executables"))
+
+!!! note "Special behaviour"
+    When `create` is `true` and the path referrs to a file, `chmod` is called to
+    ensure that all users who can read the file can execute it.
 """ User.bin
 
 @doc """

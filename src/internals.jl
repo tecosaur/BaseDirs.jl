@@ -42,6 +42,23 @@ function ensurepath(path::String)
     end
 end
 
+"""
+    ensureexecutable(path::String)
+
+Make `path` executable by everybody who can read it. Returns `path`.
+"""
+function ensureexecutable(path::String)
+    if isfile(path)
+        basemode = filemode(path)
+        uread = basemode & 0o400 > 0
+        gread = basemode & 0o040 > 0
+        oread = basemode & 0o004 > 0
+        xmask = 0o100 * uread + 0o010 * gread + 0o001 * oread
+        chmod(path, basemode | xmask)
+    end
+    path
+end
+
 function resolvedirpath(basedir::String, pathcomponents::Union{Tuple, AbstractVector}; create::Bool=false)
     create && ensurebasedir(basedir)
     if isempty(pathcomponents)

@@ -5,11 +5,21 @@ module User
 using ..BaseDirs
 using ..Internals
 
-bin(; create::Bool=false) = Internals.resolvedirpath(BaseDirs.BIN_HOME[], (); create)
-bin(name; create::Bool=false) =
-    Internals.resolvedirpath(BaseDirs.BIN_HOME[], (name,); create)
-bin(project::BaseDirs.Project; create::Bool=false) =
-    Internals.resolvedirpath(BaseDirs.BIN_HOME[], (project.name,); create)
+function bin(; create::Bool=false)
+    path = Internals.resolvedirpath(BaseDirs.BIN_HOME[], (); create)
+    create && Internals.ensureexecutable(path)
+    path
+end
+function bin(name; create::Bool=false)
+    path = Internals.resolvedirpath(BaseDirs.BIN_HOME[], (name,); create)
+    create && Internals.ensureexecutable(path)
+    path
+end
+function bin(project::BaseDirs.Project; create::Bool=false)
+    path = Internals.resolvedirpath(BaseDirs.BIN_HOME[], (project.name,); create)
+    create && Internals.ensureexecutable(path)
+    path
+end
 
 @defaccessor data DATA_HOME
 @defaccessor config CONFIG_HOME
