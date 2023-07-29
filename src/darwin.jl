@@ -9,11 +9,15 @@ function reload()
     @setxdg CACHE_HOME "~/Library/Caches"
     @setxdg RUNTIME_DIR appsupport
     @setxdg BIN_HOME let
-        path = split(get(ENV, "PATH", ""), ':')
-        binmaybe = [expanduser("~/.local/bin"),
-                    "/opt/local/bin"]
-        Iterators.flatten((Iterators.filter(p -> p in path, binmaybe),
-                           "/usr/local/bin")) |> first
+        # There's no official convention for user-specific bin files on macos,
+        # so let's check the two seemingly commonly used alternatives, then fall
+        # back on the system bin folder.
+        usrbin = split(get(ENV, "PATH", ""), ':') ∩ [expanduser("~/.local/bin"), "/opt/local/bin"]
+        if !isempty(usrbin)
+            first(usrbin)
+        else
+            "/usr/local/bin"
+        end
     end
     # User directories
     @setxdg DESKTOP_DIR "~/Desktop"
