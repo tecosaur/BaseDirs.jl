@@ -93,33 +93,12 @@ julia> BaseDirs.User.config(BaseDirs.Project("mything"), "config.conf", create=t
 
 #+begin_src @docs
 BaseDirs.DATA_HOME
-#+end_src
-
-#+begin_src @docs
 BaseDirs.DATA_DIRS
-#+end_src
-
-#+begin_src @docs
 BaseDirs.CONFIG_HOME
-#+end_src
-
-#+begin_src @docs
 BaseDirs.CONFIG_DIRS
-#+end_src
-
-#+begin_src @docs
 BaseDirs.BIN_HOME
-#+end_src
-
-#+begin_src @docs
 BaseDirs.STATE_HOME
-#+end_src
-
-#+begin_src @docs
 BaseDirs.CACHE_HOME
-#+end_src
-
-#+begin_src @docs
 BaseDirs.RUNTIME_DIR
 #+end_src
 
@@ -127,29 +106,11 @@ BaseDirs.RUNTIME_DIR
 
 #+begin_src @docs
 BaseDirs.DESKTOP_DIR
-#+end_src
-
-#+begin_src @docs
 BaseDirs.DOWNLOAD_DIR
-#+end_src
-
-#+begin_src @docs
 BaseDirs.DOCUMENTS_DIR
-#+end_src
-
-#+begin_src @docs
 BaseDirs.PICTURES_DIR
-#+end_src
-
-#+begin_src @docs
 BaseDirs.VIDEOS_DIR
-#+end_src
-
-#+begin_src @docs
 BaseDirs.TEMPLATES_DIR
-#+end_src
-
-#+begin_src @docs
 BaseDirs.PUBLICSHARE_DIR
 #+end_src
 
@@ -157,9 +118,6 @@ BaseDirs.PUBLICSHARE_DIR
 
 #+begin_src @docs
 BaseDirs.APPLICATIONS_DIRS
-#+end_src
-
-#+begin_src @docs
 BaseDirs.FONTS_DIRS
 #+end_src
 
@@ -169,29 +127,11 @@ BaseDirs.FONTS_DIRS
 
 #+begin_src @docs
 BaseDirs.User
-#+end_src
-
-#+begin_src @docs
 BaseDirs.User.data
-#+end_src
-
-#+begin_src @docs
 BaseDirs.User.config
-#+end_src
-
-#+begin_src @docs
 BaseDirs.User.bin
-#+end_src
-
-#+begin_src @docs
 BaseDirs.User.state
-#+end_src
-
-#+begin_src @docs
 BaseDirs.User.cache
-#+end_src
-
-#+begin_src @docs
 BaseDirs.User.runtime
 #+end_src
 
@@ -199,33 +139,12 @@ BaseDirs.User.runtime
 
 #+begin_src @docs
 BaseDirs.User.desktop
-#+end_src
-
-#+begin_src @docs
 BaseDirs.User.downloads
-#+end_src
-
-#+begin_src @docs
 BaseDirs.User.documents
-#+end_src
-
-#+begin_src @docs
 BaseDirs.User.music
-#+end_src
-
-#+begin_src @docs
 BaseDirs.User.pictures
-#+end_src
-
-#+begin_src @docs
 BaseDirs.User.videos
-#+end_src
-
-#+begin_src @docs
 BaseDirs.User.templates
-#+end_src
-
-#+begin_src @docs
 BaseDirs.User.public
 #+end_src
 
@@ -233,9 +152,6 @@ BaseDirs.User.public
 
 #+begin_src @docs
 BaseDirs.User.fonts
-#+end_src
-
-#+begin_src @docs
 BaseDirs.User.applications
 #+end_src
 
@@ -243,21 +159,9 @@ BaseDirs.User.applications
 
 #+begin_src @docs
 BaseDirs.System
-#+end_src
-
-#+begin_src @docs
 BaseDirs.System.data
-#+end_src
-
-#+begin_src @docs
 BaseDirs.System.config
-#+end_src
-
-#+begin_src @docs
 BaseDirs.System.fonts
-#+end_src
-
-#+begin_src @docs
 BaseDirs.System.applications
 #+end_src
 
@@ -265,16 +169,7 @@ BaseDirs.System.applications
 
 #+begin_src @docs
 BaseDirs.data
-#+end_src
-
-#+begin_src @docs
 BaseDirs.config
-#+end_src
-
-#+begin_src @docs
 BaseDirs.fonts
-#+end_src
-
-#+begin_src @docs
 BaseDirs.applications
 #+end_src
