@@ -1,7 +1,16 @@
-function parseuserdirs(parentdir)
+"""
+    parseuserdirs(configdir::String)
+
+Parse the `user-dirs.dirs` file that lies under `configdir`.
+Returns a `NamedTuple` with all relevant entries.
+
+!!! warning "Warning: Private"
+    This is _not_ part of the BaseDirs API.
+"""
+function parseuserdirs(configdir::String)
     validnames = ("DESKTOP", "DOWNLOAD", "TEMPLATES", "PUBLICSHARE",
                   "DOCUMENTS", "MUSIC", "PICTURES", "VIDEOS")
-    userdirsfile = joinpath(parentdir, "user-dirs.dirs")
+    userdirsfile = joinpath(configdir, "user-dirs.dirs")
     if isfile(userdirsfile)
         keys = Symbol[]
         values = String[]
