@@ -1,5 +1,9 @@
 #+title: Trash
 
+Locating and creating system-appropriate files is a large part of the
+system-specific file-system annoyances dealt with. For completeness though,
+=BaseDirs= also provides basic utilities for interacting with the system trash.
+
 * Functions
 
 #+begin_src @docs
