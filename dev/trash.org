@@ -1,0 +1,9 @@
+#+title: Trash
+
+* Functions
+
+#+begin_src @docs
+BaseDirs.trash
+BaseDirs.readtrash
+BaseDirs.untrash
+#+end_src
