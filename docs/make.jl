@@ -31,6 +31,7 @@ makedocs(;
         "Defaults" => "defaults.md",
         "Prior Art" => "others.md",
     ],
+    warnonly = [:missing_docs, :cross_references],
 )
 
 deploydocs(;
