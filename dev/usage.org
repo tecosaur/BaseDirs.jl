@@ -43,7 +43,7 @@ The user and system forms of the various accessor functions are split into the
 + User
   - ~data~
   - ~config~
-    - ~bin~
+  - ~bin~
   - ~state~
   - ~cache~
   - ~runtime~
