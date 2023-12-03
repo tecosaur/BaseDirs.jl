@@ -184,7 +184,7 @@ function knownfolder(id::Symbol, envvars::Vector{String}, default::String)
                 return ENV[envvar]
             end
         end
-    @something(knownfolder(id), firstenv(envvars), default)
+    something(knownfolder(id), firstenv(envvars), default)
 end
 
 knownfolder(id::Symbol, default::String) = something(knownfolder(id), default)
