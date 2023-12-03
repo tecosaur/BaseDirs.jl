@@ -132,7 +132,65 @@ elseif Sys.isunix()
         @test BaseDirs.projectpath(BaseDirs.Project("a"), "?") == "julia/a/"
         @test BaseDirs.projectpath(BaseDirs.Project("Hey There")) == "julia/heythere/"
     end
+    @testset "File creation" begin
+        filepath = "$usr/.local/share/julia/a/my_base_dirs_julia_test_file"
+        @test BaseDirs.User.data(BaseDirs.Project("a"), "my_base_dirs_julia_test_file") == filepath
+        rm(filepath, force=true)
+        try
+            @test BaseDirs.User.data(BaseDirs.Project("a"), "my_base_dirs_julia_test_file", create=true) == filepath
+            @test isfile(filepath)
+        finally
+            rm(filepath, force=true)
+        end
+    end
+    @testset "Folder creation" begin
+        folderpath = "$usr/.local/share/julia/a/my_base_dirs_julia_test_dir/"
+        @test BaseDirs.User.data(BaseDirs.Project("a"), "my_base_dirs_julia_test_dir/") == folderpath
+        rm(folderpath, force=true)
+        try
+            @test BaseDirs.User.data(BaseDirs.Project("a"), "my_base_dirs_julia_test_dir/", create=true) == folderpath
+            @test isdir(folderpath)
+        finally
+            rm(folderpath, force=true)
+        end
+    end
+    @testset "Executable creation" begin
+        rm("$usr/.local/bin/my_base_dirs_julia_test_binary", force=true)
+        try
+            exec = BaseDirs.User.bin("my_base_dirs_julia_test_binary", create=true)
+            @test exec == "$usr/.local/bin/my_base_dirs_julia_test_binary"
+            @test isfile(exec)
+            @test stat(exec).mode & 0o001 != 0
+            @test exec == BaseDirs.User.bin("my_base_dirs_julia_test_binary", create=true)
+            @test exec == BaseDirs.User.bin(BaseDirs.Project("my_base_dirs_julia_test_binary"))
+        finally
+            rm("$usr/.local/bin/my_base_dirs_julia_test_binary", force=true)
+        end
+    end
     @test isnothing(BaseDirs.reload())
+    @testset "User dirs" begin
+        isfile("$usr/.config/user-dirs.dirs") &&
+            mv("$usr/.config/user-dirs.dirs", "$usr/.config/user-dirs.dirs.backup")
+        try
+            write("$usr/.config/user-dirs.dirs",
+                  """
+                  XDG_DESKTOP_DIR="\$HOME/Workbench"
+                  # A commented line
+                  an invalid line
+                  XDG_DOWNLOAD_DIR=/tmp/Downloads
+                  XDG_TEMPLATES_DIR=/=Templates=
+                  XDG_INVALID="???"
+                  """)
+            @test isnothing(BaseDirs.reload())
+            @test BaseDirs.User.desktop() == "$usr/Workbench"
+            @test BaseDirs.User.downloads() == "/tmp/Downloads"
+            @test BaseDirs.User.templates() == "/=Templates="
+        finally
+            rm("$usr/.config/user-dirs.dirs", force=true)
+            isfile("$usr/.config/user-dirs.dirs.backup") &&
+                mv("$usr/.config/user-dirs.dirs.backup", "$usr/.config/user-dirs.dirs")
+        end
+    end
 elseif Sys.iswindows()
     @testset "OS specific" begin
         fieldvals(x::T) where {T} = ntuple(fieldcount(T)) do i
