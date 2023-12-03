@@ -70,6 +70,7 @@ if Sys.isapple()
     end
     @test isnothing(BaseDirs.reload())
 elseif Sys.isunix()
+    uid = rstrip(read(`id -u`, String))
     @testset "Dirs" begin
         @testset "Base" begin
             @test BaseDirs.DATA_HOME[] == "$usr/.local/share"
@@ -79,7 +80,7 @@ elseif Sys.isunix()
             @test BaseDirs.BIN_HOME[] == "$usr/.local/bin"
             @test BaseDirs.STATE_HOME[] == "$usr/.local/state"
             @test BaseDirs.CACHE_HOME[] == "$usr/.cache"
-            @test BaseDirs.RUNTIME_DIR[] == "/run/user/$(Base.Libc.getuid())"
+            @test BaseDirs.RUNTIME_DIR[] == "/run/user/$uid"
         end
         @testset "User" begin
             @test BaseDirs.DESKTOP_DIR[] == "$usr/Desktop"
@@ -102,7 +103,7 @@ elseif Sys.isunix()
         @test BaseDirs.User.bin() == "$usr/.local/bin"
         @test BaseDirs.User.state() == "$usr/.local/state"
         @test BaseDirs.User.cache() == "$usr/.cache"
-        @test BaseDirs.User.runtime() == "/run/user/$(Base.Libc.getuid())"
+        @test BaseDirs.User.runtime() == "/run/user/$uid"
         @test BaseDirs.User.desktop() == "$usr/Desktop"
         @test BaseDirs.User.downloads() == "$usr/Downloads"
         @test BaseDirs.User.documents() == "$usr/Documents"
