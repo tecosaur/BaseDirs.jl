@@ -10,20 +10,32 @@ export @defaccessor, @setxdg, @setxdgs
 @static if Sys.isunix()
     macro setxdg(envvar::Symbol, default)
         quote $(esc(envvar))[] = if haskey(ENV, $("XDG_$envvar")) && !isempty(ENV[$("XDG_$envvar")])
-            ENV[$("XDG_$envvar")] else expanduser($(esc(default))) end
+            path = ENV[$("XDG_$envvar")]
+            if endswith(path, first(Base.Filesystem.path_separator))
+                path[begin:end-1]
+            else path end
+        else expanduser($(esc(default))) end
         end
     end
 else
     macro setxdg(envvar::Symbol, default)
         quote $(esc(envvar))[] = if haskey(ENV, $("XDG_$envvar")) && !isempty(ENV[$("XDG_$envvar")])
-            ENV[$("XDG_$envvar")] else $(esc(default)) end
+            path = ENV[$("XDG_$envvar")]
+            if endswith(path, first(Base.Filesystem.path_separator))
+                path[begin:end-1]
+            else path end
+        else $(esc(default)) end
         end
     end
 end
 
 macro setxdgs(envvar::Symbol, defaults)
     quote $(esc(envvar))[] = if haskey(ENV, $("XDG_$envvar")) && !isempty(ENV[$("XDG_$envvar")])
-        split(ENV[$("XDG_$envvar")], ':')
+        map(split(ENV[$("XDG_$envvar")], ':')) do path
+            if endswith(path, first(Base.Filesystem.path_separator))
+                path[begin:end-1]
+            else path end
+        end
     else $(esc(defaults)) end
     end
 end
