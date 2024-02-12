@@ -265,12 +265,12 @@ elseif Sys.iswindows()
     @testset "Projects" begin
         @test BaseDirs.projectpath(BaseDirs.Project("a")) == "julia\\a\\"
         @test BaseDirs.projectpath(BaseDirs.Project("a", org="b")) == "b\\a\\"
-        @test BaseDirs.projectpath(BaseDirs.Project("a"), BaseDirs.DATA_HOME[]) == "julia\\a\\data"
+        @test BaseDirs.projectpath(BaseDirs.Project("a"), BaseDirs.DATA_HOME[]) == "julia\\a\\data\\"
         if BaseDirs.CONFIG_HOME[] != BaseDirs.DATA_HOME[]
-            @test BaseDirs.projectpath(BaseDirs.Project("a"), BaseDirs.CONFIG_HOME[]) == "julia\\a\\config"
+            @test BaseDirs.projectpath(BaseDirs.Project("a"), BaseDirs.CONFIG_HOME[]) == "julia\\a\\config\\"
         end
-        @test BaseDirs.projectpath(BaseDirs.Project("a"), BaseDirs.CACHE_HOME[]) == "julia\\a\\cache"
-        @test BaseDirs.projectpath(BaseDirs.Project("a"), BaseDirs.STATE_HOME[]) == "julia\\a\\state"
+        @test BaseDirs.projectpath(BaseDirs.Project("a"), BaseDirs.CACHE_HOME[]) == "julia\\a\\cache\\"
+        @test BaseDirs.projectpath(BaseDirs.Project("a"), BaseDirs.STATE_HOME[]) == "julia\\a\\state\\"
     end
     @test isnothing(BaseDirs.reload())
 end

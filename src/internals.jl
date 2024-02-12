@@ -57,7 +57,7 @@ path seperator of the host filesystem.
 """
 function ensurepath(path::String)
     if !ispath(path)
-        if endswith(path, DIRECTORY_SUFFIX_FLAG)
+        if endswith(path, DIRECTORY_SUFFIX_FLAG) || (Sys.iswindows() && endswith(path, "\\"))
             mkpath(path[begin:prevind(path, end)])
         else
             mkpath(dirname(path))

@@ -276,13 +276,13 @@ end
 
 projectpath(p::Project, parent::String) =
     joinpath(projectpath(p), if parent === DATA_HOME[] || parent in DATA_DIRS[]
-                 "data"
+                 "data\\"
              elseif parent == CONFIG_HOME[] || parent in CONFIG_DIRS[]
-                 "config"
+                 "config\\"
              elseif parent == CACHE_HOME[]
-                 "cache"
+                 "cache\\"
              elseif parent == STATE_HOME[]
-                 "state"
+                 "state\\"
              else
                  ""
              end)
