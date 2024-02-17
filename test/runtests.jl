@@ -115,6 +115,34 @@ elseif Sys.isunix()
         @test BaseDirs.User.fonts() == ["$usr/.local/share/fonts", "$usr/.fonts"]
         @test BaseDirs.User.applications() == ["$usr/.local/share/applications"]
     end
+    @testset "User (customised)" begin
+        userdirs_jpn = raw"""
+        XDG_DESKTOP_DIR="$HOME/デスクトップ"
+        XDG_DOWNLOAD_DIR="$HOME/ダウンロード"
+        XDG_TEMPLATES_DIR="$HOME/テンプレート"
+        XDG_PUBLICSHARE_DIR="$HOME/公開"
+        XDG_DOCUMENTS_DIR="$HOME/ドキュメント"
+        XDG_MUSIC_DIR="$HOME/ミュージック"
+        XDG_PICTURES_DIR="$HOME/ピクチャ"
+        XDG_VIDEOS_DIR="$HOME/ビデオ"
+        """
+        userdirs_file = joinpath(BaseDirs.CONFIG_HOME[], "user-dirs.dirs")
+        isfile(userdirs_file) &&
+            mv(userdirs_file, userdirs_file * ".backup")
+        write(userdirs_file, userdirs_jpn)
+        @test BaseDirs.reload() === nothing
+        @test BaseDirs.User.desktop() == "$usr/デスクトップ"
+        @test BaseDirs.User.downloads() == "$usr/ダウンロード"
+        @test BaseDirs.User.documents() == "$usr/ドキュメント"
+        @test BaseDirs.User.music() == "$usr/ミュージック"
+        @test BaseDirs.User.pictures() == "$usr/ピクチャ"
+        @test BaseDirs.User.videos() == "$usr/ビデオ"
+        @test BaseDirs.User.templates() == "$usr/テンプレート"
+        @test BaseDirs.User.public() == "$usr/公開"
+        rm(userdirs_file)
+        isfile(userdirs_file * ".backup") &&
+            mv(userdirs_file * ".backup", userdirs_file)
+    end
     @testset "System" begin
         @test BaseDirs.System.data() == ["/usr/local/share", "/usr/share"]
         @test BaseDirs.System.config() == ["/etc/xdg"]

@@ -7,23 +7,21 @@ using Base.Docs
 
 export @defaccessor, @setxdg, @setxdgs
 
+@static if VERSION < v"1.8"
+    import ..BaseDirs: chopsuffix
+end
+
 @static if Sys.isunix()
     macro setxdg(envvar::Symbol, default)
         quote $(esc(envvar))[] = if haskey(ENV, $("XDG_$envvar")) && !isempty(ENV[$("XDG_$envvar")])
-            path = ENV[$("XDG_$envvar")]
-            if endswith(path, first(Base.Filesystem.path_separator))
-                path[begin:end-1]
-            else path end
+            chopsuffix(ENV[$("XDG_$envvar")], Base.Filesystem.path_separator)
         else expanduser($(esc(default))) end
         end
     end
 else
     macro setxdg(envvar::Symbol, default)
         quote $(esc(envvar))[] = if haskey(ENV, $("XDG_$envvar")) && !isempty(ENV[$("XDG_$envvar")])
-            path = ENV[$("XDG_$envvar")]
-            if endswith(path, first(Base.Filesystem.path_separator))
-                path[begin:end-1]
-            else path end
+            chopsuffix(ENV[$("XDG_$envvar")], Base.Filesystem.path_separator)
         else $(esc(default)) end
         end
     end
@@ -32,9 +30,7 @@ end
 macro setxdgs(envvar::Symbol, defaults)
     quote $(esc(envvar))[] = if haskey(ENV, $("XDG_$envvar")) && !isempty(ENV[$("XDG_$envvar")])
         map(split(ENV[$("XDG_$envvar")], ':')) do path
-            if endswith(path, first(Base.Filesystem.path_separator))
-                path[begin:end-1]
-            else path end
+            chopsuffix(path, Base.Filesystem.path_separator)
         end
     else $(esc(defaults)) end
     end

@@ -20,10 +20,10 @@ function parseuserdirs(configdir::String)
                 key, value = split(line, '=', limit=2)
                 if key in validnames
                     if startswith(value, '"') && endswith(value, '"')
-                        value = unescape_string(value[2:end-1])
+                        value = unescape_string(chop(value, head=1, tail=1))
                     end
                     if startswith(value, "\$HOME")
-                        value = string(homedir(), value[6:end])
+                        value = string(homedir(), chopprefix(value, "\$HOME"))
                     end
                     if startswith(value, '/')
                         push!(keys, Symbol(key))
