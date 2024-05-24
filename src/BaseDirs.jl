@@ -57,11 +57,8 @@ end
 
 include("docstrings.jl")
 
-__init__() = reload()
+const __init__ = reload
 
-# From testing with `--trace-compile` and `@time_imports`, these two methods
-# are solely responsible for loadtime compilation.
-precompile(Tuple{Type{NamedTuple{(), T} where T<:Tuple}, Array{String, 1}})
-precompile(Tuple{typeof(Base.get), NamedTuple{(), Tuple{}}, Symbol, String})
+include("precompile.jl")
 
 end
