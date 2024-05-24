@@ -1,8 +1,9 @@
 """
-    parseuserdirs(configdir::String)
+    parseuserdirs(configdir::String) -> Dict{Symbol, String}
 
 Parse the `user-dirs.dirs` file that lies under `configdir`.
-Returns a `NamedTuple` with all relevant entries.
+
+Returns a dict with all recognised entries of the file.
 
 !!! warning "Warning: Private"
     This is _not_ part of the BaseDirs API.
@@ -12,9 +13,8 @@ function parseuserdirs(configdir::String)
                   "XDG_PUBLICSHARE_DIR", "XDG_DOCUMENTS_DIR", "XDG_MUSIC_DIR",
                   "XDG_PICTURES_DIR", "XDG_VIDEOS_DIR")
     userdirsfile = joinpath(configdir, "user-dirs.dirs")
+    entries = Dict{Symbol, String}()
     if isfile(userdirsfile)
-        keys = Symbol[]
-        values = String[]
         for line in Iterators.map(strip, eachline(userdirsfile))
             if !startswith(line, '#') && occursin('=', line)
                 key, value = split(line, '=', limit=2)
@@ -26,16 +26,13 @@ function parseuserdirs(configdir::String)
                         value = string(homedir(), chopprefix(value, "\$HOME"))
                     end
                     if startswith(value, '/')
-                        push!(keys, Symbol(key))
-                        push!(values, value)
+                        entries[Symbol(key)] = value
                     end
                 end
             end
         end
-        NamedTuple{Tuple(keys)}(values)
-    else
-        (;)
     end
+    entries
 end
 
 function reload()
