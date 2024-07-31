@@ -58,12 +58,11 @@ function reload()
     @setxdg PUBLICSHARE_DIR get(userdirs, :XDG_PUBLICSHARE_DIR, "~/Public")
     # Other directories
     FONTS_DIRS[] =
-        append!([joinpath(DATA_HOME[], "fonts"),
-                 expanduser("~/.fonts")],
-                joinpath.(DATA_DIRS[], "fonts")) |> unique!
+        append!([joinpath(DATA_HOME[], "fonts"), expanduser("~/.fonts")],
+                [joinpath(d, "fonts") for d in DATA_DIRS[]]) |> unique!
     APPLICATIONS_DIRS[] =
         append!([joinpath(DATA_HOME[], "applications")],
-                joinpath.(DATA_DIRS[], "applications")) |> unique!
+                [joinpath(d, "applications") for d in DATA_DIRS[]]) |> unique!
     nothing
 end
 

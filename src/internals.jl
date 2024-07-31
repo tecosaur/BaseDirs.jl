@@ -104,7 +104,7 @@ function resolvedirpath(basedir::String, pathcomponents::Union{Tuple, AbstractVe
 end
 
 function resolvedirpaths(basedirs::Vector{String}, pathcomponents::Union{Tuple, AbstractVector}; create::Bool=false, existent::Bool=false)
-    allpaths = resolvedirpath.(basedirs, Ref(pathcomponents); create)
+    allpaths = [resolvedirpath(bdir, pathcomponents; create) for bdir in basedirs]
     if existent
         filter(ispath, allpaths)
     else
