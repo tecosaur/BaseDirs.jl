@@ -44,11 +44,7 @@ function reload()
     @setxdg STATE_HOME "~/.local/state"
     @setxdg BIN_HOME "~/.local/bin"
     @setxdg CACHE_HOME "~/.cache"
-    @static if VERSION < v"1.6"
-        @setxdg RUNTIME_DIR joinpath("/run/user", rstrip(read(`id -u`, String)))
-    else
-        @setxdg RUNTIME_DIR joinpath("/run/user", string(Base.Libc.getuid()))
-    end
+    @setxdg RUNTIME_DIR joinpath("/run/user", string(Base.Libc.getuid()))
     # User directories
     userdirs = merge(parseuserdirs(first(CONFIG_DIRS[])),
                      parseuserdirs(CONFIG_HOME[]))

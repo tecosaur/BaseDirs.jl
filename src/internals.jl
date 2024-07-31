@@ -7,10 +7,6 @@ using Base.Docs
 
 export @defaccessor, @setxdg, @setxdgs
 
-@static if VERSION < v"1.8"
-    import ..BaseDirs: chopsuffix
-end
-
 @static if Sys.isunix()
     macro setxdg(envvar::Symbol, default)
         quote $(esc(envvar))[] = if haskey(ENV, $("XDG_$envvar")) && !isempty(ENV[$("XDG_$envvar")])
