@@ -75,6 +75,23 @@ function ensureexecutable(path::String)
     path
 end
 
+function warn_if_precompiling()
+    if ccall(:jl_generating_output, Cint, ()) != 0
+        @noinline (function ()
+                       st = stacktrace(backtrace())
+                       naughtyline = findfirst(sf -> sf.file != Symbol(@__FILE__), st)
+                       naughtysf = st[something(naughtyline, 1)]
+                       @warn """A base directory is being computed during precompilation.
+                                This is dangerous, as results depend on the live system configuration.
+
+                                It is recommended that you invoke BaseDirs as required in
+                                function bodies, rather than at the top level. Calls are very
+                                cheap, and you can always pass the result of a live call around.
+                                """ _module="BaseDirs" _file=String(naughtysf.file) _line=naughtysf.line
+                   end)()
+    end
+end
+
 function resolvedirpath(basedir::String, pathcomponents::Union{Tuple, AbstractVector}; create::Bool=false)
     create && ensurebasedir(basedir)
     if isempty(pathcomponents)
@@ -108,8 +125,10 @@ macro defaccessor(fnname::Symbol, var::Union{Symbol, Expr})
         :resolvedirpath
     end
     quote
-        $(esc(fnname))(pathcomponents...; kwargs...) =
+        function $(esc(fnname))(pathcomponents...; kwargs...)
+            $warn_if_precompiling()
             $resolver($dirvar, pathcomponents; kwargs...)
+        end
         $(esc(fnname))(project::BaseDirs.Project, pathcomponents...; kwargs...) =
             $(esc(fnname))(BaseDirs.projectpath(project, $dirvar), pathcomponents...; kwargs...)
     end
