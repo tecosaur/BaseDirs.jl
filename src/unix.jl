@@ -59,10 +59,10 @@ function reload()
     # Other directories
     FONTS_DIRS[] =
         append!([joinpath(DATA_HOME[], "fonts"), expanduser("~/.fonts")],
-                [joinpath(d, "fonts") for d in DATA_DIRS[]]) |> unique!
+                [joinpath(d, "fonts") for d::String in DATA_DIRS[]]) |> unique!
     APPLICATIONS_DIRS[] =
         append!([joinpath(DATA_HOME[], "applications")],
-                [joinpath(d, "applications") for d in DATA_DIRS[]]) |> unique!
+                [joinpath(d, "applications") for d::String in DATA_DIRS[]]) |> unique!
     nothing
 end
 

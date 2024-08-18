@@ -139,14 +139,14 @@ function acessordoc(finfo::Union{Symbol, Tuple{String, Symbol}},
                     plural::Bool=if isnothing(var) false
                     elseif var isa Vector true
                     else getfield(BaseDirs, var) isa Ref{Vector{String}} end,
-                    name::String=String(if fname isa Symbol fname else last(fname) end))
+                    name::String=String(if finfo isa Symbol finfo else last(finfo) end))
     fprefix, fname = if finfo isa Symbol; ("", finfo) else finfo end
     rettype = ifelse(plural, "Vector{String}", "String")
     dirprefix, dirterm = ifelse(plural, ("all", "directories"), ("the", "directory"))
     existentkwarg = ifelse(plural, " - `existent::Bool` (default `false`), filter out paths that do not exist.", "")
     vardoc = if var isa Vector && (dvars = filter(v -> haskey(Docs.meta(BaseDirs), Docs.Binding(BaseDirs, v)), var)) |> !isempty
         "\nThe returned path is based on the variables $(join(map(v -> "`BaseDirs.$v`", dvars), ", ", ", and ")), which see.\n"
-    elseif !isnothing(var) && haskey(Docs.meta(BaseDirs), Docs.Binding(BaseDirs, var))
+    elseif var isa Symbol && haskey(Docs.meta(BaseDirs), Docs.Binding(BaseDirs, var))
         "\nThe returned path is based on the variable `BaseDirs.$var`, which see.\n"
     else "" end
     kwargs = ifelse(plural, "; create, existent", "; create")
