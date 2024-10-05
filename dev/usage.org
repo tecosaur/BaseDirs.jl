@@ -4,12 +4,12 @@
 
 This library works by resolving a few key directories and saving the results to
 variables, namely:
-+ Data, =DATA_HOME= and =DATA_DIRS=
-+ Config, with =CONFIG_HOME= and =CONFIG_DIRS=
-+ Executables, with =BIN_HOME=
-+ State data, with =STATE_HOME=
-+ Cached data, with =CACHE_HOME=
-+ Runtime data, with =RUNTIME_DIR=
++ Data, [[@ref BaseDirs.DATA_HOME][=DATA_HOME=]] and [[@ref BaseDirs.DATA_DIRS][=DATA_DIRS=]]
++ Config, with [[@ref CONFIG_HOME][=CONFIG_HOME=]] and [[@ref BaseDirs.CONFIG_DIRS][=CONFIG_DIRS=]]
++ Executables, with [[@ref BaseDirs.BIN_HOME][=BIN_HOME=]]
++ State data, with [[@ref BaseDirs.STATE_HOME][=STATE_HOME=]]
++ Cached data, with [[@ref BaseDirs.CACHE_HOME][=CACHE_HOME=]]
++ Runtime data, with [[@ref BaseDirs.RUNTIME_DIR][=RUNTIME_DIR=]]
 
 While it is possible to use these variables directly, it is recommended that you
 make use of the accessor functions instead, which all follow this pattern:
@@ -18,7 +18,7 @@ make use of the accessor functions instead, which all follow this pattern:
 accessor() # Give the base directory(ies)
 accessor(parts...) # Give the base directory(ies) joined with parts
 accessor(proj::Project) # Give the base directory(ies) for proj
-acessors(proj::Project, parts...) # proj directory(ies) joined with parts
+accessors(proj::Project, parts...) # proj directory(ies) joined with parts
 #+end_src
 
 Where ~accessor~ is a stand-in for the particular named directory being resolved.
@@ -30,7 +30,7 @@ Two boolean keyword arguments are often supported:
   c. If the path is to a file (i.e. the path does not end with =/=), ~touch~​es the file.
 + =existent=, to filter the list of provided paths to ones that exist (when applicable)
 
-To give appropriate project-specific directories we can use a =BaseDirs.Project=:
+To give appropriate project-specific directories we can use a [[@ref][=BaseDirs.Project=]]:
 
 #+begin_src @docs
 BaseDirs.Project
@@ -74,7 +74,7 @@ The =User= submodule also provides a number of other "user folder" accessors, na
 #+begin_src julia-repl
 julia> using BaseDirs
 
-julia> BaseDirs.CONFIG_HOME[]
+julia> BaseDirs.CONFIG_HOME
 "/home/tec/.config"
 
 julia> BaseDirs.User.config()
