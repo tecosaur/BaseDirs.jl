@@ -1,5 +1,14 @@
 module BaseDirs
 
+@static if VERSION >= v"1.11"
+    eval(Expr(:public, :System, :User, :Project, :reload, :data, :config,
+              :fonts, :applications, :DATA_HOME, :DATA_DIRS, :CONFIG_HOME,
+              :CONFIG_DIRS, :BIN_HOME, :STATE_HOME, :CACHE_HOME, :RUNTIME_DIR,
+              :DESKTOP_DIR, :DOWNLOAD_DIR, :DOCUMENTS_DIR, :PICTURES_DIR,
+              :VIDEO_DIR, :TEMPLATE_DIR, :PUBLICSHARE_DIR, :APPLICATIONS_DIRS,
+              :FONTS_DIRS))
+end
+
 include("variables.jl")
 
 function reload end

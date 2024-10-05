@@ -5,6 +5,12 @@ module User
 using ..BaseDirs
 using ..Internals
 
+@static if VERSION >= v"1.11"
+    eval(Expr(:public, :bin, :data, :config, :state, :cache, :runtime,
+              :fonts, :applications, :desktop, :downloads, :documents,
+              :music, :pictures, :viteos, :templates, :public))
+end
+
 function bin(; create::Bool=false)
     path = Internals.resolvedirpath(BaseDirs.BIN_HOME[], (); create)
     create && Internals.ensureexecutable(path)
@@ -51,6 +57,10 @@ module System
 
 using ..BaseDirs
 using ..Internals
+
+@static if VERSION >= v"1.11"
+    eval(Expr(:public, :data, :config, :fonts, :applications))
+end
 
 @defaccessor data DATA_DIRS
 @defaccessor config CONFIG_DIRS
