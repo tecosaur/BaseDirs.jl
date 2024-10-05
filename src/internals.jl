@@ -134,7 +134,7 @@ macro defaccessor(fnname::Symbol, var::Union{Symbol, Expr})
     end
 end
 
-function acessordoc(finfo::Union{Symbol, Tuple{String, Symbol}},
+function accessordoc(finfo::Union{Symbol, Tuple{String, Symbol}},
                     var::Union{Nothing, Symbol, Vector{Symbol}}=nothing;
                     plural::Bool=if isnothing(var) false
                     elseif var isa Vector true
@@ -145,9 +145,9 @@ function acessordoc(finfo::Union{Symbol, Tuple{String, Symbol}},
     dirprefix, dirterm = ifelse(plural, ("all", "directories"), ("the", "directory"))
     existentkwarg = ifelse(plural, " - `existent::Bool` (default `false`), filter out paths that do not exist.", "")
     vardoc = if var isa Vector && (dvars = filter(v -> haskey(Docs.meta(BaseDirs), Docs.Binding(BaseDirs, v)), var)) |> !isempty
-        "\nThe returned path is based on the variables $(join(map(v -> "`BaseDirs.$v`", dvars), ", ", ", and ")), which see.\n"
+        "\nThe returned path is based on the variables $(join(map(v -> "[`BaseDirs.$v`](@ref)", dvars), ", ", ", and ")), which see.\n"
     elseif var isa Symbol && haskey(Docs.meta(BaseDirs), Docs.Binding(BaseDirs, var))
-        "\nThe returned path is based on the variable `BaseDirs.$var`, which see.\n"
+        "\nThe returned path is based on the variable [`BaseDirs.$var`](@ref), which see.\n"
     else "" end
     kwargs = ifelse(plural, "; create, existent", "; create")
     """

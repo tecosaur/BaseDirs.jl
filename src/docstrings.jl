@@ -8,20 +8,48 @@ Base.Docs.doc!(@__MODULE__, # Please let me know if there's an easier way.
 
 This module provides utilities to identify the appropriate locations for files.
 
-The `User` and `System` submodules provide a number of accessor functions, which see.
+The [`User`](@ref BaseDirs.User) and [`System`](BaseDirs.System) submodules
+provide a number of accessor functions, which see.
 
-There are also four combined accessor functions defined, namely: `data`,
-`config`, `fonts`, and `applications`. These provide a list of all relevant user
-and system directories.
+There are also four combined accessor functions defined, namely: [`data`](@ref
+BaseDirs.data), [`config`](@ref BaseDirs.config), [`fonts`](@ref
+BaseDirs.fonts), and [`applications`](@ref BaseDirs.applications). These provide
+a list of all relevant user and system directories.
+
+Also see [`BaseDirs.Project`](@ref BaseDirs.Project) for information on how to
+generate appropriate project paths.
 
 !!! note
     This is essentially an implementation of the XDG (Cross-Desktop Group) directory
     specifications, with analogues for Windows and MacOS for cross-platform. More
     specifically, this is a hybrid of:
-    - The *XDG base directory* and the *XDG user directory* specifications on Linux
-    - The *Known Folder* API on Windows
-    - The *Standard Directories* guidelines on macOS
+    - The [*XDG base directory*](https://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html)
+      and the [*XDG user directory*](https://www.freedesktop.org/wiki/Software/xdg-user-dirs/) specifications on Linux
+    - The [*Known Folder*](https://msdn.microsoft.com/en-us/library/windows/desktop/dd378457.aspx) API on Windows
+    - The [*Standard Directories*](https://developer.apple.com/library/content/documentation/FileManagement/Conceptual/FileSystemProgrammingGuide/FileSystemOverview/FileSystemOverview.html#//apple_ref/doc/uid/TP40010672-CH2-SW6)
+      guidelines on macOS
 
+# Guidelines for appropriate directories
+
++ **Runtime** data is _volatile_, and only relevant to the current user session.
+  It should be user-specific and non-essential. For example: sockets, named
+  pipes, or lockfiles.
++ **Cache** data is non-essential and can be recreated _without data loss_. For
+  example: thumbnails, compiled bytecode, font paths, or other cached data.
++ **State** data relates to application state, that should persist across _sessions_
+  but doesn't need to be backed up. For example: logs, recently opened files, or
+  other session data.
++ **Config** data is user-specific customisations to application behaviour. For
+  example: theme settings, custom keybindings, media preferences, or other
+  configuration.
++ **Data** content should be used for general application data. For example: saved
+  game progress, library metadata, templates, or other
+  user-specific/user-generated data.
++ **Bin** data is specifically executable files intended to be run by the user.
+
+Essential information (that you'd want to include in backups) should be split
+across **config** and **data**. Information in **state** may be nice to have,
+but is non-essential.
 """,
                    Dict(:path => joinpath(@__DIR__, @__FILE__),
                         :linenumber => @__LINE__,
@@ -144,8 +172,8 @@ written.
 
 !!! warning
     This is not yet standardised by the XDG, see
-    https://gitlab.freedesktop.org/xdg/xdg-specs/-/issues/14 for more
-    information.
+    [freedesktop.org/xdg-specs#14](https://gitlab.freedesktop.org/xdg/xdg-specs/-/issues/14)
+    for more information.
 """ BIN_HOME
 
 @doc """
@@ -246,37 +274,45 @@ A list of locations in which font files may be found.
 
 This module containes accessor functions for user-specific directories.
 
-### Base directory acessors
+### Base directory accessors
 
-`data`, `config`, `state`, `cache`, and `runtime` -> `String`
+The functions [`data`](@ref BaseDirs.User.data), [`config`](@ref
+BaseDirs.User.config), [`state`](@ref BaseDirs.User.state), [`cache`](@ref
+BaseDirs.User.cache), and [`runtime`](@ref BaseDirs.User.runtime) produce a
+`String`.
 
 ### User directory accessors
 
-`desktop`, `downloads`, `music`, `videos`, `templates`, `public` -> `String`
+The functions [`desktop`](@ref BaseDirs.User.desktop), [`downloads`](@ref
+BaseDirs.User.downloads), [`music`](@ref BaseDirs.User.music), [`videos`](@ref
+BaseDirs.User.videos), [`templates`](@ref BaseDirs.User.templates),
+[`public`](@ref BaseDirs.User.public) produce a `String`.
 
-### Other acessors
+### Other accessors
 
-`fonts` and `applications` -> `Vector{String}`
+The functions [`fonts`](@ref BaseDirs.User.fonts) and [`applications`](@ref
+BaseDirs.User.applications) produce a `Vector{String}`.
 
 !!! note
-    Unlike the `System` and "combined" (BaseDirs.\\*) acessors, the *Base* and *User*
-    acessors here return a single directory (`String`).
+    Unlike the [`System`](@ref BaseDirs.System) and "combined" (`BaseDirs.*`)
+    accessors, the *Base* and *User* accessors here return a single directory
+    (`String`).
 """ User
 
 @doc """
-$(Internals.acessordoc(:data, :DATA_HOME, name="user configuration"))
+$(Internals.accessordoc(:data, :DATA_HOME, name="user configuration"))
 """ User.data
 
 @doc """
-$(Internals.acessordoc(:config, :CONFIG_HOME, name="user configuration"))
+$(Internals.accessordoc(:config, :CONFIG_HOME, name="user configuration"))
 """ User.config
 
 @doc """
-$(Internals.acessordoc(:state, :STATE_HOME, name="state data"))
+$(Internals.accessordoc(:state, :STATE_HOME, name="state data"))
 """ User.state
 
 @doc """
-$(Internals.acessordoc(:bin, :BIN_HOME, name="executables"))
+$(Internals.accessordoc(:bin, :BIN_HOME, name="executables"))
 
 !!! note "Special behaviour"
     When `create` is `true` and the path referrs to a file, `chmod` is called to
@@ -284,19 +320,19 @@ $(Internals.acessordoc(:bin, :BIN_HOME, name="executables"))
 """ User.bin
 
 @doc """
-$(Internals.acessordoc(:cache, :CACHE_HOME, name="cached data"))
+$(Internals.accessordoc(:cache, :CACHE_HOME, name="cached data"))
 """ User.cache
 
 @doc """
-$(Internals.acessordoc(:state, :STATE_HOME, name="runtime information"))
+$(Internals.accessordoc(:state, :STATE_HOME, name="runtime information"))
 """ User.runtime
 
 @doc """
-$(Internals.acessordoc(:fonts, name="user fonts", plural=true))
+$(Internals.accessordoc(:fonts, name="user fonts", plural=true))
 """ User.fonts
 
 @doc """
-$(Internals.acessordoc(:applications, name="user applications", plural=true))
+$(Internals.accessordoc(:applications, name="user applications", plural=true))
 """ User.applications
 
 # ---------
@@ -371,47 +407,51 @@ The public directory is based on the variable `BaseDirs.PUBLIC_DIR`, which see.
 @doc """
 **BaseDirs.System**
 
-This module contains acessor functions for system directories.
+This module contains accessor functions for system directories.
 
-### Base directory acessors
+### Base directory accessors
 
-`data`, `config` -> `Vector{String}`
+The functions [`data`](@ref BaseDirs.System.data) and [`config`](@ref
+BaseDirs.System.config) produce a `Vector{String}`.
 
-### Other acessors
+### Other accessors
 
-`fonts` and `applications` -> `Vector{String}`
+The functions [`fonts`](@ref BaseDirs.System.fonts) and [`applications`](@ref
+BaseDirs.System.applications) produce a `Vector{String}`.
+
+See also: [`BaseDirs.User`](@ref).
 """ System
 
 @doc """
-$(Internals.acessordoc(:data, :DATA_DIRS, name="system configuration"))
+$(Internals.accessordoc(:data, :DATA_DIRS, name="system configuration"))
 """ System.data
 
 @doc """
-$(Internals.acessordoc(:config, :CONFIG_DIRS, name="system configuration"))
+$(Internals.accessordoc(:config, :CONFIG_DIRS, name="system configuration"))
 """ System.config
 
 @doc """
-$(Internals.acessordoc(:fonts, name="system fonts", plural=true))
+$(Internals.accessordoc(:fonts, name="system fonts", plural=true))
 """ System.fonts
 
 @doc """
-$(Internals.acessordoc(:applications, name="system applications", plural=true))
+$(Internals.accessordoc(:applications, name="system applications", plural=true))
 """ System.applications
 
 # ---------
 
 @doc """
-$(Internals.acessordoc(:data, [:DATA_HOME, :DATA_DIRS], name="user and system configuration"))
+$(Internals.accessordoc(:data, [:DATA_HOME, :DATA_DIRS], name="user and system configuration"))
 """ data
 
 @doc """
-$(Internals.acessordoc(:config, [:CONFIG_HOME, :CONFIG_DIRS], name="user and system configuration"))
+$(Internals.accessordoc(:config, [:CONFIG_HOME, :CONFIG_DIRS], name="user and system configuration"))
 """ config
 
 @doc """
-$(Internals.acessordoc(:fonts, name="user and system fonts", plural=true))
+$(Internals.accessordoc(:fonts, name="user and system fonts", plural=true))
 """ fonts
 
 @doc """
-$(Internals.acessordoc(:applications, name="user and system applications", plural=true))
+$(Internals.accessordoc(:applications, name="user and system applications", plural=true))
 """ applications
