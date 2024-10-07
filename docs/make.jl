@@ -23,7 +23,7 @@ makedocs(;
         prettyurls=get(ENV, "CI", "false") == "true",
         canonical="https://tecosaur.github.io/BaseDirs.jl",
         edit_link="main",
-        assets=String[],
+        assets=["assets/favicon.ico"],
     ),
     pages=[
         "Introduction" => "index.md",
