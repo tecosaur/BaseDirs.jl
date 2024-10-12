@@ -79,6 +79,7 @@ function warn_if_precompiling()
     if ccall(:jl_generating_output, Cint, ()) != 0
         @noinline (function ()
                        st = stacktrace(backtrace())
+                       any(sf -> sf.func === :__init__, st) && return
                        naughtyline = findfirst(sf -> sf.file != Symbol(@__FILE__), st)
                        naughtysf = st[something(naughtyline, 1)]
                        @warn """A base directory is being computed during precompilation.
