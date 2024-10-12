@@ -201,8 +201,12 @@ message like this in response to any potential misuse:
 └ @ BaseDirs ~/.julia/dev/MyPkg/src/MyPkg.jl:42
 #+end_src
 
-As mentioned in the warning, you can suppress spurious warnings by wrapping the
-checked call with ~@promise_no_assign~.
+Note that the path displayed at the end of the warning
+(=~/.julia/dev/MyPkg/src/MyPkg.jl:42= in the example) identifies the suspicious
+callsite in =MyPkg=, rather than the line within BaseDirs that produces the
+warning. If you've checked how this call occurs and verified it's unfounded, you
+can suppress spurious warnings by wrapping the parent call in the precompilation
+workload with ~@promise_no_assign~.
 
 #+begin_src @docs
 BaseDirs.@promise_no_assign
