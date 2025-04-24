@@ -269,19 +269,19 @@ function reload()
     @setxdg TEMPLATES_DIR rf.Templates
     @setxdg PUBLICSHARE_DIR rf.Public
     # Other directories
-    FONTS_DIRS[] = [rf.Fonts, joinpath(rf.LocalAppData, "Microsoft", "Windows", "Fonts")]
-    APPLICATIONS_DIRS[] = [rf.Programs, rf.CommonPrograms]
+    global FONTS_DIRS = [rf.Fonts, joinpath(rf.LocalAppData, "Microsoft", "Windows", "Fonts")]
+    global APPLICATIONS_DIRS = [rf.Programs, rf.CommonPrograms]
     nothing
 end
 
 projectpath(p::Project, parent::String) =
-    joinpath(projectpath(p), if parent === DATA_HOME[] || parent in DATA_DIRS[]
+    joinpath(projectpath(p), if parent === DATA_HOME || parent in DATA_DIRS
                  "data\\"
-             elseif parent == CONFIG_HOME[] || parent in CONFIG_DIRS[]
+             elseif parent == CONFIG_HOME || parent in CONFIG_DIRS
                  "config\\"
-             elseif parent == CACHE_HOME[]
+             elseif parent == CACHE_HOME
                  "cache\\"
-             elseif parent == STATE_HOME[]
+             elseif parent == STATE_HOME
                  "state\\"
              else
                  ""

@@ -9,38 +9,38 @@ usr = homedir()
 if Sys.isapple()
     @testset "Dirs" begin
         @testset "Base" begin
-            @test BaseDirs.DATA_HOME[] == "$usr/Library/Application Support"
-            @test BaseDirs.DATA_DIRS[] == ["/Library/Application Support"]
-            @test BaseDirs.CONFIG_HOME[] == "$usr/Library/Application Support"
-            @test BaseDirs.CONFIG_DIRS[] == ["/Library/Application Support"]
+            @test BaseDirs.DATA_HOME == "$usr/Library/Application Support"
+            @test BaseDirs.DATA_DIRS == ["/Library/Application Support"]
+            @test BaseDirs.CONFIG_HOME == "$usr/Library/Application Support"
+            @test BaseDirs.CONFIG_DIRS == ["/Library/Application Support"]
             if occursin("$usr/.local/bin", get(ENV, "PATH", ""))
-                @test BaseDirs.BIN_HOME[] == "$usr/.local/bin"
+                @test BaseDirs.BIN_HOME == "$usr/.local/bin"
             else
-                @test BaseDirs.BIN_HOME[] == "/usr/local/bin"
+                @test BaseDirs.BIN_HOME == "/usr/local/bin"
             end
-            @test BaseDirs.STATE_HOME[] == "$usr/Library/Application Support"
-            @test BaseDirs.CACHE_HOME[] == "$usr/Library/Caches"
-            @test BaseDirs.RUNTIME_DIR[] == "$usr/Library/Application Support"
+            @test BaseDirs.STATE_HOME == "$usr/Library/Application Support"
+            @test BaseDirs.CACHE_HOME == "$usr/Library/Caches"
+            @test BaseDirs.RUNTIME_DIR == "$usr/Library/Application Support"
         end
         @testset "User" begin
-            @test BaseDirs.DESKTOP_DIR[] == "$usr/Desktop"
-            @test BaseDirs.DOWNLOAD_DIR[] == "$usr/Downloads"
-            @test BaseDirs.DOCUMENTS_DIR[] == "$usr/Documents"
-            @test BaseDirs.MUSIC_DIR[] == "$usr/Music"
-            @test BaseDirs.PICTURES_DIR[] == "$usr/Pictures"
-            @test BaseDirs.VIDEOS_DIR[] == "$usr/Videos"
-            @test BaseDirs.TEMPLATES_DIR[] == "$usr/Templates"
-            @test BaseDirs.PUBLICSHARE_DIR[] == "$usr/Public"
+            @test BaseDirs.DESKTOP_DIR == "$usr/Desktop"
+            @test BaseDirs.DOWNLOAD_DIR == "$usr/Downloads"
+            @test BaseDirs.DOCUMENTS_DIR == "$usr/Documents"
+            @test BaseDirs.MUSIC_DIR == "$usr/Music"
+            @test BaseDirs.PICTURES_DIR == "$usr/Pictures"
+            @test BaseDirs.VIDEOS_DIR == "$usr/Videos"
+            @test BaseDirs.TEMPLATES_DIR == "$usr/Templates"
+            @test BaseDirs.PUBLICSHARE_DIR == "$usr/Public"
         end
         @testset "Other" begin
-            @test BaseDirs.APPLICATIONS_DIRS[] == ["/Applications"]
-            @test BaseDirs.FONTS_DIRS[] == ["$usr/Library/Fonts", "/Library/Fonts", "/System/Library/Fonts", "/System/Library/Fonts/Supplemental", "/Network/Library/Fonts"]
+            @test BaseDirs.APPLICATIONS_DIRS == ["/Applications"]
+            @test BaseDirs.FONTS_DIRS == ["$usr/Library/Fonts", "/Library/Fonts", "/System/Library/Fonts", "/System/Library/Fonts/Supplemental", "/Network/Library/Fonts"]
         end
     end
     @testset "User" begin
         @test BaseDirs.User.data() == "$usr/Library/Application Support"
         @test BaseDirs.User.config() == "$usr/Library/Application Support"
-        @test BaseDirs.User.bin() == BaseDirs.BIN_HOME[]
+        @test BaseDirs.User.bin() == BaseDirs.BIN_HOME
         @test BaseDirs.User.state() == "$usr/Library/Application Support"
         @test BaseDirs.User.cache() == "$usr/Library/Caches"
         @test BaseDirs.User.runtime() == "$usr/Library/Application Support"
@@ -77,28 +77,28 @@ elseif Sys.isunix()
     uid = rstrip(read(`id -u`, String))
     @testset "Dirs" begin
         @testset "Base" begin
-            @test BaseDirs.DATA_HOME[] == "$usr/.local/share"
-            @test BaseDirs.DATA_DIRS[] == ["/usr/local/share", "/usr/share"]
-            @test BaseDirs.CONFIG_HOME[] == "$usr/.config"
-            @test BaseDirs.CONFIG_DIRS[] == ["/etc/xdg"]
-            @test BaseDirs.BIN_HOME[] == "$usr/.local/bin"
-            @test BaseDirs.STATE_HOME[] == "$usr/.local/state"
-            @test BaseDirs.CACHE_HOME[] == "$usr/.cache"
-            @test BaseDirs.RUNTIME_DIR[] == "/run/user/$uid"
+            @test BaseDirs.DATA_HOME == "$usr/.local/share"
+            @test BaseDirs.DATA_DIRS == ["/usr/local/share", "/usr/share"]
+            @test BaseDirs.CONFIG_HOME == "$usr/.config"
+            @test BaseDirs.CONFIG_DIRS == ["/etc/xdg"]
+            @test BaseDirs.BIN_HOME == "$usr/.local/bin"
+            @test BaseDirs.STATE_HOME == "$usr/.local/state"
+            @test BaseDirs.CACHE_HOME == "$usr/.cache"
+            @test BaseDirs.RUNTIME_DIR == "/run/user/$uid"
         end
         @testset "User" begin
-            @test BaseDirs.DESKTOP_DIR[] == "$usr/Desktop"
-            @test BaseDirs.DOWNLOAD_DIR[] == "$usr/Downloads"
-            @test BaseDirs.DOCUMENTS_DIR[] == "$usr/Documents"
-            @test BaseDirs.MUSIC_DIR[] == "$usr/Music"
-            @test BaseDirs.PICTURES_DIR[] == "$usr/Pictures"
-            @test BaseDirs.VIDEOS_DIR[] == "$usr/Videos"
-            @test BaseDirs.TEMPLATES_DIR[] == "$usr/Templates"
-            @test BaseDirs.PUBLICSHARE_DIR[] == "$usr/Public"
+            @test BaseDirs.DESKTOP_DIR == "$usr/Desktop"
+            @test BaseDirs.DOWNLOAD_DIR == "$usr/Downloads"
+            @test BaseDirs.DOCUMENTS_DIR == "$usr/Documents"
+            @test BaseDirs.MUSIC_DIR == "$usr/Music"
+            @test BaseDirs.PICTURES_DIR == "$usr/Pictures"
+            @test BaseDirs.VIDEOS_DIR == "$usr/Videos"
+            @test BaseDirs.TEMPLATES_DIR == "$usr/Templates"
+            @test BaseDirs.PUBLICSHARE_DIR == "$usr/Public"
         end
         @testset "Other" begin
-            @test BaseDirs.APPLICATIONS_DIRS[] == ["$usr/.local/share/applications", "/usr/local/share/applications", "/usr/share/applications"]
-            @test BaseDirs.FONTS_DIRS[] == ["$usr/.local/share/fonts", "$usr/.fonts", "/usr/local/share/fonts", "/usr/share/fonts"]
+            @test BaseDirs.APPLICATIONS_DIRS == ["$usr/.local/share/applications", "/usr/local/share/applications", "/usr/share/applications"]
+            @test BaseDirs.FONTS_DIRS == ["$usr/.local/share/fonts", "$usr/.fonts", "/usr/local/share/fonts", "/usr/share/fonts"]
         end
     end
     @testset "User" begin
@@ -130,7 +130,7 @@ elseif Sys.isunix()
         XDG_PICTURES_DIR="$HOME/ピクチャ"
         XDG_VIDEOS_DIR="$HOME/ビデオ"
         """
-        userdirs_file = joinpath(BaseDirs.CONFIG_HOME[], "user-dirs.dirs")
+        userdirs_file = joinpath(BaseDirs.CONFIG_HOME, "user-dirs.dirs")
         isfile(userdirs_file) &&
             mv(userdirs_file, userdirs_file * ".backup")
         write(userdirs_file, userdirs_jpn)
@@ -240,28 +240,28 @@ elseif Sys.iswindows()
     end
     @testset "Dirs" begin
         @testset "Base" begin
-            @test BaseDirs.DATA_HOME[] == "$usr\\AppData\\Roaming"
-            @test BaseDirs.DATA_DIRS[] == ["C:\\ProgramData"]
-            @test BaseDirs.CONFIG_HOME[] == "$usr\\AppData\\Roaming"
-            @test BaseDirs.CONFIG_DIRS[] == ["C:\\ProgramData"]
-            @test BaseDirs.BIN_HOME[] == "$usr\\bin"
-            @test BaseDirs.STATE_HOME[] == "$usr\\AppData\\Local"
-            @test BaseDirs.CACHE_HOME[] == "$usr\\AppData\\Local\\cache"
-            @test BaseDirs.RUNTIME_DIR[] == "$usr\\AppData\\Local"
+            @test BaseDirs.DATA_HOME == "$usr\\AppData\\Roaming"
+            @test BaseDirs.DATA_DIRS == ["C:\\ProgramData"]
+            @test BaseDirs.CONFIG_HOME == "$usr\\AppData\\Roaming"
+            @test BaseDirs.CONFIG_DIRS == ["C:\\ProgramData"]
+            @test BaseDirs.BIN_HOME == "$usr\\bin"
+            @test BaseDirs.STATE_HOME == "$usr\\AppData\\Local"
+            @test BaseDirs.CACHE_HOME == "$usr\\AppData\\Local\\cache"
+            @test BaseDirs.RUNTIME_DIR == "$usr\\AppData\\Local"
         end
         @testset "User" begin
-            @test BaseDirs.DESKTOP_DIR[] == "$usr\\Desktop"
-            @test BaseDirs.DOWNLOAD_DIR[] == "$usr\\Downloads"
-            @test BaseDirs.DOCUMENTS_DIR[] == "$usr\\Documents"
-            @test BaseDirs.MUSIC_DIR[] == "$usr\\Music"
-            @test BaseDirs.PICTURES_DIR[] == "$usr\\Pictures"
-            @test BaseDirs.VIDEOS_DIR[] == "$usr\\Videos"
-            @test BaseDirs.TEMPLATES_DIR[] == "$usr\\AppData\\Roaming\\Microsoft\\Windows\\Templates"
-            @test BaseDirs.PUBLICSHARE_DIR[] == "C:\\Users\\Public"
+            @test BaseDirs.DESKTOP_DIR == "$usr\\Desktop"
+            @test BaseDirs.DOWNLOAD_DIR == "$usr\\Downloads"
+            @test BaseDirs.DOCUMENTS_DIR == "$usr\\Documents"
+            @test BaseDirs.MUSIC_DIR == "$usr\\Music"
+            @test BaseDirs.PICTURES_DIR == "$usr\\Pictures"
+            @test BaseDirs.VIDEOS_DIR == "$usr\\Videos"
+            @test BaseDirs.TEMPLATES_DIR == "$usr\\AppData\\Roaming\\Microsoft\\Windows\\Templates"
+            @test BaseDirs.PUBLICSHARE_DIR == "C:\\Users\\Public"
         end
         @testset "Other" begin
-            @test BaseDirs.APPLICATIONS_DIRS[] == ["$usr\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs", "C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs"]
-            @test BaseDirs.FONTS_DIRS[] == ["C:\\Windows\\Fonts", "$usr\\AppData\\Local\\Microsoft\\Windows\\Fonts"]
+            @test BaseDirs.APPLICATIONS_DIRS == ["$usr\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs", "C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs"]
+            @test BaseDirs.FONTS_DIRS == ["C:\\Windows\\Fonts", "$usr\\AppData\\Local\\Microsoft\\Windows\\Fonts"]
         end
     end
     @testset "User" begin
@@ -297,12 +297,12 @@ elseif Sys.iswindows()
     @testset "Projects" begin
         @test BaseDirs.projectpath(BaseDirs.Project("a")) == "julia\\a\\"
         @test BaseDirs.projectpath(BaseDirs.Project("a", org="b")) == "b\\a\\"
-        @test BaseDirs.projectpath(BaseDirs.Project("a"), BaseDirs.DATA_HOME[]) == "julia\\a\\data\\"
-        if BaseDirs.CONFIG_HOME[] != BaseDirs.DATA_HOME[]
-            @test BaseDirs.projectpath(BaseDirs.Project("a"), BaseDirs.CONFIG_HOME[]) == "julia\\a\\config\\"
+        @test BaseDirs.projectpath(BaseDirs.Project("a"), BaseDirs.DATA_HOME) == "julia\\a\\data\\"
+        if BaseDirs.CONFIG_HOME != BaseDirs.DATA_HOME
+            @test BaseDirs.projectpath(BaseDirs.Project("a"), BaseDirs.CONFIG_HOME) == "julia\\a\\config\\"
         end
-        @test BaseDirs.projectpath(BaseDirs.Project("a"), BaseDirs.CACHE_HOME[]) == "julia\\a\\cache\\"
-        @test BaseDirs.projectpath(BaseDirs.Project("a"), BaseDirs.STATE_HOME[]) == "julia\\a\\state\\"
+        @test BaseDirs.projectpath(BaseDirs.Project("a"), BaseDirs.CACHE_HOME) == "julia\\a\\cache\\"
+        @test BaseDirs.projectpath(BaseDirs.Project("a"), BaseDirs.STATE_HOME) == "julia\\a\\state\\"
     end
     @test isnothing(BaseDirs.reload())
 end

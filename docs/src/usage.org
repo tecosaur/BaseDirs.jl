@@ -88,6 +88,11 @@ julia> BaseDirs.User.config(BaseDirs.Project("mything"), "config.conf", create=t
 #+end_src
 
 * Variables
+
+#+begin_warning
+While listed for reference, these variables are not part of the public API.
+#+end_warning
+
 ** Base directories
 
 #+begin_src @docs
