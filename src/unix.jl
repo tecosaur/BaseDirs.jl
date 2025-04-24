@@ -46,8 +46,12 @@ function reload()
     @setxdg CACHE_HOME "~/.cache"
     @setxdg RUNTIME_DIR joinpath("/run/user", string(Base.Libc.getuid()))
     # User directories
-    userdirs = merge(parseuserdirs(first(CONFIG_DIRS[])),
-                     parseuserdirs(CONFIG_HOME[]))
+    homeuserdirs = parseuserdirs(CONFIG_HOME)
+    userdirs = if !isempty(CONFIG_DIRS)
+        homeuserdirs
+    else
+        merge(parseuserdirs(first(CONFIG_DIRS)), homeuserdirs)
+    end
     @setxdg DESKTOP_DIR     get(userdirs, :XDG_DESKTOP_DIR,     "~/Desktop")
     @setxdg DOWNLOAD_DIR    get(userdirs, :XDG_DOWNLOAD_DIR,    "~/Downloads")
     @setxdg DOCUMENTS_DIR   get(userdirs, :XDG_DOCUMENTS_DIR,   "~/Documents")
@@ -57,12 +61,12 @@ function reload()
     @setxdg TEMPLATES_DIR   get(userdirs, :XDG_TEMPLATES_DIR,   "~/Templates")
     @setxdg PUBLICSHARE_DIR get(userdirs, :XDG_PUBLICSHARE_DIR, "~/Public")
     # Other directories
-    FONTS_DIRS[] =
-        append!([joinpath(DATA_HOME[], "fonts"), expanduser("~/.fonts")],
-                [joinpath(d, "fonts") for d::String in DATA_DIRS[]]) |> unique
-    APPLICATIONS_DIRS[] =
-        append!([joinpath(DATA_HOME[], "applications")],
-                [joinpath(d, "applications") for d::String in DATA_DIRS[]]) |> unique
+    global FONTS_DIRS =
+        append!([joinpath(DATA_HOME, "fonts"), expanduser("~/.fonts")],
+                [joinpath(d, "fonts") for d::String in DATA_DIRS]) |> unique
+    global APPLICATIONS_DIRS =
+        append!([joinpath(DATA_HOME, "applications")],
+                [joinpath(d, "applications") for d::String in DATA_DIRS]) |> unique
     nothing
 end
 

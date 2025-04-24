@@ -29,16 +29,18 @@ function reload()
     @setxdg TEMPLATES_DIR "~/Templates"
     @setxdg PUBLICSHARE_DIR "~/Public"
     # Other directories
-    FONTS_DIRS[] = [expanduser("~/Library/Fonts"),
-                    "/Library/Fonts",
-                    "/System/Library/Fonts",
-                    "/System/Library/Fonts/Supplemental",
-                    "/Network/Library/Fonts"]
-    APPLICATIONS_DIRS[] = ["/Applications"]
+    global FONTS_DIRS = [
+        expanduser("~/Library/Fonts"),
+        "/Library/Fonts",
+        "/System/Library/Fonts",
+        "/System/Library/Fonts/Supplemental",
+        "/Network/Library/Fonts"]
+    global APPLICATIONS_DIRS = ["/Applications"]
     nothing
 end
 
 projectpath(p::Project, _) = projectpath(p)
-projectpath(p::Project) = string(join(split(p.qualifier, '.') |> reverse, '.'), '.',
-                                 replace(p.org, r"[^A-Za-z0-9_-]" => '-'), '.',
-                                 replace(p.name, r"[^A-Za-z0-9_-]" => '-'), '/')
+projectpath(p::Project) =
+    string(join(split(p.qualifier, '.') |> reverse, '.'), '.',
+           replace(p.org, r"[^A-Za-z0-9_-]" => '-'), '.',
+           replace(p.name, r"[^A-Za-z0-9_-]" => '-'), '/')

@@ -9,24 +9,24 @@ export @defaccessor, @setxdg, @setxdgs
 
 @static if Sys.isunix()
     macro setxdg(envvar::Symbol, default)
-        quote $(esc(envvar))[] = if haskey(ENV, $("XDG_$envvar")) && !isempty(ENV[$("XDG_$envvar")])
-            chopsuffix(ENV[$("XDG_$envvar")], Base.Filesystem.path_separator)
+        quote global $(esc(envvar)) = if haskey(ENV, $("XDG_$envvar")) && !isempty(ENV[$("XDG_$envvar")])
+            String(chopsuffix(ENV[$("XDG_$envvar")], Base.Filesystem.path_separator))
         else expanduser($(esc(default))) end
         end
     end
 else
     macro setxdg(envvar::Symbol, default)
-        quote $(esc(envvar))[] = if haskey(ENV, $("XDG_$envvar")) && !isempty(ENV[$("XDG_$envvar")])
-            chopsuffix(ENV[$("XDG_$envvar")], Base.Filesystem.path_separator)
+        quote global $(esc(envvar)) = if haskey(ENV, $("XDG_$envvar")) && !isempty(ENV[$("XDG_$envvar")])
+            String(chopsuffix(ENV[$("XDG_$envvar")], Base.Filesystem.path_separator))
         else $(esc(default)) end
         end
     end
 end
 
 macro setxdgs(envvar::Symbol, defaults)
-    quote $(esc(envvar))[] = if haskey(ENV, $("XDG_$envvar")) && !isempty(ENV[$("XDG_$envvar")])
+    quote global $(esc(envvar)) = if haskey(ENV, $("XDG_$envvar")) && !isempty(ENV[$("XDG_$envvar")])
         map(split(ENV[$("XDG_$envvar")], ':')) do path
-            chopsuffix(path, Base.Filesystem.path_separator)
+            String(chopsuffix(path, Base.Filesystem.path_separator))
         end
     else $(esc(defaults)) end
     end
@@ -116,7 +116,7 @@ function warn_misplaced_promise()
     end
 end
 
-function resolvedirpath(basedir::String, pathcomponents::Union{Tuple, AbstractVector}; create::Bool=false)
+function resolvedirpath(basedir::String, pathcomponents::Union{<:Tuple{Vararg{<:AbstractString}}, <:AbstractVector}; create::Bool=false)
     create && ensurebasedir(basedir)
     if isempty(pathcomponents)
         basedir
@@ -127,7 +127,7 @@ function resolvedirpath(basedir::String, pathcomponents::Union{Tuple, AbstractVe
     end
 end
 
-function resolvedirpaths(basedirs::Vector{String}, pathcomponents::Union{Tuple, AbstractVector}; create::Bool=false, existent::Bool=false)
+function resolvedirpaths(basedirs::Vector{String}, pathcomponents::Union{<:Tuple{Vararg{<:AbstractString}}, <:AbstractVector}; create::Bool=false, existent::Bool=false)
     allpaths = [resolvedirpath(bdir, pathcomponents; create) for bdir in basedirs]
     if existent
         filter(ispath, allpaths)
@@ -138,10 +138,10 @@ end
 
 macro defaccessor(fnname::Symbol, var::Union{Symbol, Expr})
     dirvar = if var isa Symbol
-        Expr(:ref, Expr(:., :BaseDirs, QuoteNode(var)))
+        Expr(:., :BaseDirs, QuoteNode(var))
     else esc(var) end
     vecfns = (:vec, :vcat, :filter, :map, :push!, :pushfirst!) # a few that come to mind
-    resolver = if (var isa Symbol && getfield(BaseDirs, var) isa Ref{Vector{String}}) ||
+    resolver = if (var isa Symbol && getfield(BaseDirs, var) isa Vector{String}) ||
           (var isa Expr && (var.head == :vect ||
                             (var.head == :call && var.args[1] in vecfns)))
         :resolvedirpaths
@@ -162,7 +162,7 @@ function accessordoc(finfo::Union{Symbol, Tuple{String, Symbol}},
                     var::Union{Nothing, Symbol, Vector{Symbol}}=nothing;
                     plural::Bool=if isnothing(var) false
                     elseif var isa Vector true
-                    else getfield(BaseDirs, var) isa Ref{Vector{String}} end,
+                    else getfield(BaseDirs, var) isa Vector{String} end,
                     name::String=String(if finfo isa Symbol finfo else last(finfo) end))
     fprefix, fname = if finfo isa Symbol; ("", finfo) else finfo end
     rettype = ifelse(plural, "Vector{String}", "String")

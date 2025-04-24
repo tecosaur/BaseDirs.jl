@@ -12,17 +12,17 @@ using ..Internals
 end
 
 function bin(; create::Bool=false)
-    path = Internals.resolvedirpath(BaseDirs.BIN_HOME[], (); create)
+    path = Internals.resolvedirpath(BaseDirs.BIN_HOME, (); create)
     create && Internals.ensureexecutable(path)
     path
 end
 function bin(name; create::Bool=false)
-    path = Internals.resolvedirpath(BaseDirs.BIN_HOME[], (name,); create)
+    path = Internals.resolvedirpath(BaseDirs.BIN_HOME, (name,); create)
     create && Internals.ensureexecutable(path)
     path
 end
 function bin(project::BaseDirs.Project; create::Bool=false)
-    path = Internals.resolvedirpath(BaseDirs.BIN_HOME[], (project.name,); create)
+    path = Internals.resolvedirpath(BaseDirs.BIN_HOME, (project.name,); create)
     create && Internals.ensureexecutable(path)
     path
 end
@@ -34,20 +34,20 @@ end
 @defaccessor runtime RUNTIME_DIR
 
 fonts(pathcomponents...; kwargs...) =
-    Internals.resolvedirpaths(filter(p -> startswith(p, homedir()), BaseDirs.FONTS_DIRS[]),
+    Internals.resolvedirpaths(filter(p -> startswith(p, homedir()), BaseDirs.FONTS_DIRS),
                               pathcomponents; kwargs...)
 applications(pathcomponents...; kwargs...) =
-    Internals.resolvedirpaths(filter(p -> startswith(p, homedir()), BaseDirs.APPLICATIONS_DIRS[]),
+    Internals.resolvedirpaths(filter(p -> startswith(p, homedir()), BaseDirs.APPLICATIONS_DIRS),
                               pathcomponents; kwargs...)
 
-desktop(pathcomponents...)   = joinpath(BaseDirs.DESKTOP_DIR[],     pathcomponents...)
-downloads(pathcomponents...) = joinpath(BaseDirs.DOWNLOAD_DIR[],    pathcomponents...)
-documents(pathcomponents...) = joinpath(BaseDirs.DOCUMENTS_DIR[],   pathcomponents...)
-music(pathcomponents...)     = joinpath(BaseDirs.MUSIC_DIR[],       pathcomponents...)
-pictures(pathcomponents...)  = joinpath(BaseDirs.PICTURES_DIR[],    pathcomponents...)
-videos(pathcomponents...)    = joinpath(BaseDirs.VIDEOS_DIR[],      pathcomponents...)
-templates(pathcomponents...) = joinpath(BaseDirs.TEMPLATES_DIR[],   pathcomponents...)
-public(pathcomponents...)    = joinpath(BaseDirs.PUBLICSHARE_DIR[], pathcomponents...)
+desktop(pathcomponents...)   = joinpath(BaseDirs.DESKTOP_DIR,     pathcomponents...)
+downloads(pathcomponents...) = joinpath(BaseDirs.DOWNLOAD_DIR,    pathcomponents...)
+documents(pathcomponents...) = joinpath(BaseDirs.DOCUMENTS_DIR,   pathcomponents...)
+music(pathcomponents...)     = joinpath(BaseDirs.MUSIC_DIR,       pathcomponents...)
+pictures(pathcomponents...)  = joinpath(BaseDirs.PICTURES_DIR,    pathcomponents...)
+videos(pathcomponents...)    = joinpath(BaseDirs.VIDEOS_DIR,      pathcomponents...)
+templates(pathcomponents...) = joinpath(BaseDirs.TEMPLATES_DIR,   pathcomponents...)
+public(pathcomponents...)    = joinpath(BaseDirs.PUBLICSHARE_DIR, pathcomponents...)
 
 end
 
@@ -66,17 +66,17 @@ end
 @defaccessor config CONFIG_DIRS
 
 fonts(pathcomponents...; kwargs...) =
-    Internals.resolvedirpaths(filter(p -> !startswith(p, homedir()), BaseDirs.FONTS_DIRS[]),
+    Internals.resolvedirpaths(filter(p -> !startswith(p, homedir()), BaseDirs.FONTS_DIRS),
                               pathcomponents; kwargs...)
 applications(pathcomponents...; kwargs...) =
-    Internals.resolvedirpaths(filter(p -> !startswith(p, homedir()), BaseDirs.APPLICATIONS_DIRS[]),
+    Internals.resolvedirpaths(filter(p -> !startswith(p, homedir()), BaseDirs.APPLICATIONS_DIRS),
                               pathcomponents; kwargs...)
 
 end
 
 # ---------
 
-@defaccessor data vcat(DATA_HOME[], DATA_DIRS[])
-@defaccessor config vcat(CONFIG_HOME[], CONFIG_DIRS[])
+@defaccessor data vcat(DATA_HOME, DATA_DIRS)
+@defaccessor config vcat(CONFIG_HOME, CONFIG_DIRS)
 @defaccessor fonts FONTS_DIRS
 @defaccessor applications APPLICATIONS_DIRS
