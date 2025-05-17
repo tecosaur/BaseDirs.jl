@@ -8,7 +8,7 @@ using ..Internals
 @static if VERSION >= v"1.11"
     eval(Expr(:public, :bin, :data, :config, :state, :cache, :runtime,
               :fonts, :applications, :desktop, :downloads, :documents,
-              :music, :pictures, :viteos, :templates, :public))
+              :music, :pictures, :videos, :templates, :public))
 end
 
 function bin(; create::Bool=false)
