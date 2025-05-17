@@ -116,7 +116,7 @@ function warn_misplaced_promise()
     end
 end
 
-function resolvedirpath(basedir::String, pathcomponents::Union{<:Tuple{Vararg{<:AbstractString}}, <:AbstractVector}; create::Bool=false)
+function resolvedirpath(basedir::String, pathcomponents::Union{<:Tuple{Vararg{S}}, <:AbstractVector{S}}; create::Bool=false) where {S<:AbstractString}
     create && ensurebasedir(basedir)
     if isempty(pathcomponents)
         basedir
@@ -127,7 +127,7 @@ function resolvedirpath(basedir::String, pathcomponents::Union{<:Tuple{Vararg{<:
     end
 end
 
-function resolvedirpaths(basedirs::Vector{String}, pathcomponents::Union{<:Tuple{Vararg{<:AbstractString}}, <:AbstractVector}; create::Bool=false, existent::Bool=false)
+function resolvedirpaths(basedirs::Vector{String}, pathcomponents::Union{<:Tuple{Vararg{S}}, <:AbstractVector{S}}; create::Bool=false, existent::Bool=false) where {S<:AbstractString}
     allpaths = [resolvedirpath(bdir, pathcomponents; create) for bdir in basedirs]
     if existent
         filter(ispath, allpaths)
