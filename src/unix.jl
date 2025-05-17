@@ -70,7 +70,32 @@ function reload()
     nothing
 end
 
+"""
+    plainascii(s::String) -> String
+
+Convert a string to a certain 'plain' ASCII form.
+
+This is done by removing all non-alphanumeric characters (besides `_` and `-`),
+and putting all letters in lower case.
+
+While this could easily be done with a regex, unlike regex
+replacement this can be precompiled, reducing TTFX.
+"""
+Base.@assume_effects :foldable function plainascii(s::String)
+    out = Vector{UInt8}()
+    sizehint!(out, ncodeunits(s))
+    for b in codeunits(s)
+        if UInt8('0') <= b <= UInt8('9') ||
+           UInt8('a') <= b <= UInt8('z') ||
+           b in (UInt8('_'), UInt8('-'))
+            push!(out, b)
+        elseif UInt8('A') <= b <= UInt8('Z')
+            push!(out, b ⊻ 0x20) # lowercase
+        end
+    end
+    String(out)
+end
+
 projectpath(p::Project, _) = projectpath(p)
 projectpath(p::Project) =
-    string(lowercase(replace(p.org, r"[^A-Za-z0-9_-]" => "")), '/',
-           lowercase(replace(p.name, r"[^A-Za-z0-9_-]" => "")), '/')
+    string(plainascii(p.org), '/', plainascii(p.name), '/')

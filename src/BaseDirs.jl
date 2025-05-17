@@ -88,6 +88,28 @@ include("docstrings.jl")
 
 const __init__ = reload
 
-include("precompile.jl")
+if ccall(:jl_generating_output, Cint, ()) != 0
+    @promise_no_assign begin
+        reload()
+        User.bin("hey")
+        for fn in (User.data, User.config, User.state, User.cache, User.runtime,
+                System.data, System.config,
+                data, config, fonts, applications)
+            fn()
+            fn("hey")
+            fn("sam", "ple")
+            fn(BaseDirs)
+            fn(BaseDirs, "hey")
+            fn(Project("hey"))
+            fn(Project("hey"), "samp/")
+        end
+        for fn in (User.desktop, User.downloads, User.documents, User.music,
+                User.pictures, User.videos, User.templates, User.public,
+                User.fonts, User.applications, System.fonts, System.applications)
+            fn()
+            fn("hey")
+        end
+    end
+end
 
 end

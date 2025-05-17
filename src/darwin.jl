@@ -39,8 +39,35 @@ function reload()
     nothing
 end
 
+"""
+    simpleascii(s::String) -> String
+
+Convert a string to a certain 'simple' ASCII form.
+
+This is done by replacing all non-alphanumeric characters (besides `_` and `-`)
+with `-`.
+
+While this could easily be done with a regex, unlike regex
+replacement this can be precompiled, reducing TTFX.
+"""
+Base.@assume_effects :foldable function simpleascii(s::String)
+    out = Vector{UInt8}()
+    sizehint!(out, ncodeunits(s))
+    for b in codeunits(s)
+        if UInt8('0') <= b <= UInt8('9') ||
+           UInt8('A') <= b <= UInt8('Z') ||
+           UInt8('a') <= b <= UInt8('z') ||
+           b in (UInt8('_'), UInt8('-'))
+            push!(out, b)
+        else
+            push!(out, UInt8('-'))
+        end
+    end
+    String(out)
+end
+
 projectpath(p::Project, _) = projectpath(p)
 projectpath(p::Project) =
     string(join(split(p.qualifier, '.') |> reverse, '.'), '.',
-           replace(p.org, r"[^A-Za-z0-9_-]" => '-'), '.',
-           replace(p.name, r"[^A-Za-z0-9_-]" => '-'), '/')
+           simpleascii(p.org), '.',
+           simpleascii(p.name), '/')
