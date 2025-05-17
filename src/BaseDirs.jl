@@ -23,6 +23,8 @@ end
 Project(name::AbstractString; org::AbstractString="julia", qualifier::AbstractString="lang") =
     Project(name, org, qualifier)
 
+Project(mod::Module) = Project(String(nameof(parentmodule(mod))))
+
 include("internals.jl")
 
 using ..Internals

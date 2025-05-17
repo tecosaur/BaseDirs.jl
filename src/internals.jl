@@ -155,6 +155,8 @@ macro defaccessor(fnname::Symbol, var::Union{Symbol, Expr})
         end
         $(esc(fnname))(project::BaseDirs.Project, pathcomponents...; kwargs...) =
             $(esc(fnname))(BaseDirs.projectpath(project, $dirvar), pathcomponents...; kwargs...)
+        $(esc(fnname))(mod::Module, pathcomponents...; kwargs...) =
+            $(esc(fnname))(BaseDirs.Project(mod), pathcomponents...; kwargs...)
     end
 end
 
@@ -169,20 +171,20 @@ function accessordoc(finfo::Union{Symbol, Tuple{String, Symbol}},
     dirprefix, dirterm = ifelse(plural, ("all", "directories"), ("the", "directory"))
     existentkwarg = ifelse(plural, " - `existent::Bool` (default `false`), filter out paths that do not exist.", "")
     vardoc = if var isa Vector && (dvars = filter(v -> haskey(Docs.meta(BaseDirs), Docs.Binding(BaseDirs, v)), var)) |> !isempty
-        "\nThe returned path is based on the variables $(join(map(v -> "[`BaseDirs.$v`](@ref)", dvars), ", ", ", and ")), which see.\n"
+        "\nThe returned path is determined by the value of $(join(map(v -> "[`BaseDirs.$v`](@ref)", dvars), ", ", ", and ")), which see.\n"
     elseif var isa Symbol && haskey(Docs.meta(BaseDirs), Docs.Binding(BaseDirs, var))
-        "\nThe returned path is based on the variable [`BaseDirs.$var`](@ref), which see.\n"
+        "\nThe returned path is determined by the value of [`BaseDirs.$var`](@ref), which see.\n"
     else "" end
     kwargs = ifelse(plural, "; create, existent", "; create")
     """
-    $fprefix$fname($kwargs) -> $rettype # $dirprefix $dirterm
-    $fprefix$fname(parts...$kwargs) # $dirprefix $dirterm joined with parts
-    $fprefix$fname(proj::Project$kwargs) # $dirprefix project-specific $dirterm
-    $fprefix$fname(proj::Project, parts...$kwargs) # $dirprefix project-specific $dirterm joined with parts
+    $fprefix$fname($kwargs) -> $rettype # $dirprefix $name $dirterm
+    $fprefix$fname([mod::Module or proj::Project], parts...$kwargs) # a [project-specific] $name path
 
-Locate $dirprefix $name $dirterm. Optionally, a project and/or path components
-can be provided as arguments, in which case they are joined with the $name
-$dirterm as appropriate.
+Locate $dirprefix $name $dirterm, or a path within it.
+
+A project or module can be optionally provided as the first argument, in which
+case the returned path is scoped to the project or module.
+
 $vardoc
 ## Keyword arguments
  - `create::Bool` (default `false`), whether the path should be created if it

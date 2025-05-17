@@ -16,6 +16,7 @@
 precompile(reload, ())
 
 precompile(Project, (String,))
+precompile(Project, (Module,))
 precompile(projectpath, (Project,))
 
 precompile(User.bin, ())
@@ -29,6 +30,8 @@ for fn in (User.data, User.config, User.state, User.cache, User.runtime,
     precompile(fn, ())
     precompile(fn, (String,))
     precompile(fn, (String, String))
+    precompile(fn, (Module,))
+    precompile(fn, (Module, String))
     precompile(fn, (Project,))
     precompile(fn, (Project, String))
 end
