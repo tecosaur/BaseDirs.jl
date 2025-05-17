@@ -80,3 +80,8 @@ end
 @defaccessor config vcat(CONFIG_HOME, CONFIG_DIRS)
 @defaccessor fonts FONTS_DIRS
 @defaccessor applications APPLICATIONS_DIRS
+
+# User accessors without system equivalents, for convenience.
+const cache = User.cache
+const runtime = User.runtime
+const state = User.state

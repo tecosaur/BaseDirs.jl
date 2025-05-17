@@ -16,6 +16,11 @@ BaseDirs.data), [`config`](@ref BaseDirs.config), [`fonts`](@ref
 BaseDirs.fonts), and [`applications`](@ref BaseDirs.applications). These provide
 a list of all relevant user and system directories.
 
+As a convenience, the three user-specific accessors [`cache`](@ref
+BaseDirs.User.cache), [`runtime`](@ref BaseDirs.User.runtime), and
+[`state`](@ref BaseDirs.User.state), are available under `BaseDirs` as they have
+no `System` equivalent they could be confused with.
+
 Also see [`BaseDirs.Project`](@ref BaseDirs.Project) for information on how to
 generate appropriate project paths.
 
