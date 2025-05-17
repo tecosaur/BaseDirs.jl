@@ -4,7 +4,7 @@ authors = ["TEC <git@tecosaur.net>"]
 version = "1.2.4"
 
 [compat]
-julia = "1.8"
+julia = "1.9"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
