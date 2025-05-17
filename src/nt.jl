@@ -152,15 +152,15 @@ const KNOWN_FOLDER_IDS = Dict{Symbol, StupidWindowsGUID}(
     :Windows                => StupidWindowsGUID(0xf38bf404, 0x1d43, 0x42f2, (0x93, 0x05, 0x67, 0xde, 0x0b, 0x28, 0xfc, 0x23)))
 
 function unsafe_utf16string(ptr::Ptr{UInt16})
-    chars = Vector{UInt16}()
-    i = 1
-    while (c = unsafe_load(ptr, i)) != 0
-        push!(chars, c)
-        i += 1
+    ptr == C_NULL && return
+    len = 0
+    while unsafe_load(ptr, len + 1) != 0
+        len += 1
     end
-    if i > 1
-        transcode(String, chars)
-    end
+    len == 0 && return ""
+    buf = Vector{UInt16}(undef, len)
+    unsafe_copyto!(pointer(buf), ptr, len)
+    transcode(String, buf)
 end
 
 function knownfolder(id::Symbol)
