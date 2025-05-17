@@ -138,7 +138,7 @@ end
 
 macro defaccessor(fnname::Symbol, var::Union{Symbol, Expr})
     dirvar = if var isa Symbol
-        Expr(:., :BaseDirs, QuoteNode(var))
+        GlobalRef(BaseDirs, var)
     else esc(var) end
     vecfns = (:vec, :vcat, :filter, :map, :push!, :pushfirst!) # a few that come to mind
     resolver = if (var isa Symbol && getfield(BaseDirs, var) isa Vector{String}) ||
