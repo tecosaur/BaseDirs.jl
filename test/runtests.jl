@@ -306,3 +306,50 @@ elseif Sys.iswindows()
     end
     @test isnothing(BaseDirs.reload())
 end
+
+@testset "Precompilation warnings" begin
+    @test_warn "is likely misplaced" BaseDirs.@promise_no_assign 1+1
+    @static if VERSION >= v"1.12"
+        function mkpackage(dir::String, code::String)
+            modfile = joinpath(dir, "src", basename(dir) * ".jl")
+            mkdir(dirname(modfile))
+            write(modfile, """
+            module $(basename(dir))
+                using BaseDirs
+                $code
+            end
+            """)
+            write(joinpath(dir, "Project.toml"), """
+            name = "$(basename(dir))"
+            uuid = "$(Base.UUID(rand(UInt128)))"
+            version = "0.1.0"
+            authors = ["test"]
+
+            [deps]
+            BaseDirs = "$(Base.identify_package("BaseDirs").uuid)"
+
+            [sources]
+            BaseDirs = {path = "$(escape_string(abspath(joinpath(@__DIR__, ".."))))"}
+            """)
+        end
+        mktempdir() do dir
+            mkpackage(dir, "const dodgy = BaseDirs.config()")
+            push!(LOAD_PATH, dir)
+            try
+                @test_warn("A base directory is being computed during precompilation.",
+                           @eval import $(Symbol(basename(dir))))
+            finally
+                pop!(LOAD_PATH)
+            end
+        end
+        mktempdir() do dir
+            mkpackage(dir, "const lie = BaseDirs.@promise_no_assign BaseDirs.config()")
+            push!(LOAD_PATH, dir)
+            try
+                @test_nowarn @eval import $(Symbol(basename(dir)))
+            finally
+                pop!(LOAD_PATH)
+            end
+        end
+    end
+end
