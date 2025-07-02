@@ -129,8 +129,9 @@ end
 
 function resolvedirpaths(basedirs::Vector{String}, pathcomponents::Union{<:Tuple{Vararg{S}}, <:AbstractVector{S}}; create::Bool=false, existent::Bool=false) where {S<:AbstractString}
     allpaths = [resolvedirpath(bdir, pathcomponents; create) for bdir in basedirs]
+    isreachablepath(path::String) = try ispath(path) catch; false end
     if existent
-        filter(ispath, allpaths)
+        filter(isreachablepath, allpaths)
     else
         allpaths
     end

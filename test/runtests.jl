@@ -164,6 +164,13 @@ elseif Sys.isunix()
         @test BaseDirs.projectpath(BaseDirs.Project("a"), "?") == "julia/a/"
         @test BaseDirs.projectpath(BaseDirs.Project("Hey There")) == "julia/heythere/"
     end
+    @testset "Directory existence" begin
+        withenv("XDG_DATA_DIRS" => "/root/forbidden:/nonexistent:/usr/share") do
+            BaseDirs.reload()
+            @test BaseDirs.System.data(existent = true) == ["/usr/share"]
+        end
+        BaseDirs.reload()
+    end
     @testset "File creation" begin
         filepath = "$usr/.local/share/julia/a/my_base_dirs_julia_test_file"
         @test BaseDirs.User.data(BaseDirs.Project("a"), "my_base_dirs_julia_test_file") == filepath
