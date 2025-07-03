@@ -1,6 +1,6 @@
 name = "BaseDirs"
 uuid = "18cc8868-cbac-4acf-b575-c8ff214dc66f"
-version = "1.3.0"
+version = "1.3.1"
 authors = ["TEC <git@tecosaur.net>"]
 
 [compat]
