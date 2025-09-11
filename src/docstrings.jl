@@ -119,6 +119,12 @@ should be searched.
 The single base directory relative to which user-specific configuration files
 should be written.
 
+!!! note "Systemd integration"
+    If the program is running as a systemd service, and the
+    [`ConfigurationDirectory` sandbox](https://www.freedesktop.org/software/systemd/man/latest/systemd.exec.html#Sandboxing)
+    is specified, then that directory will be used instead. Should multiple
+    configuration directories be specified, the first one is used.
+
 **Default values**
 
 | Linux             | MacOS                          | Windows          |
@@ -131,6 +137,12 @@ should be written.
 
 The set of *preference ordered* base directories relative to which data files
 should be searched.
+
+!!! note "Systemd integration"
+    If the program is running as a systemd service, and the
+    [`StateDirectory` sandbox](https://www.freedesktop.org/software/systemd/man/latest/systemd.exec.html#Sandboxing)
+    is specified, then that directory will be used instead. Should
+    multiple state directories be specified, the first one is used.
 
 **Default values**
 
@@ -188,6 +200,12 @@ written.
 The single base directory relative to which user-specific non-essential (cached)
 data should be written.
 
+!!! note "Systemd integration"
+    If the program is running as a systemd service, and the
+    [`CacheDirectory` sandbox](https://www.freedesktop.org/software/systemd/man/latest/systemd.exec.html#Sandboxing)
+    is specified, then that directory will be used instead. Should
+    multiple cache directories be specified, the first one is used.
+
 **Default values**
 
 | Linux      | MacOS              | Windows              |
@@ -203,6 +221,12 @@ The single base directory relative to which user-specific runtime files and
 other file objects should be placed. . Applications should use this directory
 for communication and synchronization purposes and should not place larger files
 in it.
+
+!!! note "Systemd integration"
+    If the program is running as a systemd service, and the
+    [`RuntimeDirectory` sandbox](https://www.freedesktop.org/software/systemd/man/latest/systemd.exec.html#Sandboxing)
+    is specified, then that directory will be used instead. Should multiple
+    runtime directories be specified, the first one is used.
 
 **Default values**
 

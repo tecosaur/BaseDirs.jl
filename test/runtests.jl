@@ -230,6 +230,149 @@ elseif Sys.isunix()
                 mv("$usr/.config/user-dirs.dirs.backup", "$usr/.config/user-dirs.dirs")
         end
     end
+    @testset "Systemd Integration" begin
+        has_systemd = success(`systemctl --version`)
+        can_run_service = success(`systemctl --user show-environment`)
+        if !has_systemd || !can_run_service
+            @test_skip "Systemd integration tests require systemd and user service support"
+        else
+            tmpdir = mktempdir()
+            test_script_plain = joinpath(tmpdir, "test_plain.jl")
+            write(test_script_plain, """
+            using BaseDirs
+
+            println("SYSTEMD_SERVICE=", BaseDirs.SYSTEMD_SERVICE)
+            println("User.config()=", BaseDirs.User.config())
+            println("User.data()=", BaseDirs.User.data())
+            println("User.state()=", BaseDirs.User.state())
+            println("User.cache()=", BaseDirs.User.cache())
+            println("User.runtime()=", BaseDirs.User.runtime())
+            """)
+
+            test_script_project = joinpath(tmpdir, "test_project.jl")
+            write(test_script_project, """
+            using BaseDirs
+
+            proj = BaseDirs.Project("testapp", org="testorg")
+
+            println("SYSTEMD_SERVICE=", BaseDirs.SYSTEMD_SERVICE)
+            println("User.config(proj)=", BaseDirs.User.config(proj))
+            println("User.data(proj)=", BaseDirs.User.data(proj))
+            println("User.state(proj)=", BaseDirs.User.state(proj))
+            println("User.cache(proj)=", BaseDirs.User.cache(proj))
+            println("User.runtime(proj)=", BaseDirs.User.runtime(proj))
+            """)
+
+            function parse_output(output::String)
+                result = Dict{String, String}()
+                for line in split(output, '\n')
+                    if occursin('=', line)
+                        key, value = split(line, '=', limit=2)
+                        result[strip(key)] = strip(value)
+                    end
+                end
+                result
+            end
+
+            julia_cmd = filter(arg -> !any(a -> startswith(arg, a), ("--color", "--depwarn", "--project", "--startup-file")), collect(Base.julia_cmd()))
+            dummy_systemd_envvars = ["-E", "CONFIGURATION_DIRECTORY=C",
+                                     "-E", "LOGS_DIRECTORY=L",
+                                     "-E", "STATE_DIRECTORY=S",
+                                     "-E", "CACHE_DIRECTORY=H",
+                                     "-E", "RUNTIME_DIRECTORY=R"]
+
+            @testset "Plain script standalone" begin
+                standalone_output = read(`systemd-run --user --scope $dummy_systemd_envvars -- $julia_cmd --project=$(dirname(@__DIR__)) $test_script_plain`, String)
+                standalone = parse_output(standalone_output)
+                @test standalone["SYSTEMD_SERVICE"] == "false"
+                @test standalone["User.config()"] == "$usr/.config"
+                @test standalone["User.state()"] == "$usr/.local/state"
+                @test standalone["User.cache()"] == "$usr/.cache"
+                @test standalone["User.runtime()"] == "/run/user/$uid"
+                @test standalone["User.data()"] == "$usr/.local/share"
+            end
+            @testset "Plain script as systemd service" begin
+                service_name = "basedirs-test-plain-$(getpid())"
+                service_file = expanduser("/etc/systemd/system/$(service_name).service")
+                tmpfile = tempname()
+                try
+                    write(tmpfile, """
+                    [Unit]
+                    Description=BaseDirs Test Plain
+
+                    [Service]
+                    Type=oneshot
+                    ExecStart=$(join(julia_cmd, ' ')) --project=$(dirname(@__DIR__)) $test_script_plain
+                    ConfigurationDirectory=$service_name
+                    StateDirectory=$service_name
+                    CacheDirectory=$service_name
+                    RuntimeDirectory=$service_name
+                    StandardOutput=journal
+                    StandardError=journal
+                    """)
+                    run(`sudo mkdir -p $(dirname(service_file))`)
+                    run(`sudo cp $tmpfile $service_file`)
+                    run(`sudo systemctl daemon-reload`)
+                    run(`sudo systemctl start $(service_name).service`)
+                    service_output = read(`journalctl -u $(service_name).service -n 15 --no-pager -o cat`, String)
+                    service = parse_output(service_output)
+                    @test service["SYSTEMD_SERVICE"] == "true"
+                    @test service["User.config()"]   == "/etc/$service_name"
+                    @test service["User.state()"]    == "/var/lib/$service_name"
+                    @test service["User.cache()"]    == "/var/cache/$service_name"
+                    @test service["User.runtime()"]  == "/run/$service_name"
+                finally
+                    run(`sudo systemctl stop $(service_name).service`)
+                    run(`sudo rm $service_file`)
+                    run(`sudo systemctl daemon-reload`)
+                end
+            end
+            @testset "Project script standalone" begin
+                standalone_output = read(`systemd-run --user --scope $dummy_systemd_envvars -- $julia_cmd --startup-file=no --project=$(dirname(@__DIR__)) $test_script_project`, String)
+                standalone = parse_output(standalone_output)
+                @test standalone["SYSTEMD_SERVICE"] == "false"
+                @test occursin("testorg", standalone["User.config(proj)"])
+            end
+            @testset "Project script as systemd service" begin
+                service_name = "basedirs-test-project-$(getpid())"
+                service_file = expanduser("/etc/systemd/system/$(service_name).service")
+                tmpfile = tempname()
+                try
+                    write(tmpfile, """
+                    [Unit]
+                    Description=BaseDirs Test Project
+
+                    [Service]
+                    Type=oneshot
+                    ExecStart=$(join(julia_cmd, ' ')) --startup-file=no --project=$(dirname(@__DIR__)) $test_script_project
+                    ConfigurationDirectory=$service_name
+                    StateDirectory=$service_name
+                    CacheDirectory=$service_name
+                    RuntimeDirectory=$service_name
+                    StandardOutput=journal
+                    StandardError=journal
+                    """)
+                    run(`sudo cp $tmpfile $service_file`)
+                    run(`sudo systemctl daemon-reload`)
+                    run(`sudo systemctl start $(service_name).service`)
+                    # Get service output from journal
+                    service_output = read(`journalctl -u $(service_name).service -n 15 --no-pager -o cat`, String)
+                    service = parse_output(service_output)
+                    # Verify systemd detection
+                    @test service["SYSTEMD_SERVICE"] == "true"
+                    @test !occursin("testorg", service["User.config(proj)"])
+                    @test chopsuffix(service["User.config(proj)"],  "/") == "/etc/$service_name"
+                    @test chopsuffix(service["User.state(proj)"],   "/") == "/var/lib/$service_name"
+                    @test chopsuffix(service["User.cache(proj)"],   "/") == "/var/cache/$service_name"
+                    @test chopsuffix(service["User.runtime(proj)"], "/") == "/run/$service_name"
+                finally
+                    run(`sudo systemctl stop $(service_name).service`)
+                    run(`sudo rm $service_file`)
+                    run(`sudo systemctl daemon-reload`)
+                end
+            end
+        end
+    end
 elseif Sys.iswindows()
     @testset "OS specific" begin
         fieldvals(x::T) where {T} = ntuple(fieldcount(T)) do i
@@ -326,8 +469,8 @@ else
                 projdir = joinpath(dep, "compiled", string('v', VERSION.major, '.', VERSION.minor), basename(proj))
                 isdir(projdir) && rm(projdir; force=true, recursive=true)
             end
-            julia_cmd = filter(arg -> !any(a -> startswith(arg, a), ("--code-coverage", "--color", "--depwarn", "--project")), collect(Base.julia_cmd()))
-            precompile_cmd = addenv(`$julia_cmd --color=no --project=$proj -e "using Pkg; Pkg.precompile()"`,
+            julia_cmd = filter(arg -> !any(a -> startswith(arg, a), ("--code-coverage", "--color", "--depwarn", "--project", "--startup-file")), collect(Base.julia_cmd()))
+            precompile_cmd = addenv(`$julia_cmd --startup-file=no --color=no --project=$proj -e "using Pkg; Pkg.precompile()"`,
                                     "JULIA_LOAD_PATH" => ifelse(Sys.iswindows(), ";", ":"))
             try
                 run(pipeline(precompile_cmd, stdout=out, stderr=err))

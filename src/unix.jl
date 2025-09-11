@@ -1,4 +1,36 @@
 """
+    SYSTEMD_SERVICE
+
+Whether the current process is a systemd service.
+"""
+SYSTEMD_SERVICE::Bool = false
+
+"""
+    SYSTEMD_DIRS
+
+Sandboxed directories provided by systemd, if running as a systemd service.
+
+These are handled according to Table 2 of [systemd.exec(5) Sandboxing](https://www.freedesktop.org/software/systemd/man/latest/systemd.exec.html#id-1.14.5.3.6.3):
+
+| Directory                   | Below path for system units | Below path for user units  | Environment variable set  |
+|:----------------------------|:----------------------------|:---------------------------|:--------------------------|
+| `RuntimeDirectory=%d`       | `/run/%d`                   | `\$XDG_RUNTIME_DIR/%d`      | `RUNTIME_DIRECTORY`       |
+| `StateDirectory=%d`         | `/var/lib/%d`               | `\$XDG_STATE_HOME/%d`       | `STATE_DIRECTORY`         |
+| `CacheDirectory=%d`         | `/var/cache/%d`             | `\$XDG_CACHE_HOME/%d`       | `CACHE_DIRECTORY`         |
+| `LogsDirectory=%d`          | `/var/log/%d`               | `\$XDG_STATE_HOME/log/%d`   | `LOGS_DIRECTORY`          |
+| `ConfigurationDirectory=%d` | `/etc/%d`                   | `\$XDG_CONFIG_HOME/%d`      | `CONFIGURATION_DIRECTORY` |
+
+Recognition of these directories is particularly important when a service is run
+under a [`DynamicUser`](https://0pointer.net/blog/dynamic-users-with-systemd.html)
+and trying to use the "usual" directories is liable to cause permissions errors.
+
+It is possible for multiple directories (separated with `:`) to be set, in which case
+we take the first one for consistency with the non-systemd behaviour.
+"""
+SYSTEMD_DIRS::@NamedTuple{runtime::String, state::String, cache::String, logs::String, config::String} =
+    (runtime = "", state = "", cache = "", logs = "", config = "")
+
+"""
     parseuserdirs(configdir::String) -> Dict{Symbol, String}
 
 Parse the `user-dirs.dirs` file that lies under `configdir`.
@@ -36,15 +68,30 @@ function parseuserdirs(configdir::String)
 end
 
 function reload()
+    # Systemd detection
+    @static if Sys.islinux()
+        cgroup = readchomp("/proc/self/cgroup")
+        global SYSTEMD_SERVICE = startswith(cgroup, "0::") && endswith(cgroup, ".service")
+        global SYSTEMD_DIRS = if SYSTEMD_SERVICE
+            (runtime = first(eachsplit(get(ENV, "RUNTIME_DIRECTORY", ""), ':')),
+             state   = first(eachsplit(get(ENV, "STATE_DIRECTORY", ""), ':')),
+             cache   = first(eachsplit(get(ENV, "CACHE_DIRECTORY", ""), ':')),
+             logs    = first(eachsplit(get(ENV, "LOGS_DIRECTORY", ""), ':')),
+             config  = first(eachsplit(get(ENV, "CONFIGURATION_DIRECTORY", ""), ':')))
+        else
+            (runtime = "", state = "", cache = "", logs = "", config = "")
+        end
+    end
     # Base directories
     @setxdg DATA_HOME "~/.local/share"
     @setxdgs DATA_DIRS ["/usr/local/share", "/usr/share"]
-    @setxdg CONFIG_HOME "~/.config"
+    @setxdg CONFIG_HOME SYSTEMD_DIRS.config "~/.config"
     @setxdgs CONFIG_DIRS ["/etc/xdg"]
-    @setxdg STATE_HOME "~/.local/state"
+    @setxdg STATE_HOME SYSTEMD_DIRS.state "~/.local/state"
+    # TODO: Introduce LOGS_HOME?
     @setxdg BIN_HOME "~/.local/bin"
-    @setxdg CACHE_HOME "~/.cache"
-    @setxdg RUNTIME_DIR joinpath("/run/user", string(Base.Libc.getuid()))
+    @setxdg CACHE_HOME SYSTEMD_DIRS.cache "~/.cache"
+    @setxdg RUNTIME_DIR SYSTEMD_DIRS.runtime joinpath("/run/user", string(Base.Libc.getuid()))
     # User directories
     homeuserdirs = parseuserdirs(CONFIG_HOME)
     userdirs = if !isempty(CONFIG_DIRS)
@@ -96,6 +143,23 @@ Base.@assume_effects :foldable function plainascii(s::String)
     String(out)
 end
 
-projectpath(p::Project, _) = projectpath(p)
+function projectpath(p::Project, parent::String)
+    # For quick exact matching, we can consider the pointers of
+    # the strings in SYSTEMD_DIRS.
+    if SYSTEMD_SERVICE && pointer(parent) ∈ map(pointer, SYSTEMD_DIRS)
+        ""
+    else
+        projectpath(p)
+    end
+end
+
+function projectpath(p::Project, parents::Vector{String})
+    if isempty(parents)
+        projectpath(p)
+    else
+        projectpath(p, first(parents))
+    end
+end
+
 projectpath(p::Project) =
     string(plainascii(p.org), '/', plainascii(p.name), '/')

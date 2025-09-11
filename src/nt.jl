@@ -285,6 +285,13 @@ projectpath(p::Project, parent::String) =
              else
                  ""
              end)
-projectpath(p::Project, parents::Vector{String}) =
-    projectpath(p, first(parents))
+
+function projectpath(p::Project, parents::Vector{String})
+    if isempty(parents)
+        projectpath(p)
+    else
+        projectpath(p, first(parents))
+    end
+end
+
 projectpath(p::Project) = joinpath(p.org, p.name, "")
