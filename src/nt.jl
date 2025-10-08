@@ -166,15 +166,14 @@ end
 function knownfolder(id::Symbol)
     guid = KNOWN_FOLDER_IDS[id]
     ptr = Ref(Ptr{UInt16}())
-    result =
-        ccall((:SHGetKnownFolderPath, "shell32"), stdcall, UInt32,
-              (StupidWindowsGUID, Cuint, Ptr{Cvoid}, Ptr{Ptr{UInt16}}),
-              guid, 0, C_NULL, ptr)
-    folder = if result == zero(UInt32)
-        unsafe_utf16string(ptr[])
+    err = ccall((:SHGetKnownFolderPath, "shell32"), stdcall, UInt32,
+                (Ref{StupidWindowsGUID}, Cuint, Ptr{Cvoid}, Ptr{Ptr{UInt16}}),
+                Ref(guid), 0, C_NULL, ptr)
+    if iszero(err)
+        folder = unsafe_utf16string(ptr[])
+        ccall((:CoTaskMemFree, "ole32.dll"), stdcall, Cvoid, (Ptr{Cvoid},), ptr[])
+        folder
     end
-    ccall((:CoTaskMemFree, "ole32.dll"), Cvoid, (Ptr{Cvoid},), ptr[])
-    folder
 end
 
 function knownfolder(id::Symbol, envvars::Vector{String}, default::String)
