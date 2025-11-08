@@ -314,49 +314,31 @@ elseif Sys.iswindows()
     @test isnothing(BaseDirs.reload())
 end
 
-@testset "Precompilation warnings" begin
-    @test_warn "is likely misplaced" BaseDirs.@promise_no_assign 1+1
-    @static if VERSION >= v"1.12"
-        function mkpackage(dir::String, code::String)
-            modfile = joinpath(dir, "src", basename(dir) * ".jl")
-            mkdir(dirname(modfile))
-            write(modfile, """
-            module $(basename(dir))
-                using BaseDirs
-                $code
+@static if VERSION < v"1.12"
+    @test_skip "Precompilation warning tests require Julia 1.12 or later, and misbehave on Windows"
+else
+    @testset "Precompilation warnings" begin
+        @test_warn "is likely misplaced" BaseDirs.@promise_no_assign 1+1
+        function precompile_output(proj::String)
+            out = IOBuffer()
+            err = IOBuffer()
+            for dep in DEPOT_PATH
+                projdir = joinpath(dep, "compiled", string('v', VERSION.major, '.', VERSION.minor), basename(proj))
+                isdir(projdir) && rm(projdir; force=true, recursive=true)
             end
-            """)
-            write(joinpath(dir, "Project.toml"), """
-            name = "$(basename(dir))"
-            uuid = "$(Base.UUID(rand(UInt128)))"
-            version = "0.1.0"
-            authors = ["test"]
-
-            [deps]
-            BaseDirs = "$(Base.identify_package("BaseDirs").uuid)"
-
-            [sources]
-            BaseDirs = {path = "$(escape_string(abspath(joinpath(@__DIR__, ".."))))"}
-            """)
-        end
-        mktempdir() do dir
-            mkpackage(dir, "const dodgy = BaseDirs.config()")
-            push!(LOAD_PATH, dir)
+            julia_cmd = filter(arg -> !any(a -> startswith(arg, a), ("--code-coverage", "--color", "--depwarn", "--project")), collect(Base.julia_cmd()))
+            precompile_cmd = addenv(`$julia_cmd --color=no --project=$proj -e "using Pkg; Pkg.precompile()"`,
+                                    "JULIA_LOAD_PATH" => ifelse(Sys.iswindows(), ";", ":"))
             try
-                @test_warn("A base directory is being computed during precompilation.",
-                           @eval import $(Symbol(basename(dir))))
-            finally
-                pop!(LOAD_PATH)
+                run(pipeline(precompile_cmd, stdout=out, stderr=err))
+            catch
+                error("Precompilation failed!\nCMD:\n$precompile_cmd\n\nSTDOUT:\n$(String(take!(out)))\nSTDERR:\n$(String(take!(err)))")
             end
+            (stdout = String(take!(out)), stderr = String(take!(err)))
         end
-        mktempdir() do dir
-            mkpackage(dir, "const lie = BaseDirs.@promise_no_assign BaseDirs.config()")
-            push!(LOAD_PATH, dir)
-            try
-                @test_nowarn @eval import $(Symbol(basename(dir)))
-            finally
-                pop!(LOAD_PATH)
-            end
-        end
+        precompile_badassign = precompile_output(joinpath(@__DIR__, "BaseDirs_TestBadAssign"))
+        @test contains(precompile_badassign.stderr, "Warning: A base directory is being computed during precompilation.")
+        precompile_promiseassign = precompile_output(joinpath(@__DIR__, "BaseDirs_TestPromiseAssign"))
+        @test !contains(precompile_promiseassign.stderr, "Warning:")
     end
 end

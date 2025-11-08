@@ -1,0 +1,10 @@
+name = "BaseDirs_TestBadAssign"
+uuid = "994b7027-e696-44ef-83f8-780abb4563ff"
+version = "0.1.0"
+authors = ["TEC <git@tecosaur.net>"]
+
+[deps]
+BaseDirs = "18cc8868-cbac-4acf-b575-c8ff214dc66f"
+
+[sources]
+BaseDirs = {path = "../.."}
