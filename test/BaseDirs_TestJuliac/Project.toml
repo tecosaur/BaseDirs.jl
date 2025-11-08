@@ -1,0 +1,10 @@
+name = "BaseDirs_TestJuliac"
+uuid = "51044e4b-aae8-44a4-aff2-cd76144ddcb7"
+version = "0.1.0"
+authors = ["TEC <git@tecosaur.net>"]
+
+[deps]
+BaseDirs = "18cc8868-cbac-4acf-b575-c8ff214dc66f"
+
+[sources]
+BaseDirs = {path = "../.."}

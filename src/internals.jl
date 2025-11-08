@@ -125,35 +125,35 @@ PROMISED_NO_CONST_ASSIGNMENT::Bool = false
 
 function warn_if_precompiling()
     if ccall(:jl_generating_output, Cint, ()) != 0 && !PROMISED_NO_CONST_ASSIGNMENT
-        @noinline (function ()
-                       st = stacktrace(backtrace())
-                       any(sf -> sf.func ∈ (:__init__, :_atexit), st) && return
-                       naughtyline = findfirst(sf -> sf.file != Symbol(@__FILE__), st)
-                       naughtysf = st[something(naughtyline, 1)]
-                       @warn """A base directory is being computed during precompilation.
-                                This is dangerous, as results depend on the live system configuration.
-
-                                It is recommended that you invoke BaseDirs as required in
-                                function bodies, rather than at the top level. Calls are very
-                                cheap, and you can always pass the result of a live call around.
-
-                                If you have verified that this call was not assigned to a global constant,
-                                you can silence this warning with `BaseDirs.@promise_no_assign`.
-                                """ _module="BaseDirs" _file=String(naughtysf.file) _line=naughtysf.line
-                   end)()
+        # Called via the C API so `juliac --trim` neither follows nor compiles the
+        # (untrimmable) warning, which is only relevant during precompilation.
+        # Any exception it throws is dropped, which is fine.
+        ccall(:jl_call0, Ptr{Cvoid}, (Any,), warn_if_precompiling_1)
     end
 end
 
-function warn_misplaced_promise()
+function warn_if_precompiling_1()
+    st = stacktrace(backtrace())
+    any(sf -> sf.func ∈ (:__init__, :_atexit), st) && return
+    naughtyline = findfirst(sf -> sf.file != Symbol(@__FILE__), st)
+    naughtysf = st[something(naughtyline, 1)]
+    @warn """A base directory is being computed during precompilation.
+             This is dangerous, as results depend on the live system configuration.
+
+             It is recommended that you invoke BaseDirs as required in
+             function bodies, rather than at the top level. Calls are very
+             cheap, and you can always pass the result of a live call around.
+
+             If you have verified that this call was not assigned to a global constant,
+             you can silence this warning with `BaseDirs.@promise_no_assign`.
+             """ _module="BaseDirs" _file=String(naughtysf.file) _line=naughtysf.line
+end
+
+function warn_misplaced_promise(source::LineNumberNode)
     if ccall(:jl_generating_output, Cint, ()) == 0
-        @noinline (function ()
-                       st = stacktrace(backtrace())
-                       naughtyline = findfirst(sf -> sf.file != Symbol(@__FILE__), st)
-                       naughtysf = st[something(naughtyline, 1)]
-                       @warn """A `BaseDirs.@promise_no_assign` declaration has been evalated at runtime.
-                                This macro is explicitly intended for use during precompilation, and is likely misplaced.
-                                """ _module="BaseDirs" _file=String(naughtysf.file) _line=naughtysf.line
-                   end)()
+        @warn """A `BaseDirs.@promise_no_assign` declaration has been evalated at runtime.
+                 This macro is explicitly intended for use during precompilation, and is likely misplaced.
+                 """ _module="BaseDirs" _file=String(something(source.file, :none)) _line=source.line
     end
 end
 
@@ -192,14 +192,18 @@ macro defaccessor(fnname::Symbol, var::Union{Symbol, Expr})
     else
         :resolvedirpath
     end
+    # `Vararg{T, N}` forces specialisation on the number of path components, without
+    # which keyword calls are compiled dynamically (untrimmable). It must be escaped, as
+    # keyword-method lowering only recognises varargs by the literal `Vararg` symbol.
+    Vararg = esc(:Vararg)
     quote
-        function $(esc(fnname))(pathcomponents...; kwargs...)
+        function $(esc(fnname))(pathcomponents::$Vararg{AbstractString, N}; kwargs...) where {N}
             $warn_if_precompiling()
             $resolver($dirvar, pathcomponents; kwargs...)
         end
-        $(esc(fnname))(app::BaseDirs.App, pathcomponents...; kwargs...) =
+        $(esc(fnname))(app::BaseDirs.App, pathcomponents::$Vararg{AbstractString, N}; kwargs...) where {N} =
             $(esc(fnname))(BaseDirs.applicationpath(app, $(QuoteNode(fnname)), $dirvar), pathcomponents...; kwargs...)
-        $(esc(fnname))(mod::Module, pathcomponents...; kwargs...) =
+        $(esc(fnname))(mod::Module, pathcomponents::$Vararg{AbstractString, N}; kwargs...) where {N} =
             $(esc(fnname))(BaseDirs.App(mod), pathcomponents...; kwargs...)
     end
 end

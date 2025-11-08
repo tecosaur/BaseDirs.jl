@@ -69,12 +69,13 @@ end
 """
 macro promise_no_assign(body)
     quote
-        Internals.warn_misplaced_promise()
+        Internals.warn_misplaced_promise($(QuoteNode(__source__)))
+        oldval = Internals.PROMISED_NO_CONST_ASSIGNMENT
         Internals.PROMISED_NO_CONST_ASSIGNMENT = true
         try
             $(esc(body))
         finally
-            Internals.PROMISED_NO_CONST_ASSIGNMENT = false
+            Internals.PROMISED_NO_CONST_ASSIGNMENT = oldval
         end
     end
 end

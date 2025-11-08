@@ -9,6 +9,11 @@ Sys.iswindows() || (ENV["HOME"] = mktempdir())
 foreach(var -> delete!(ENV, var), filter(startswith("XDG_"), collect(keys(ENV))))
 BaseDirs.reload()
 
+haskey(ENV, "CI") ||
+    @warn "Tests are written for a default system configuration, \
+           spurious failures may occur from the the very customisations \
+           this package is designed to detect."
+
 usr = homedir()
 
 @testset "Project compat" begin
@@ -641,5 +646,15 @@ else
         @test contains(precompile_badassign.stderr, "Warning: A base directory is being computed during precompilation.")
         precompile_promiseassign = precompile_output(joinpath(@__DIR__, "BaseDirs_TestPromiseAssign"))
         @test !contains(precompile_promiseassign.stderr, "Warning:")
+    end
+
+    using JuliaC
+    @testset "JuliaC" begin
+        juliacproj = relpath(joinpath(@__DIR__, "BaseDirs_TestJuliac"))
+        @test JuliaC.main(["--output-exe", "basedir",
+                           "--bundle", "build",
+                           "--trim=safe",
+                           "--experimental",
+                           juliacproj]) isa Any
     end
 end

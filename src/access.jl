@@ -33,10 +33,10 @@ end
 @defaccessor cache CACHE_HOME
 @defaccessor runtime RUNTIME_DIR
 
-fonts(pathcomponents...; kwargs...) =
+fonts(pathcomponents::Vararg{AbstractString, N}; kwargs...) where {N} =
     Internals.resolvedirpaths(filter(Internals.withinhome(), BaseDirs.FONTS_DIRS),
                               pathcomponents; kwargs...)
-applications(pathcomponents...; kwargs...) =
+applications(pathcomponents::Vararg{AbstractString, N}; kwargs...) where {N} =
     Internals.resolvedirpaths(filter(Internals.withinhome(), BaseDirs.APPLICATIONS_DIRS),
                               pathcomponents; kwargs...)
 
@@ -66,10 +66,10 @@ end
 @defaccessor data DATA_DIRS
 @defaccessor config CONFIG_DIRS
 
-fonts(pathcomponents...; kwargs...) =
+fonts(pathcomponents::Vararg{AbstractString, N}; kwargs...) where {N} =
     Internals.resolvedirpaths(filter(!Internals.withinhome(), BaseDirs.FONTS_DIRS),
                               pathcomponents; kwargs...)
-applications(pathcomponents...; kwargs...) =
+applications(pathcomponents::Vararg{AbstractString, N}; kwargs...) where {N} =
     Internals.resolvedirpaths(filter(!Internals.withinhome(), BaseDirs.APPLICATIONS_DIRS),
                               pathcomponents; kwargs...)
 
