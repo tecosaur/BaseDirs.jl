@@ -16,10 +16,13 @@ function reload end
 function projectpath end
 
 struct Project
-    name::AbstractString
-    org::AbstractString
-    qualifier::AbstractString
+    name::String
+    org::String
+    qualifier::String
 end
+
+Project(name::AbstractString, org::AbstractString, qualifier::AbstractString) =
+    Project(String(name), String(org), String(qualifier))
 
 Project(name::AbstractString; org::AbstractString="julia", qualifier::AbstractString="lang") =
     Project(name, org, qualifier)
