@@ -256,6 +256,12 @@ The user's documents directory.
 """ DOCUMENTS_DIR
 
 @doc """
+**PROJECTS_DIR** (`XDG_PROJECTS_DIR`)
+
+The user's projects directory.
+""" PROJECTS_DIR
+
+@doc """
 **MUSIC_DIR** (`XDG_MUSIC_DIR`)
 
 The user's music directory.
@@ -391,6 +397,14 @@ Join the documents directory with zero or more path components (`parts`).
 
 The documents directory is based on the variable `BaseDirs.DOCUMENTS_DIR`, which see.
 """ User.documents
+
+@doc """
+    projects(parts...) -> String
+
+Join the projects directory with zero or more path components (`parts`).
+
+The projects directory is based on the variable `BaseDirs.PROJECTS_DIR`, which see.
+""" User.projects
 
 @doc """
     music(parts...) -> String

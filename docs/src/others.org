@@ -61,16 +61,17 @@ Here folder names not beginning with =~=  or =/= refer to [[https://docs.microso
 
 ** Linux
 
-| Common Name | EnvVar              | XDG spec    | QStandardPaths | Go XDG   | Rust directories-rs | Python platform-dirs |
-|-------------+---------------------+-------------+----------------+----------+---------------------+----------------------|
-| Desktop     | =XDG_DESKTOP_DIR=     | =~/Desktop=   | XDG spec       | XDG spec | -                   | -                    |
-| Download    | =XDG_DOWNLOAD_DIR=    | =~/Downloads= | XDG spec       | XDG spec | -                   | -                    |
-| Documents   | =XDG_DOCUMENTS_DIR=   | =~/Documents= | XDG spec       | XDG spec | -                   | XDG spec             |
-| Music       | =XDG_MUSIC_DIR=       | =~/Music=     | XDG spec       | XDG spec | -                   | -                    |
-| Pictures    | =XDG_PICTURES_DIR=    | =~/Pictures=  | XDG spec       | XDG spec | -                   | -                    |
-| Videos      | =XDG_VIDEOS_DIR=      | =~/Videos=    | XDG spec       | XDG spec | -                   | -                    |
-| Templates   | =XDG_TEMPLATES_DIR=   | =~/Templates= | -              | XDG spec | -                   | -                    |
-| Public      | =XDG_PUBLICSHARE_DIR= | =~/Public=    | -              | XDG spec | -                   | -                    |
+| Common Name | EnvVar              | XDG         | QStandardPaths | Go XDG | Rust directories-rs | Python platform-dirs |
+|-------------+---------------------+-------------+----------------+--------+---------------------+----------------------|
+| Desktop     | =XDG_DESKTOP_DIR=     | =~/Desktop=   | XDG            | XDG    | -                   | -                    |
+| Download    | =XDG_DOWNLOAD_DIR=    | =~/Downloads= | XDG            | XDG    | -                   | -                    |
+| Documents   | =XDG_DOCUMENTS_DIR=   | =~/Documents= | XDG            | XDG    | -                   | XDG                  |
+| Projects    | =XDG_PROJECTS_DIR=    | =~/Projects=  | -              | -      | -                   | -                    |
+| Music       | =XDG_MUSIC_DIR=       | =~/Music=     | XDG            | XDG    | -                   | -                    |
+| Pictures    | =XDG_PICTURES_DIR=    | =~/Pictures=  | XDG            | XDG    | -                   | -                    |
+| Videos      | =XDG_VIDEOS_DIR=      | =~/Videos=    | XDG            | XDG    | -                   | -                    |
+| Templates   | =XDG_TEMPLATES_DIR=   | =~/Templates= | -              | XDG    | -                   | -                    |
+| Public      | =XDG_PUBLICSHARE_DIR= | =~/Public=    | -              | XDG    | -                   | -                    |
 
 ** MacOS
 
@@ -79,6 +80,7 @@ Here folder names not beginning with =~=  or =/= refer to [[https://docs.microso
 | Desktop     | =XDG_DESKTOP_DIR=     | =~/Desktop=      | Qt         | Qt                  | -                    |
 | Download    | =XDG_DOWNLOAD_DIR=    | =~/Downloads=    | Qt         | Qt                  | -                    |
 | Documents   | =XDG_DOCUMENTS_DIR=   | =~/Document=     | Qt         | Qt                  | Qt                   |
+| Projects    | =XDG_PROJECTS_DIR=    | =~/Pictures=     | -          | -                   | -                    |
 | Music       | =XDG_MUSIC_DIR=       | =~/Music=        | Qt         | Qt                  | -                    |
 | Pictures    | =XDG_PICTURES_DIR=    | =~/Pictures=     | Qt         | Qt                  | -                    |
 | Videos      | =XDG_VIDEOS_DIR=      | =~/Movies=       | Qt         | Qt                  | -                    |
@@ -92,6 +94,7 @@ Here folder names not beginning with =~=  or =/= refer to [[https://docs.microso
 | Desktop     | =XDG_DESKTOP_DIR=     | =Desktop=   | Go XDG              | -                    |
 | Download    | =XDG_DOWNLOAD_DIR=    | =Downloads= | Go XDG              | -                    |
 | Documents   | =XDG_DOCUMENTS_DIR=   | =Documents= | Go XDG              | Go XDG               |
+| Projects    | =XDG_PROJECTS_DIR=    | -         | -                   | -                    |
 | Music       | =XDG_MUSIC_DIR=       | =Music=     | Go XDG              | -                    |
 | Pictures    | =XDG_PICTURES_DIR=    | =Pictures=  | Go XDG              | -                    |
 | Videos      | =XDG_VIDEOS_DIR=      | =Videos=    | Go XDG              | -                    |

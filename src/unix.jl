@@ -43,7 +43,7 @@ Returns a dict with all recognised entries of the file.
 function parseuserdirs(configdir::String)
     validnames = ("XDG_DESKTOP_DIR", "XDG_DOWNLOAD_DIR", "XDG_TEMPLATES_DIR",
                   "XDG_PUBLICSHARE_DIR", "XDG_DOCUMENTS_DIR", "XDG_MUSIC_DIR",
-                  "XDG_PICTURES_DIR", "XDG_VIDEOS_DIR")
+                  "XDG_PICTURES_DIR", "XDG_PROJECTS_DIR", "XDG_VIDEOS_DIR")
     userdirsfile = joinpath(configdir, "user-dirs.dirs")
     entries = Dict{Symbol, String}()
     if isfile(userdirsfile)
@@ -102,6 +102,7 @@ function reload()
     @setxdg DESKTOP_DIR     get(userdirs, :XDG_DESKTOP_DIR,     "~/Desktop")
     @setxdg DOWNLOAD_DIR    get(userdirs, :XDG_DOWNLOAD_DIR,    "~/Downloads")
     @setxdg DOCUMENTS_DIR   get(userdirs, :XDG_DOCUMENTS_DIR,   "~/Documents")
+    @setxdg PROJECTS_DIR    get(userdirs, :XDG_PROJECTS_DIR,    "~/Projects")
     @setxdg MUSIC_DIR       get(userdirs, :XDG_MUSIC_DIR,       "~/Music")
     @setxdg PICTURES_DIR    get(userdirs, :XDG_PICTURES_DIR,    "~/Pictures")
     @setxdg VIDEOS_DIR      get(userdirs, :XDG_VIDEOS_DIR,      "~/Videos")

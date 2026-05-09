@@ -262,6 +262,7 @@ function reload()
     @setxdg DESKTOP_DIR rf.Desktop
     @setxdg DOWNLOAD_DIR rf.Downloads
     @setxdg DOCUMENTS_DIR rf.Documents
+    @setxdg PROJECTS_DIR joinpath(rf.Profile, "Projects")
     @setxdg MUSIC_DIR rf.Music
     @setxdg PICTURES_DIR rf.Pictures
     @setxdg VIDEOS_DIR rf.Videos

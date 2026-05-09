@@ -23,6 +23,7 @@ function reload()
     @setxdg DESKTOP_DIR "~/Desktop"
     @setxdg DOWNLOAD_DIR "~/Downloads"
     @setxdg DOCUMENTS_DIR "~/Documents"
+    @setxdg PROJECTS_DIR "~/Projects"
     @setxdg MUSIC_DIR "~/Music"
     @setxdg PICTURES_DIR "~/Pictures"
     @setxdg VIDEOS_DIR "~/Videos"
