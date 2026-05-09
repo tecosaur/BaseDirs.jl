@@ -191,7 +191,7 @@ knownfolder(id::Symbol, default::String) = something(knownfolder(id), default)
 const RELEVANT_FOLDERS =
     (:SystemDrive, :SystemRoot,
      :ProgramData, :Programs, :CommonPrograms,
-     :UserProfiles, :RoamingAppData, :LocalAppData,
+     :Profile, :RoamingAppData, :LocalAppData,
      :Desktop, :Downloads, :Documents, :Music, :Pictures,
      :Videos, :Templates, :Public, :Fonts)
 
@@ -213,8 +213,8 @@ function relevantfolders()
         :Windows, ["SystemRoot", "windir"], joinpath(rf.SystemDrive, "Windows"))
     rf.ProgramData = knownfolder(
         :ProgramData, ["ProgramData", "ALLUSERSPROFILE"], joinpath(rf.SystemDrive, "ProgramData"))
-    rf.UserProfiles = knownfolder(
-        :UserProfiles, joinpath(rf.SystemDrive, "Users"))
+    rf.Profile = knownfolder(
+        :Profile, joinpath(rf.SystemDrive, "Users"))
     rf.RoamingAppData = knownfolder(
         :RoamingAppData, ["APPDATA"], joinpath(home, "AppData", "Roaming"))
     rf.LocalAppData = knownfolder(
@@ -227,7 +227,7 @@ function relevantfolders()
     rf.Videos = knownfolder(:Videos, joinpath(home, "Videos"))
     rf.Templates = knownfolder(
         :Templates, joinpath(rf.RoamingAppData, "Microsoft", "Windows", "Templates"))
-    rf.Public = knownfolder(:Public, ["Public"], joinpath(rf.UserProfiles, "Public"))
+    rf.Public = knownfolder(:Public, ["Public"], joinpath(rf.Profile, "Public"))
     rf.Fonts = knownfolder(:Fonts, joinpath(rf.SystemRoot, "Fonts"))
     rf.Programs = knownfolder(
         :Programs, joinpath(rf.RoamingAppData, "Microsoft", "Windows", "Start Menu", "Programs"))

@@ -382,7 +382,7 @@ elseif Sys.iswindows()
             "C:", "C:\\Windows", "C:\\ProgramData",
             "$usr\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs",
             "C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs",
-            "C:\\Users", "$usr\\AppData\\Roaming", "$usr\\AppData\\Local",
+            "$usr", "$usr\\AppData\\Roaming", "$usr\\AppData\\Local",
             "$usr\\Desktop", "$usr\\Downloads", "$usr\\Documents",
             "$usr\\Music", "$usr\\Pictures", "$usr\\Videos",
             "$usr\\AppData\\Roaming\\Microsoft\\Windows\\Templates",
