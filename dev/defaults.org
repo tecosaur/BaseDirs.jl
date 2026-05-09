@@ -23,18 +23,22 @@ worth having something rather than nothing.
 * User directories
 
 | Common Name | EnvVar              | Linux[fn:xdg-user-dirs] | MacOS       | Windows (KnownPath) |
-|-------------+---------------------+-------------------------+-------------+---------------------|
-| Desktop     | =XDG_DESKTOP_DIR=     | =~/Desktop=               | =~/Desktop=   | =Desktop=             |
-| Download    | =XDG_DOWNLOAD_DIR=    | =~/Downloads=             | =~/Downloads= | =Downloads=           |
-| Documents   | =XDG_DOCUMENTS_DIR=   | =~/Documents=             | =~/Documents= | =Documents=           |
-| Music       | =XDG_MUSIC_DIR=       | =~/Music=                 | =~/Music=     | =Music=               |
-| Pictures    | =XDG_PICTURES_DIR=    | =~/Pictures=              | =~/Pictures=  | =Pictures=            |
-| Videos      | =XDG_VIDEOS_DIR=      | =~/Videos=                | =~/Movies=    | =Videos=              |
-| Templates   | =XDG_TEMPLATES_DIR=   | =~/Templates=             | =~/Templates= | =Templates=           |
-| Public      | =XDG_PUBLICSHARE_DIR= | =~/Public=                | =~/Public=    | =Public=              |
+|-------------+---------------------+------------------+-------------+---------------------|
+| Desktop     | =XDG_DESKTOP_DIR=     | =~/Desktop=        | =~/Desktop=   | =Desktop=             |
+| Download    | =XDG_DOWNLOAD_DIR=    | =~/Downloads=      | =~/Downloads= | =Downloads=           |
+| Documents   | =XDG_DOCUMENTS_DIR=   | =~/Documents=      | =~/Documents= | =Documents=           |
+| Projects    | =XDG_PROJECTS_DIR=    | =~/Projects=       | =~/Projects=  | =~\Projects=[fn:winproj] |
+| Music       | =XDG_MUSIC_DIR=       | =~/Music=          | =~/Music=     | =Music=               |
+| Pictures    | =XDG_PICTURES_DIR=    | =~/Pictures=       | =~/Pictures=  | =Pictures=            |
+| Videos      | =XDG_VIDEOS_DIR=      | =~/Videos=         | =~/Movies=    | =Videos=              |
+| Templates   | =XDG_TEMPLATES_DIR=   | =~/Templates=      | =~/Templates= | =Templates=           |
+| Public      | =XDG_PUBLICSHARE_DIR= | =~/Public=         | =~/Public=    | =Public=              |
 
 [fn:xdg-user-dirs] In accordance with the [[https://www.freedesktop.org/wiki/Software/xdg-user-dirs/][xdg-user-dirs]] documentation, the
 system and user =user-dirs.dirs= files are checked before using the defaults.
+
+[fn:winproj] Since there is no known projects directory on windows, we use the
+=Projects= subdirectory of =FOLDERID_Profile=.
 
 * Project directories
 

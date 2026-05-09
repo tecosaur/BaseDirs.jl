@@ -63,6 +63,7 @@ The =User= submodule also provides a number of other "user folder" accessors, na
 + ~desktop~
 + ~downloads~
 + ~documents~
++ ~projects~
 + ~music~
 + ~pictures~
 + ~videos~
@@ -112,6 +113,7 @@ BaseDirs.RUNTIME_DIR
 BaseDirs.DESKTOP_DIR
 BaseDirs.DOWNLOAD_DIR
 BaseDirs.DOCUMENTS_DIR
+BaseDirs.PROJECTS_DIR
 BaseDirs.PICTURES_DIR
 BaseDirs.VIDEOS_DIR
 BaseDirs.TEMPLATES_DIR
@@ -144,6 +146,7 @@ BaseDirs.User.runtime
 BaseDirs.User.desktop
 BaseDirs.User.downloads
 BaseDirs.User.documents
+BaseDirs.User.projects
 BaseDirs.User.music
 BaseDirs.User.pictures
 BaseDirs.User.videos
