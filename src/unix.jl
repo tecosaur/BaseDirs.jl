@@ -46,7 +46,12 @@ function parseuserdirs(configdir::String)
                   "XDG_PICTURES_DIR", "XDG_PROJECTS_DIR", "XDG_VIDEOS_DIR")
     userdirsfile = joinpath(configdir, "user-dirs.dirs")
     entries = Dict{Symbol, String}()
-    if isfile(userdirsfile)
+    udfreadable = @static if VERSION >= v"1.11-"
+        isreadable(userdirsfile)
+    else
+        try open(isreadable, userdirsfile) catch; false end
+    end
+    if udfreadable && isfile(userdirsfile)
         for line in Iterators.map(strip, eachline(userdirsfile))
             if !startswith(line, '#') && occursin('=', line)
                 key, value = split(line, '=', limit=2)
