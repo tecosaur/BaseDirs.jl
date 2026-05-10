@@ -160,7 +160,7 @@ macro defaccessor(fnname::Symbol, var::Union{Symbol, Expr})
             $resolver($dirvar, pathcomponents; kwargs...)
         end
         $(esc(fnname))(app::BaseDirs.App, pathcomponents...; kwargs...) =
-            $(esc(fnname))(BaseDirs.applicationpath(app, $dirvar), pathcomponents...; kwargs...)
+            $(esc(fnname))(BaseDirs.applicationpath(app, $(QuoteNode(fnname)), $dirvar), pathcomponents...; kwargs...)
         $(esc(fnname))(mod::Module, pathcomponents...; kwargs...) =
             $(esc(fnname))(BaseDirs.App(mod), pathcomponents...; kwargs...)
     end

@@ -34,6 +34,9 @@ generate appropriate application-specific paths.
     - The [*Standard Directories*](https://developer.apple.com/library/content/documentation/FileManagement/Conceptual/FileSystemProgrammingGuide/FileSystemOverview/FileSystemOverview.html#//apple_ref/doc/uid/TP40010672-CH2-SW6)
       guidelines on macOS
 
+    Whenever a the relevant `XDG_*` environment variable is set, it overrides the default
+    path on all platforms.
+
 # Guidelines for appropriate directories
 
 + **Runtime** data is _volatile_, and only relevant to the current user session.

@@ -150,6 +150,8 @@ Base.@assume_effects :foldable function plainascii(s::String)
     String(out)
 end
 
+applicationpath(app::App, ::Symbol, parent) = applicationpath(app, parent)
+
 function applicationpath(app::App, parent::String)
     # For quick exact matching, we can consider the pointers of
     # the strings in SYSTEMD_DIRS.

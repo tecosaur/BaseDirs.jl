@@ -68,8 +68,58 @@ Base.@assume_effects :foldable function simpleascii(s::String)
     String(out)
 end
 
-applicationpath(app::App, _) = applicationpath(app)
+# Copied from `unix.jl:132` for `unixapplicationpath`
+Base.@assume_effects :foldable function plainascii(s::String)
+    isvalid(b::UInt8) = UInt8('0') <= b <= UInt8('9') ||
+        UInt8('a') <= b <= UInt8('z') ||
+        b in (UInt8('_'), UInt8('-'))
+    all(isvalid, codeunits(s)) && return s
+    out = sizehint!(UInt8[], ncodeunits(s))
+    for b in codeunits(s)
+        if isvalid(b)
+            push!(out, b)
+        elseif UInt8('A') <= b <= UInt8('Z')
+            push!(out, b ⊻ 0x20) # lowercase
+        end
+    end
+    String(out)
+end
+
+function applicationpath(app::App, kind::Symbol, parent::String)
+    startswith(parent, homedir()) || return if kind === :cache
+        applicationpath(app)
+    else
+        applicationpath(app) * String(kind) * '/'
+    end
+    appsupport = joinpath(homedir(), "Library/Application Support")
+    default = if kind ∈ (:data, :config, :state, :runtime)
+        appsupport
+    elseif kind === :cache
+        joinpath(homedir(), "Library/Caches")
+    else
+        parent
+    end
+    if parent != default
+        unixapplicationpath(app)
+    elseif default == appsupport
+        applicationpath(app) * String(kind) * '/'
+    else
+        applicationpath(app)
+    end
+end
+
+function applicationpath(app::App, kind::Symbol, parents::Vector{String})
+    if isempty(parents)
+        applicationpath(app)
+    else
+        applicationpath(app, kind, first(parents))
+    end
+end
+
 applicationpath(app::App) =
-    string(join(split(app.qualifier, '.') |> reverse, '.'), '.',
+    string(join(Iterators.reverse(split(app.qualifier, '.')), '.'), '.',
            simpleascii(app.org), '.',
            simpleascii(app.name), '/')
+
+unixapplicationpath(app::App) =
+    string(plainascii(app.org), '/', plainascii(app.name), '/')

@@ -274,24 +274,24 @@ function reload()
     nothing
 end
 
-applicationpath(app::App, parent::String) =
-    joinpath(applicationpath(app), if parent === DATA_HOME || parent in DATA_DIRS
+applicationpath(app::App, kind::Symbol, ::String) =
+    joinpath(applicationpath(app), if kind === :data
                  "data\\"
-             elseif parent == CONFIG_HOME || parent in CONFIG_DIRS
+             elseif kind === :config
                  "config\\"
-             elseif parent == CACHE_HOME
+             elseif kind === :cache
                  "cache\\"
-             elseif parent == STATE_HOME
+             elseif kind === :state
                  "state\\"
              else
                  ""
              end)
 
-function applicationpath(app::App, parents::Vector{String})
+function applicationpath(app::App, kind::Symbol, parents::Vector{String})
     if isempty(parents)
         applicationpath(app)
     else
-        applicationpath(app, first(parents))
+        applicationpath(app, kind, first(parents))
     end
 end
 

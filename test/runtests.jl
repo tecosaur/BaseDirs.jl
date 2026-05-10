@@ -77,8 +77,11 @@ if Sys.isapple()
     end
     @testset "App" begin
         @test BaseDirs.applicationpath(BaseDirs.App("a")) == "lang.julia.a/"
-        @test BaseDirs.applicationpath(BaseDirs.App("a"), "?") == "lang.julia.a/"
         @test BaseDirs.applicationpath(BaseDirs.App("Hey There")) == "lang.julia.Hey-There/"
+        @test BaseDirs.applicationpath(BaseDirs.App("foo"), :state, "$usr/Library/Application Support") == "lang.julia.foo/state/"
+        @test BaseDirs.applicationpath(BaseDirs.App("foo"), :state, "$usr/.local/state") == "julia/foo/"
+        @test BaseDirs.applicationpath(BaseDirs.App("Hey There"), :state, "$usr/Library/Application Support") == "lang.julia.Hey-There/state/"
+        @test BaseDirs.applicationpath(BaseDirs.App("Hey There"), :state, "$usr/.local/state") == "julia/heythere/"
     end
     @test isnothing(BaseDirs.reload())
 elseif Sys.isunix()
@@ -461,12 +464,12 @@ elseif Sys.iswindows()
     @testset "Projects" begin
         @test BaseDirs.applicationpath(BaseDirs.App("a")) == "julia\\a\\"
         @test BaseDirs.applicationpath(BaseDirs.App("a", org="b")) == "b\\a\\"
-        @test BaseDirs.applicationpath(BaseDirs.App("a"), BaseDirs.DATA_HOME) == "julia\\a\\data\\"
+        @test BaseDirs.applicationpath(BaseDirs.App("a"), :data, BaseDirs.DATA_HOME) == "julia\\a\\data\\"
         if BaseDirs.CONFIG_HOME != BaseDirs.DATA_HOME
-            @test BaseDirs.applicationpath(BaseDirs.App("a"), BaseDirs.CONFIG_HOME) == "julia\\a\\config\\"
+            @test BaseDirs.applicationpath(BaseDirs.App("a"), :config, BaseDirs.CONFIG_HOME) == "julia\\a\\config\\"
         end
-        @test BaseDirs.applicationpath(BaseDirs.App("a"), BaseDirs.CACHE_HOME) == "julia\\a\\cache\\"
-        @test BaseDirs.applicationpath(BaseDirs.App("a"), BaseDirs.STATE_HOME) == "julia\\a\\state\\"
+        @test BaseDirs.applicationpath(BaseDirs.App("a"), :cache, BaseDirs.CACHE_HOME) == "julia\\a\\cache\\"
+        @test BaseDirs.applicationpath(BaseDirs.App("a"), :state, BaseDirs.STATE_HOME) == "julia\\a\\state\\"
     end
     @test isnothing(BaseDirs.reload())
 end
