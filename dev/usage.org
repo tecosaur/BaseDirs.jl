@@ -30,7 +30,7 @@ Two boolean keyword arguments are often supported:
   c. If the path is to a file (i.e. the path does not end with =/=), ~touch~​es the file.
 + =existent=, to filter the list of provided paths to ones that exist (when applicable)
 
-To give appropriate project-specific directories we can use a [[@ref][=BaseDirs.App=]]:
+To give appropriate application-specific directories we can use a [[@ref][=BaseDirs.App=]]:
 
 #+begin_src @docs
 BaseDirs.App

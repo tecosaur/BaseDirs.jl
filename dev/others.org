@@ -101,42 +101,42 @@ Here folder names not beginning with =~=  or =/= refer to [[https://docs.microso
 | Templates   | =XDG_TEMPLATES_DIR=   | =Templates= | Go XDG              | -                    |
 | Public      | =XDG_PUBLICSHARE_DIR= | =Public=    | Go XDG              | -                    |
 
-* Project directories
+* Application directories
 
-Here =$PP= will be a stand-in for the project path, according to the conventions
+Here =$AP= will be a stand-in for the project path, according to the conventions
 of the OS.
 
 ** Linux
 
 | Common Name   | QStandardPaths       | Rust directories-rs |
 |---------------+----------------------+---------------------|
-| User data     | =$(User data)/$PP=     | =$(User data)/$PP=    |
-| System data   | =$(System data)/$PP=   | =$(User data)/$PP=    |
-| User config   | =$(User config)/$PP=   | =$(User config)/$PP=  |
-| System config | =$(System config)/$PP= | -                   |
-| Cache         | =$(Cache)/$PP=         | =$(Cache)/$PP=        |
-| State         | -                    | =$(State)/$PP=        |
+| User data     | =$(User data)/$AP=     | =$(User data)/$AP=    |
+| System data   | =$(System data)/$AP=   | =$(User data)/$AP=    |
+| User config   | =$(User config)/$AP=   | =$(User config)/$AP=  |
+| System config | =$(System config)/$AP= | -                   |
+| Cache         | =$(Cache)/$AP=         | =$(Cache)/$AP=        |
+| State         | -                    | =$(State)/$AP=        |
 
 ** MacOS
 
 | Common Name   | QStandardPaths     | Rust directories-rs |
 |---------------+--------------------+---------------------|
-| User data     | =$(User data)/$PP=   | =$(User data)/$PP=    |
-| System data   | =$(System data)/$PP= | =$(User data)/$PP=    |
-| User config   | =$(User config)/$PP= | =$(User config)/$PP=  |
+| User data     | =$(User data)/$AP=   | =$(User data)/$AP=    |
+| System data   | =$(System data)/$AP= | =$(User data)/$AP=    |
+| User config   | =$(User config)/$AP= | =$(User config)/$AP=  |
 | System config | -                  | -                   |
-| Cache         | =$(Cache)/$PP=       | =$(Cache)/$PP=        |
+| Cache         | =$(Cache)/$AP=       | =$(Cache)/$AP=        |
 | State         | -                  | -                   |
 
 ** Windows
 
 | Common Name   | QStandardPaths       | Rust directories-rs       |
 |---------------+----------------------+---------------------------|
-| User data     | =$(User data)\$PP=     | =$(User data)\$PP\data=     |
-| System data   | =$(System data)\$PP=   | =$(User data)\$PP\data=     |
-| User config   | =$(User config)\$PP=   | =$(User config)\$PP\config= |
-| System config | =$(System config)\$PP= | -                         |
-| Cache         | =$(Cache)\$PP=         | =$(Cache)\$PP\cache=        |
+| User data     | =$(User data)\$AP=     | =$(User data)\$AP\data=     |
+| System data   | =$(System data)\$AP=   | =$(User data)\$AP\data=     |
+| User config   | =$(User config)\$AP=   | =$(User config)\$AP\config= |
+| System config | =$(System config)\$AP= | -                         |
+| Cache         | =$(Cache)\$AP=         | =$(Cache)\$AP\cache=        |
 | State         | -                    | -                         |
 
 * Extra directories 
@@ -261,11 +261,11 @@ the provided path [[https://learn.microsoft.com/en-gb/windows/win32/shell/app-re
 
 No conflicts 🎉.
 
-** Project directories
-*** Windows AppData project suffixes
+** Application directories
+*** Windows AppData suffixes
 **** The conflict
 
-Some projects just use =AppData\$Project= for the data, config, and cache folders,
+Some projects just use =AppData\$App= for the data, config, and cache folders,
 however =directories-rs= adds suffixes after the project.
 
 **** Resolution
