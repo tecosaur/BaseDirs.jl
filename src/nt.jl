@@ -274,8 +274,8 @@ function reload()
     nothing
 end
 
-projectpath(p::Project, parent::String) =
-    joinpath(projectpath(p), if parent === DATA_HOME || parent in DATA_DIRS
+applicationpath(app::App, parent::String) =
+    joinpath(applicationpath(app), if parent === DATA_HOME || parent in DATA_DIRS
                  "data\\"
              elseif parent == CONFIG_HOME || parent in CONFIG_DIRS
                  "config\\"
@@ -287,12 +287,12 @@ projectpath(p::Project, parent::String) =
                  ""
              end)
 
-function projectpath(p::Project, parents::Vector{String})
+function applicationpath(app::App, parents::Vector{String})
     if isempty(parents)
-        projectpath(p)
+        applicationpath(app)
     else
-        projectpath(p, first(parents))
+        applicationpath(app, first(parents))
     end
 end
 
-projectpath(p::Project) = joinpath(p.org, p.name, "")
+applicationpath(app::App) = joinpath(app.org, app.name, "")

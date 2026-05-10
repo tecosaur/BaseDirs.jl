@@ -67,8 +67,8 @@ Base.@assume_effects :foldable function simpleascii(s::String)
     String(out)
 end
 
-projectpath(p::Project, _) = projectpath(p)
-projectpath(p::Project) =
-    string(join(split(p.qualifier, '.') |> reverse, '.'), '.',
-           simpleascii(p.org), '.',
-           simpleascii(p.name), '/')
+applicationpath(app::App, _) = applicationpath(app)
+applicationpath(app::App) =
+    string(join(split(app.qualifier, '.') |> reverse, '.'), '.',
+           simpleascii(app.org), '.',
+           simpleascii(app.name), '/')

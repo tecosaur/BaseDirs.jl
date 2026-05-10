@@ -144,23 +144,23 @@ Base.@assume_effects :foldable function plainascii(s::String)
     String(out)
 end
 
-function projectpath(p::Project, parent::String)
+function applicationpath(app::App, parent::String)
     # For quick exact matching, we can consider the pointers of
     # the strings in SYSTEMD_DIRS.
     if SYSTEMD_SERVICE && pointer(parent) ∈ map(pointer, SYSTEMD_DIRS)
         ""
     else
-        projectpath(p)
+        applicationpath(app)
     end
 end
 
-function projectpath(p::Project, parents::Vector{String})
+function applicationpath(app::App, parents::Vector{String})
     if isempty(parents)
-        projectpath(p)
+        applicationpath(app)
     else
-        projectpath(p, first(parents))
+        applicationpath(app, first(parents))
     end
 end
 
-projectpath(p::Project) =
-    string(plainascii(p.org), '/', plainascii(p.name), '/')
+applicationpath(app::App) =
+    string(plainascii(app.org), '/', plainascii(app.name), '/')

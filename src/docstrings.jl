@@ -21,8 +21,8 @@ BaseDirs.User.cache), [`runtime`](@ref BaseDirs.User.runtime), and
 [`state`](@ref BaseDirs.User.state), are available under `BaseDirs` as they have
 no `System` equivalent they could be confused with.
 
-Also see [`BaseDirs.Project`](@ref BaseDirs.Project) for information on how to
-generate appropriate project paths.
+Also see [`BaseDirs.App`](@ref BaseDirs.App) for information on how to
+generate appropriate application-specific paths.
 
 !!! note
     This is essentially an implementation of the XDG (Cross-Desktop Group) directory
@@ -64,25 +64,35 @@ but is non-essential.
 @doc """
      Project
 
-A representation of a "Project", namely the essential components of naming
+A representation of an "App", namely the essential components of naming
 information used to produce platform-appropriate project paths.
 
-    Project(name::Union{AbstractString, Module};
-            org::AbstractString="julia", qualifier::AbstractString="lang")
+!!! warning "Deprecated"
+    `Project` has been renamed to `App` as of BaseDirs v1.4. Please use `App` instead.
+""" Project
+
+@doc """
+     App
+
+A representation of an application, namely the essential components of naming
+information used to produce platform-appropriate paths for an application.
+
+    App(name::Union{AbstractString, Module};
+        org::AbstractString="julia", qualifier::AbstractString="lang")
 
 The information needed, and the platforms that make use of it, are as follows:
-- `name`, the name of the project (Linux, MacOS, Windows)
-- `org` (`"julia"`), the organisation the project belongs to (MacOS, Windows)
+- `name`, the name of the application (Linux, MacOS, Windows)
+- `org` (`"julia"`), the organisation the application belongs to (MacOS, Windows)
 - `qualifier` (`"org"`), the nature of the organisation, usually a TLD (MacOS)
 
-The resulting "project path components" take one of the following forms:
+The resulting "application path components" take one of the following forms:
 
-| Platform | Project path form         |
+| Platform | Application path form         |
 |----------|---------------------------|
 | Linux    | `"\$org/\$name"`            |
 | MacOS    | `"\$qualifier.\$org.\$name"` |
 | Windows  | `"\$org\\\$name"`           |
-""" Project
+""" App
 
 # ---------
 

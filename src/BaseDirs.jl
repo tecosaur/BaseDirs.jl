@@ -1,7 +1,7 @@
 module BaseDirs
 
 @static if VERSION >= v"1.11"
-    eval(Expr(:public, :System, :User, :Project, :reload, :data, :config,
+    eval(Expr(:public, :System, :User, :App, :Project, :reload, :data, :config,
               :fonts, :applications, :cache, :runtime, :state, :DATA_HOME,
               :DATA_DIRS, :CONFIG_HOME, :CONFIG_DIRS, :BIN_HOME, :STATE_HOME,
               :CACHE_HOME, :RUNTIME_DIR, :DESKTOP_DIR, :DOWNLOAD_DIR,
@@ -13,21 +13,26 @@ end
 include("variables.jl")
 
 function reload end
-function projectpath end
+function applicationpath end
 
-struct Project
+struct App
     name::String
     org::String
     qualifier::String
 end
 
-Project(name::AbstractString, org::AbstractString, qualifier::AbstractString) =
-    Project(String(name), String(org), String(qualifier))
+App(name::AbstractString, org::AbstractString, qualifier::AbstractString) =
+    App(String(name), String(org), String(qualifier))
 
-Project(name::AbstractString; org::AbstractString="julia", qualifier::AbstractString="lang") =
-    Project(name, org, qualifier)
+App(name::AbstractString; org::AbstractString="julia", qualifier::AbstractString="lang") =
+    App(name, org, qualifier)
 
-Project(mod::Module) = Project(String(nameof(parentmodule(mod))))
+App(mod::Module) = App(String(nameof(parentmodule(mod))))
+
+function Project(args...; kwargs...)
+    Base.depwarn("`Project` has been renamed to `App` as of BaseDirs v1.4", :Project)
+    App(args...; kwargs...)
+end
 
 include("internals.jl")
 
@@ -104,8 +109,8 @@ if ccall(:jl_generating_output, Cint, ()) != 0
             fn("sam", "ple")
             fn(BaseDirs)
             fn(BaseDirs, "hey")
-            fn(Project("hey"))
-            fn(Project("hey"), "samp/")
+            fn(App("hey"))
+            fn(App("hey"), "samp/")
         end
         for fn in (User.desktop, User.downloads, User.documents, User.music,
                 User.pictures, User.videos, User.templates, User.public,

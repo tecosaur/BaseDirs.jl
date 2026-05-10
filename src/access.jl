@@ -21,7 +21,7 @@ function bin(name; create::Bool=false)
     create && Internals.ensureexecutable(path)
     path
 end
-function bin(project::BaseDirs.Project; create::Bool=false)
+function bin(project::BaseDirs.App; create::Bool=false)
     path = Internals.resolvedirpath(BaseDirs.BIN_HOME, (project.name,); create)
     create && Internals.ensureexecutable(path)
     path

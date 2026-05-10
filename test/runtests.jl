@@ -6,6 +6,12 @@ using Test
 
 usr = homedir()
 
+@testset "Project compat" begin
+    @test BaseDirs.Project("foo") == BaseDirs.App("foo")
+    @test BaseDirs.Project("foo", org="org") == BaseDirs.App("foo", org="org")
+    @test BaseDirs.Project("foo", "org", "qual") == BaseDirs.App("foo", "org", "qual")
+end
+
 if Sys.isapple()
     @testset "Dirs" begin
         @testset "Base" begin
@@ -69,10 +75,10 @@ if Sys.isapple()
         @test BaseDirs.fonts() == ["$usr/Library/Fonts", "/Library/Fonts", "/System/Library/Fonts", "/System/Library/Fonts/Supplemental", "/Network/Library/Fonts"]
         @test BaseDirs.applications() == ["/Applications"]
     end
-    @testset "Project" begin
-        @test BaseDirs.projectpath(BaseDirs.Project("a")) == "lang.julia.a/"
-        @test BaseDirs.projectpath(BaseDirs.Project("a"), "?") == "lang.julia.a/"
-        @test BaseDirs.projectpath(BaseDirs.Project("Hey There")) == "lang.julia.Hey-There/"
+    @testset "App" begin
+        @test BaseDirs.applicationpath(BaseDirs.App("a")) == "lang.julia.a/"
+        @test BaseDirs.applicationpath(BaseDirs.App("a"), "?") == "lang.julia.a/"
+        @test BaseDirs.applicationpath(BaseDirs.App("Hey There")) == "lang.julia.Hey-There/"
     end
     @test isnothing(BaseDirs.reload())
 elseif Sys.isunix()
@@ -165,10 +171,10 @@ elseif Sys.isunix()
         @test BaseDirs.fonts() == ["$usr/.local/share/fonts", "$usr/.fonts", "/usr/local/share/fonts", "/usr/share/fonts"]
         @test BaseDirs.applications() == ["$usr/.local/share/applications", "/usr/local/share/applications", "/usr/share/applications"]
     end
-    @testset "Project" begin
-        @test BaseDirs.projectpath(BaseDirs.Project("a")) == "julia/a/"
-        @test BaseDirs.projectpath(BaseDirs.Project("a"), "?") == "julia/a/"
-        @test BaseDirs.projectpath(BaseDirs.Project("Hey There")) == "julia/heythere/"
+    @testset "App" begin
+        @test BaseDirs.applicationpath(BaseDirs.App("a")) == "julia/a/"
+        @test BaseDirs.applicationpath(BaseDirs.App("a"), "?") == "julia/a/"
+        @test BaseDirs.applicationpath(BaseDirs.App("Hey There")) == "julia/heythere/"
     end
     @testset "Directory existence" begin
         withenv("XDG_DATA_DIRS" => "/root/forbidden:/nonexistent:/usr/share") do
@@ -179,10 +185,10 @@ elseif Sys.isunix()
     end
     @testset "File creation" begin
         filepath = "$usr/.local/share/julia/a/my_base_dirs_julia_test_file"
-        @test BaseDirs.User.data(BaseDirs.Project("a"), "my_base_dirs_julia_test_file") == filepath
+        @test BaseDirs.User.data(BaseDirs.App("a"), "my_base_dirs_julia_test_file") == filepath
         rm(filepath, force=true)
         try
-            @test BaseDirs.User.data(BaseDirs.Project("a"), "my_base_dirs_julia_test_file", create=true) == filepath
+            @test BaseDirs.User.data(BaseDirs.App("a"), "my_base_dirs_julia_test_file", create=true) == filepath
             @test isfile(filepath)
         finally
             rm(filepath, force=true)
@@ -190,10 +196,10 @@ elseif Sys.isunix()
     end
     @testset "Folder creation" begin
         folderpath = "$usr/.local/share/julia/a/my_base_dirs_julia_test_dir/"
-        @test BaseDirs.User.data(BaseDirs.Project("a"), "my_base_dirs_julia_test_dir/") == folderpath
+        @test BaseDirs.User.data(BaseDirs.App("a"), "my_base_dirs_julia_test_dir/") == folderpath
         rm(folderpath, force=true)
         try
-            @test BaseDirs.User.data(BaseDirs.Project("a"), "my_base_dirs_julia_test_dir/", create=true) == folderpath
+            @test BaseDirs.User.data(BaseDirs.App("a"), "my_base_dirs_julia_test_dir/", create=true) == folderpath
             @test isdir(folderpath)
         finally
             rm(folderpath, force=true)
@@ -207,7 +213,7 @@ elseif Sys.isunix()
             @test isfile(exec)
             @test stat(exec).mode & 0o001 != 0
             @test exec == BaseDirs.User.bin("my_base_dirs_julia_test_binary", create=true)
-            @test exec == BaseDirs.User.bin(BaseDirs.Project("my_base_dirs_julia_test_binary"))
+            @test exec == BaseDirs.User.bin(BaseDirs.App("my_base_dirs_julia_test_binary"))
         finally
             rm("$usr/.local/bin/my_base_dirs_julia_test_binary", force=true)
         end
@@ -259,7 +265,7 @@ elseif Sys.isunix()
             write(test_script_project, """
             using BaseDirs
 
-            proj = BaseDirs.Project("testapp", org="testorg")
+            proj = BaseDirs.App("testapp", org="testorg")
 
             println("SYSTEMD_SERVICE=", BaseDirs.SYSTEMD_SERVICE)
             println("User.config(proj)=", BaseDirs.User.config(proj))
@@ -453,14 +459,14 @@ elseif Sys.iswindows()
         @test BaseDirs.applications() == ["$usr\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs", "C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs"]
     end
     @testset "Projects" begin
-        @test BaseDirs.projectpath(BaseDirs.Project("a")) == "julia\\a\\"
-        @test BaseDirs.projectpath(BaseDirs.Project("a", org="b")) == "b\\a\\"
-        @test BaseDirs.projectpath(BaseDirs.Project("a"), BaseDirs.DATA_HOME) == "julia\\a\\data\\"
+        @test BaseDirs.applicationpath(BaseDirs.App("a")) == "julia\\a\\"
+        @test BaseDirs.applicationpath(BaseDirs.App("a", org="b")) == "b\\a\\"
+        @test BaseDirs.applicationpath(BaseDirs.App("a"), BaseDirs.DATA_HOME) == "julia\\a\\data\\"
         if BaseDirs.CONFIG_HOME != BaseDirs.DATA_HOME
-            @test BaseDirs.projectpath(BaseDirs.Project("a"), BaseDirs.CONFIG_HOME) == "julia\\a\\config\\"
+            @test BaseDirs.applicationpath(BaseDirs.App("a"), BaseDirs.CONFIG_HOME) == "julia\\a\\config\\"
         end
-        @test BaseDirs.projectpath(BaseDirs.Project("a"), BaseDirs.CACHE_HOME) == "julia\\a\\cache\\"
-        @test BaseDirs.projectpath(BaseDirs.Project("a"), BaseDirs.STATE_HOME) == "julia\\a\\state\\"
+        @test BaseDirs.applicationpath(BaseDirs.App("a"), BaseDirs.CACHE_HOME) == "julia\\a\\cache\\"
+        @test BaseDirs.applicationpath(BaseDirs.App("a"), BaseDirs.STATE_HOME) == "julia\\a\\state\\"
     end
     @test isnothing(BaseDirs.reload())
 end

@@ -17,8 +17,8 @@ make use of the accessor functions instead, which all follow this pattern:
 #+begin_src julia
 accessor() # Give the base directory(ies)
 accessor(parts...) # Give the base directory(ies) joined with parts
-accessor(proj::Project) # Give the base directory(ies) for proj
-accessors(proj::Project, parts...) # proj directory(ies) joined with parts
+accessor(app::App) # Give the base directory(ies) for proj
+accessors(app::App, parts...) # proj directory(ies) joined with parts
 #+end_src
 
 Where ~accessor~ is a stand-in for the particular named directory being resolved.
@@ -30,10 +30,10 @@ Two boolean keyword arguments are often supported:
   c. If the path is to a file (i.e. the path does not end with =/=), ~touch~​es the file.
 + =existent=, to filter the list of provided paths to ones that exist (when applicable)
 
-To give appropriate project-specific directories we can use a [[@ref][=BaseDirs.Project=]]:
+To give appropriate application-specific directories we can use a [[@ref][=BaseDirs.App=]]:
 
 #+begin_src @docs
-BaseDirs.Project
+BaseDirs.App
 #+end_src
 
 The user and system forms of the various accessor functions are split into the
@@ -84,7 +84,7 @@ julia> BaseDirs.User.config()
 julia> BaseDirs.User.config("sub", "dir/")
 "/home/tec/.config/sub/dir/"
 
-julia> BaseDirs.User.config(BaseDirs.Project("mything"), "config.conf", create=true)
+julia> BaseDirs.User.config(BaseDirs.App("mything"), "config.conf", create=true)
 "/home/tec/.config/mything/config.conf"
 #+end_src
 
@@ -185,7 +185,7 @@ Since these directories are resolved using runtime information, as tempting and
 easy as it may be to include a snippet like this in your package:
 
 #+begin_src julia
-const MY_CACHE = BaseDirs.User.cache(BaseDirs.Project("MyPkg"))
+const MY_CACHE = BaseDirs.User.cache(BaseDirs.App("MyPkg"))
 #+end_src
 
 When this is evaluated during precompilation, it "bakes in" the runtime

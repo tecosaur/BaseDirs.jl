@@ -159,10 +159,10 @@ macro defaccessor(fnname::Symbol, var::Union{Symbol, Expr})
             $warn_if_precompiling()
             $resolver($dirvar, pathcomponents; kwargs...)
         end
-        $(esc(fnname))(project::BaseDirs.Project, pathcomponents...; kwargs...) =
-            $(esc(fnname))(BaseDirs.projectpath(project, $dirvar), pathcomponents...; kwargs...)
+        $(esc(fnname))(app::BaseDirs.App, pathcomponents...; kwargs...) =
+            $(esc(fnname))(BaseDirs.applicationpath(app, $dirvar), pathcomponents...; kwargs...)
         $(esc(fnname))(mod::Module, pathcomponents...; kwargs...) =
-            $(esc(fnname))(BaseDirs.Project(mod), pathcomponents...; kwargs...)
+            $(esc(fnname))(BaseDirs.App(mod), pathcomponents...; kwargs...)
     end
 end
 
