@@ -52,13 +52,14 @@ While this could easily be done with a regex, unlike regex
 replacement this can be precompiled, reducing TTFX.
 """
 Base.@assume_effects :foldable function simpleascii(s::String)
-    out = Vector{UInt8}()
-    sizehint!(out, ncodeunits(s))
+    isvalid(b::UInt8) = UInt8('0') <= b <= UInt8('9') ||
+        UInt8('A') <= b <= UInt8('Z') ||
+        UInt8('a') <= b <= UInt8('z') ||
+        b in (UInt8('_'), UInt8('-'))
+    all(isvalid, codeunits(s)) && return s
+    out = sizehint!(UInt8[], ncodeunits(s))
     for b in codeunits(s)
-        if UInt8('0') <= b <= UInt8('9') ||
-           UInt8('A') <= b <= UInt8('Z') ||
-           UInt8('a') <= b <= UInt8('z') ||
-           b in (UInt8('_'), UInt8('-'))
+        if isvalid(b)
             push!(out, b)
         else
             push!(out, UInt8('-'))
