@@ -99,7 +99,7 @@ function reload()
     @setxdg RUNTIME_DIR SYSTEMD_DIRS.runtime joinpath("/run/user", string(Base.Libc.getuid()))
     # User directories
     homeuserdirs = parseuserdirs(CONFIG_HOME)
-    userdirs = if !isempty(CONFIG_DIRS)
+    userdirs = if isempty(CONFIG_DIRS)
         homeuserdirs
     else
         merge(parseuserdirs(first(CONFIG_DIRS)), homeuserdirs)
