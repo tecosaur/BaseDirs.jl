@@ -373,7 +373,7 @@ $(Internals.accessordoc(:cache, :CACHE_HOME, name="cached data"))
 """ User.cache
 
 @doc """
-$(Internals.accessordoc(:state, :STATE_HOME, name="runtime information"))
+$(Internals.accessordoc(:state, :RUNTIME_DIR, name="runtime information"))
 """ User.runtime
 
 @doc """
