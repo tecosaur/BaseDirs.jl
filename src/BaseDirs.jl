@@ -28,7 +28,7 @@ App(name::AbstractString, org::AbstractString, qualifier::AbstractString) =
 App(name::AbstractString; org::AbstractString="julia", qualifier::AbstractString="lang") =
     App(name, org, qualifier)
 
-App(mod::Module) = App(String(nameof(parentmodule(mod))))
+App(mod::Module) = App(String(nameof(Base.moduleroot(mod))))
 
 function Project(args...; kwargs...)
     Base.depwarn("`Project` has been renamed to `App` as of BaseDirs v1.4", :Project)
