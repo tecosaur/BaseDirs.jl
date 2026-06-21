@@ -7,6 +7,8 @@ using Base.Docs
 
 export @defaccessor, @setxdg, @setxdgs
 
+chopxdgsuffix(path::AbstractString) = String(rstrip(path, @static(if Sys.iswindows(); ('/', '\\') else '/' end)))
+
 @static if Sys.isunix()
     macro setxdg(envvar::Symbol, prioritydefault, default = nothing)
         if isnothing(default)
@@ -15,14 +17,14 @@ export @defaccessor, @setxdg, @setxdgs
         quote global $(esc(envvar)) = if !isempty($(esc(prioritydefault)))
             $(esc(prioritydefault))
         elseif haskey(ENV, $("XDG_$envvar")) && !isempty(ENV[$("XDG_$envvar")])
-            String(chopsuffix(ENV[$("XDG_$envvar")], Base.Filesystem.path_separator))
+            chopxdgsuffix(ENV[$("XDG_$envvar")])
         else expanduser($(esc(default))) end
         end
     end
 else
     macro setxdg(envvar::Symbol, default)
         quote global $(esc(envvar)) = if haskey(ENV, $("XDG_$envvar")) && !isempty(ENV[$("XDG_$envvar")])
-            String(chopsuffix(ENV[$("XDG_$envvar")], Base.Filesystem.path_separator))
+            chopxdgsuffix(ENV[$("XDG_$envvar")])
         else $(esc(default)) end
         end
     end
@@ -30,9 +32,7 @@ end
 
 macro setxdgs(envvar::Symbol, defaults)
     quote global $(esc(envvar)) = if haskey(ENV, $("XDG_$envvar")) && !isempty(ENV[$("XDG_$envvar")])
-        map(split(ENV[$("XDG_$envvar")], ':')) do path
-            String(chopsuffix(path, Base.Filesystem.path_separator))
-        end
+        map(chopxdgsuffix, split(ENV[$("XDG_$envvar")], @static if Sys.iswindows() ';' else ':' end))
     else $(esc(defaults)) end
     end
 end

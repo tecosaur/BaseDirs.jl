@@ -186,6 +186,25 @@ elseif Sys.isunix()
         end
         BaseDirs.reload()
     end
+    @testset "XDG_*_DIRS parsing" begin
+        @testset "separator" begin
+            withenv("XDG_DATA_DIRS" => "/opt/a:/opt/b") do
+                BaseDirs.reload()
+                @test BaseDirs.System.data() == ["/opt/a", "/opt/b"]
+            end
+        end
+        @testset "trailing separator stripped" begin
+            withenv("XDG_DATA_DIRS" => "/opt/a/:/opt/b//") do
+                BaseDirs.reload()
+                @test BaseDirs.System.data() == ["/opt/a", "/opt/b"]
+            end
+            withenv("XDG_DATA_HOME" => "/opt/home//") do
+                BaseDirs.reload()
+                @test BaseDirs.DATA_HOME == "/opt/home"
+            end
+        end
+        BaseDirs.reload()
+    end
     @testset "File creation" begin
         filepath = "$usr/.local/share/julia/a/my_base_dirs_julia_test_file"
         @test BaseDirs.User.data(BaseDirs.App("a"), "my_base_dirs_julia_test_file") == filepath
@@ -506,6 +525,24 @@ elseif Sys.iswindows()
         end
         @test BaseDirs.applicationpath(BaseDirs.App("a"), :cache, BaseDirs.CACHE_HOME) == "julia\\a\\cache\\"
         @test BaseDirs.applicationpath(BaseDirs.App("a"), :state, BaseDirs.STATE_HOME) == "julia\\a\\state\\"
+    end
+    @testset "XDG_*_DIRS parsing" begin
+        @testset "separator" begin
+            withenv("XDG_DATA_DIRS" => "C:\\A;D:\\B") do
+                BaseDirs.reload()
+                @test BaseDirs.System.data() == ["C:\\A", "D:\\B"]
+            end
+        end
+        @testset "trailing separator stripped" begin
+            withenv("XDG_DATA_DIRS" => "C:\\A\\;D:\\B/") do
+                BaseDirs.reload()
+                @test BaseDirs.System.data() == ["C:\\A", "D:\\B"]
+            end
+            withenv("XDG_DATA_HOME" => "C:\\Home\\/") do
+                BaseDirs.reload()
+                @test BaseDirs.DATA_HOME == "C:\\Home"
+            end
+        end
     end
     @test isnothing(BaseDirs.reload())
 end
