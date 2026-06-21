@@ -30,6 +30,10 @@ we take the first one for consistency with the non-systemd behaviour.
 SYSTEMD_DIRS::@NamedTuple{runtime::String, state::String, cache::String, logs::String, config::String} =
     (runtime = "", state = "", cache = "", logs = "", config = "")
 
+@static if VERSION < v"1.11-"
+    isreadable(path) = try open(Base.isreadable, path) catch; false end
+end
+
 """
     parseuserdirs(configdir::String) -> Dict{Symbol, String}
 
@@ -46,12 +50,7 @@ function parseuserdirs(configdir::String)
                   "XDG_PICTURES_DIR", "XDG_PROJECTS_DIR", "XDG_VIDEOS_DIR")
     userdirsfile = joinpath(configdir, "user-dirs.dirs")
     entries = Dict{Symbol, String}()
-    udfreadable = @static if VERSION >= v"1.11-"
-        isreadable(userdirsfile)
-    else
-        try open(isreadable, userdirsfile) catch; false end
-    end
-    if udfreadable && isfile(userdirsfile)
+    if isreadable(userdirsfile) && isfile(userdirsfile)
         for line in Iterators.map(strip, eachline(userdirsfile))
             if !startswith(line, '#') && occursin('=', line)
                 key, value = split(line, '=', limit=2)
@@ -65,6 +64,37 @@ function parseuserdirs(configdir::String)
                     if startswith(value, '/')
                         entries[Symbol(key)] = value
                     end
+                end
+            end
+        end
+    end
+    entries
+end
+
+"""
+    parsesystemuserdirs(configdir::String) -> Dict{Symbol, String}
+
+Parse the system `user-dirs.defaults` file that lies under `configdir`.
+
+This is the distribution-provided seed read by `xdg-user-dirs-update`. Unlike the
+per-user [`parseuserdirs`](@ref) file, lines take the form `<NAME>=<path>` with a
+bare key (no `XDG_` prefix or `_DIR` suffix) and an unquoted path relative to the
+home directory, e.g. `DESKTOP=Desktop`.
+
+Returns a dict keyed by the corresponding `XDG_*_DIR` symbols, with values
+resolved to absolute paths, so the result merges directly with `parseuserdirs`.
+"""
+function parsesystemuserdirs(configdir::String)
+    validnames = ("DESKTOP", "DOWNLOAD", "TEMPLATES", "PUBLICSHARE",
+                  "DOCUMENTS", "MUSIC", "PICTURES", "PROJECTS", "VIDEOS")
+    defaultsfile = joinpath(configdir, "user-dirs.defaults")
+    entries = Dict{Symbol, String}()
+    if isreadable(defaultsfile) && isfile(defaultsfile)
+        for line in Iterators.map(strip, eachline(defaultsfile))
+            if !startswith(line, '#') && occursin('=', line)
+                key, value = split(line, '=', limit=2)
+                if key in validnames && !isempty(value)
+                    entries[Symbol("XDG_", key, "_DIR")] = joinpath(homedir(), value)
                 end
             end
         end
@@ -98,12 +128,11 @@ function reload()
     @setxdg CACHE_HOME SYSTEMD_DIRS.cache "~/.cache"
     @setxdg RUNTIME_DIR SYSTEMD_DIRS.runtime joinpath("/run/user", string(Base.Libc.getuid()))
     # User directories
-    homeuserdirs = parseuserdirs(CONFIG_HOME)
-    userdirs = if isempty(CONFIG_DIRS)
-        homeuserdirs
-    else
-        merge(parseuserdirs(first(CONFIG_DIRS)), homeuserdirs)
+    userdirs = Dict{Symbol, String}()
+    for dir in Iterators.reverse(CONFIG_DIRS)
+        merge!(userdirs, parsesystemuserdirs(dir))
     end
+    merge!(userdirs, parseuserdirs(CONFIG_HOME))
     @setxdg DESKTOP_DIR     get(userdirs, :XDG_DESKTOP_DIR,     "~/Desktop")
     @setxdg DOWNLOAD_DIR    get(userdirs, :XDG_DOWNLOAD_DIR,    "~/Downloads")
     @setxdg DOCUMENTS_DIR   get(userdirs, :XDG_DOCUMENTS_DIR,   "~/Documents")

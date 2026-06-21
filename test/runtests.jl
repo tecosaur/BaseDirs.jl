@@ -245,6 +245,42 @@ elseif Sys.isunix()
                 mv("$usr/.config/user-dirs.dirs.backup", "$usr/.config/user-dirs.dirs")
         end
     end
+    @testset "System user-dirs.defaults" begin
+        sysdir = mktempdir()
+        write(joinpath(sysdir, "user-dirs.defaults"),
+              """
+              # Default settings for user directories
+              DESKTOP=Desktop
+              DOWNLOAD=Downloads
+              MUSIC=Documents/Music
+              UNKNOWN=Nope
+              EMPTY=
+              """)
+        hadhome = isfile("$usr/.config/user-dirs.dirs")
+        hadhome && mv("$usr/.config/user-dirs.dirs", "$usr/.config/user-dirs.dirs.backup")
+        try
+            withenv("XDG_CONFIG_DIRS" => sysdir) do
+                @test isnothing(BaseDirs.reload())
+                @test BaseDirs.User.desktop() == "$usr/Desktop"
+                @test BaseDirs.User.downloads() == "$usr/Downloads"
+                @test BaseDirs.User.music() == "$usr/Documents/Music"
+                # Unrecognised/empty keys fall back to built-in defaults.
+                @test BaseDirs.User.videos() == "$usr/Videos"
+            end
+            # A per-user entry overrides the system default.
+            write("$usr/.config/user-dirs.dirs", "XDG_DESKTOP_DIR=\"\$HOME/Workbench\"\n")
+            withenv("XDG_CONFIG_DIRS" => sysdir) do
+                BaseDirs.reload()
+                @test BaseDirs.User.desktop() == "$usr/Workbench"
+                @test BaseDirs.User.downloads() == "$usr/Downloads"
+            end
+        finally
+            rm("$usr/.config/user-dirs.dirs", force=true)
+            hadhome && mv("$usr/.config/user-dirs.dirs.backup", "$usr/.config/user-dirs.dirs")
+            rm(sysdir, recursive=true, force=true)
+            BaseDirs.reload()
+        end
+    end
     @testset "Systemd Integration" begin
         has_systemd = success(`systemctl --version`)
         can_run_service = success(`systemctl --user show-environment`)
