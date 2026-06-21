@@ -8,7 +8,7 @@ Base.Docs.doc!(@__MODULE__, # Please let me know if there's an easier way.
 
 This module provides utilities to identify the appropriate locations for files.
 
-The [`User`](@ref BaseDirs.User) and [`System`](BaseDirs.System) submodules
+The [`User`](@ref BaseDirs.User) and [`System`](@ref BaseDirs.System) submodules
 provide a number of accessor functions, which see.
 
 There are also four combined accessor functions defined, namely: [`data`](@ref
@@ -34,7 +34,7 @@ generate appropriate application-specific paths.
     - The [*Standard Directories*](https://developer.apple.com/library/content/documentation/FileManagement/Conceptual/FileSystemProgrammingGuide/FileSystemOverview/FileSystemOverview.html#//apple_ref/doc/uid/TP40010672-CH2-SW6)
       guidelines on macOS
 
-    Whenever a the relevant `XDG_*` environment variable is set, it overrides the default
+    Whenever the relevant `XDG_*` environment variable is set, it overrides the default
     path on all platforms.
 
 # Guidelines for appropriate directories
@@ -86,7 +86,7 @@ information used to produce platform-appropriate paths for an application.
 The information needed, and the platforms that make use of it, are as follows:
 - `name`, the name of the application (Linux, MacOS, Windows)
 - `org` (`"julia"`), the organisation the application belongs to (MacOS, Windows)
-- `qualifier` (`"org"`), the nature of the organisation, usually a TLD (MacOS)
+- `qualifier` (`"lang"`), the nature of the organisation, usually a TLD (MacOS)
 
 The resulting "application path components" take one of the following forms:
 
@@ -107,9 +107,9 @@ written.
 
 **Default values**
 
-| Linux            | MacOS                          | Windows          |
-|------------------|--------------------------------|------------------|
-| `~/.local/share` | `~/Library/ApplicationSupport` | `RoamingAppData` |
+| Linux            | MacOS                           | Windows          |
+|------------------|---------------------------------|------------------|
+| `~/.local/share` | `~/Library/Application Support` | `RoamingAppData` |
 """ DATA_HOME
 
 @doc """
@@ -120,9 +120,9 @@ should be searched.
 
 **Default values**
 
-| Linux              | MacOS                         | Windows       |
-|--------------------|-------------------------------|---------------|
-| `/usr/local/share` | `/Library/ApplicationSupport` | `ProgramData` |
+| Linux              | MacOS                          | Windows       |
+|--------------------|--------------------------------|---------------|
+| `/usr/local/share` | `/Library/Application Support` | `ProgramData` |
 | `/usr/share`       |                               |               |
 """ DATA_DIRS
 
@@ -142,7 +142,7 @@ should be written.
 
 | Linux             | MacOS                          | Windows          |
 |-------------------|--------------------------------|------------------|
-| `~/.local/config` | `~/Library/ApplicationSupport` | `RoamingAppData` |
+| `~/.config` | `~/Library/Application Support` | `RoamingAppData` |
 """ CONFIG_HOME
 
 @doc """
@@ -151,17 +151,11 @@ should be written.
 The set of *preference ordered* base directories relative to which data files
 should be searched.
 
-!!! note "Systemd integration"
-    If the program is running as a systemd service, and the
-    [`StateDirectory` sandbox](https://www.freedesktop.org/software/systemd/man/latest/systemd.exec.html#Sandboxing)
-    is specified, then that directory will be used instead. Should
-    multiple state directories be specified, the first one is used.
-
 **Default values**
 
 | Linux      | MacOS                         | Windows       |
 |------------|-------------------------------|---------------|
-| `/etc/xdg` | `/Library/ApplicationSupport` | `ProgramData` |
+| `/etc/xdg` | `/Library/Application Support` | `ProgramData` |
 """ CONFIG_DIRS
 
 @doc """
@@ -176,11 +170,17 @@ should be stored in `DATA_HOME`. It may contain:
 - actions history (logs, history, recently used files, …)
 - current state of the application that can be reused on a restart (view, layout, open files, undo history, …)
 
+!!! note "Systemd integration"
+    If the program is running as a systemd service, and the
+    [`StateDirectory` sandbox](https://www.freedesktop.org/software/systemd/man/latest/systemd.exec.html#Sandboxing)
+    is specified, then that directory will be used instead. Should multiple
+    state directories be specified, the first one is used.
+
 **Default values**
 
-| Linux            | MacOS                          | Windows        |
-|------------------|--------------------------------|----------------|
-| `~/.local/state` | `~/Library/ApplicationSupport` | `LocalAppData` |
+| Linux            | MacOS                           | Windows        |
+|------------------|---------------------------------|----------------|
+| `~/.local/state` | `~/Library/Application Support` | `LocalAppData` |
 """ STATE_HOME
 
 @doc """
@@ -199,7 +199,8 @@ written.
 |                | `/usr/local/bin`               | `AppData\\bin`        |
 |                |                                | current working dir  |
 
-\\* The first of these directories that exists is used.
+\\* The first of these directories present in `PATH` is used, falling back to
+the last entry otherwise.
 
 !!! warning
     This is not yet standardised by the XDG, see
@@ -231,7 +232,7 @@ data should be written.
 **RUNTIME_DIR** (`XDG_RUNTIME_DIR`)
 
 The single base directory relative to which user-specific runtime files and
-other file objects should be placed. . Applications should use this directory
+other file objects should be placed. Applications should use this directory
 for communication and synchronization purposes and should not place larger files
 in it.
 
@@ -243,9 +244,9 @@ in it.
 
 **Default values**
 
-| Linux            | MacOS                          | Windows        |
-|------------------|--------------------------------|----------------|
-| `/run/user/\$UID` | `~/Library/ApplicationSupport` | `LocalAppData` |
+| Linux             | MacOS                           | Windows        |
+|-------------------|---------------------------------|----------------|
+| `/run/user/\$UID` | `~/Library/Application Support` | `LocalAppData` |
 """ RUNTIME_DIR
 
 # ---------
@@ -321,7 +322,7 @@ A list of locations in which font files may be found.
 @doc """
 **BaseDirs.User**
 
-This module containes accessor functions for user-specific directories.
+This module contains accessor functions for user-specific directories.
 
 ### Base directory accessors
 
@@ -333,9 +334,11 @@ BaseDirs.User.cache), and [`runtime`](@ref BaseDirs.User.runtime) produce a
 ### User directory accessors
 
 The functions [`desktop`](@ref BaseDirs.User.desktop), [`downloads`](@ref
-BaseDirs.User.downloads), [`music`](@ref BaseDirs.User.music), [`videos`](@ref
-BaseDirs.User.videos), [`templates`](@ref BaseDirs.User.templates),
-[`public`](@ref BaseDirs.User.public) produce a `String`.
+BaseDirs.User.downloads), [`documents`](@ref BaseDirs.User.documents),
+[`projects`](@ref BaseDirs.User.projects), [`music`](@ref BaseDirs.User.music),
+[`pictures`](@ref BaseDirs.User.pictures), [`videos`](@ref BaseDirs.User.videos),
+[`templates`](@ref BaseDirs.User.templates), [`public`](@ref BaseDirs.User.public)
+produce a `String`.
 
 ### Other accessors
 
@@ -349,7 +352,7 @@ BaseDirs.User.applications) produce a `Vector{String}`.
 """ User
 
 @doc """
-$(Internals.accessordoc(:data, :DATA_HOME, name="user configuration"))
+$(Internals.accessordoc(:data, :DATA_HOME, name="user data"))
 """ User.data
 
 @doc """
@@ -373,7 +376,7 @@ $(Internals.accessordoc(:cache, :CACHE_HOME, name="cached data"))
 """ User.cache
 
 @doc """
-$(Internals.accessordoc(:state, :RUNTIME_DIR, name="runtime information"))
+$(Internals.accessordoc(:runtime, :RUNTIME_DIR, name="runtime information"))
 """ User.runtime
 
 @doc """
@@ -400,7 +403,7 @@ The desktop directory is based on the variable `BaseDirs.DESKTOP_DIR`, which see
 
 Join the downloads directory with zero or more path components (`parts`).
 
-The downloads directory is based on the variable `BaseDirs.DOWNLOADS_DIR`, which see.
+The downloads directory is based on the variable `BaseDirs.DOWNLOAD_DIR`, which see.
 """ User.downloads
 
 @doc """
@@ -456,7 +459,7 @@ The templates directory is based on the variable `BaseDirs.TEMPLATES_DIR`, which
 
 Join the public directory with zero or more path components (`parts`).
 
-The public directory is based on the variable `BaseDirs.PUBLIC_DIR`, which see.
+The public directory is based on the variable `BaseDirs.PUBLICSHARE_DIR`, which see.
 """ User.public
 
 # ---------
@@ -480,7 +483,7 @@ See also: [`BaseDirs.User`](@ref).
 """ System
 
 @doc """
-$(Internals.accessordoc(:data, :DATA_DIRS, name="system configuration"))
+$(Internals.accessordoc(:data, :DATA_DIRS, name="system data"))
 """ System.data
 
 @doc """
@@ -498,7 +501,7 @@ $(Internals.accessordoc(:applications, name="system applications", plural=true))
 # ---------
 
 @doc """
-$(Internals.accessordoc(:data, [:DATA_HOME, :DATA_DIRS], name="user and system configuration"))
+$(Internals.accessordoc(:data, [:DATA_HOME, :DATA_DIRS], name="user and system data"))
 """ data
 
 @doc """

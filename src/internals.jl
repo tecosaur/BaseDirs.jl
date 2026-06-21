@@ -184,12 +184,12 @@ function accessordoc(finfo::Union{Symbol, Tuple{String, Symbol}},
     kwargs = ifelse(plural, "; create, existent", "; create")
     """
     $fprefix$fname($kwargs) -> $rettype # $dirprefix $name $dirterm
-    $fprefix$fname([mod::Module or proj::Project], parts...$kwargs) # a [project-specific] $name path
+    $fprefix$fname([mod::Module or app::App], parts...$kwargs) # an [application-specific] $name path
 
 Locate $dirprefix $name $dirterm, or a path within it.
 
-A project or module can be optionally provided as the first argument, in which
-case the returned path is scoped to the project or module.
+An application or module can be optionally provided as the first argument, in
+which case the returned path is scoped to the application or module.
 
 $vardoc
 ## Keyword arguments

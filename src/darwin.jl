@@ -68,7 +68,7 @@ Base.@assume_effects :foldable function simpleascii(s::String)
     String(out)
 end
 
-# Copied from `unix.jl:132` for `unixapplicationpath`
+# Copied from `unix.jl:137` for `unixapplicationpath`
 Base.@assume_effects :foldable function plainascii(s::String)
     isvalid(b::UInt8) = UInt8('0') <= b <= UInt8('9') ||
         UInt8('a') <= b <= UInt8('z') ||
