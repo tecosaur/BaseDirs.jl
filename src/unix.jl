@@ -56,7 +56,11 @@ function parseuserdirs(configdir::String)
                 key, value = split(line, '=', limit=2)
                 if key in validnames
                     if startswith(value, '"') && endswith(value, '"')
-                        value = unescape_string(chop(value, head=1, tail=1))
+                        value = try
+                            unescape_string(chop(value, head=1, tail=1))
+                        catch
+                            continue
+                        end
                     end
                     if startswith(value, "\$HOME")
                         value = string(homedir(), chopprefix(value, "\$HOME"))
@@ -105,7 +109,7 @@ end
 function reload()
     # Systemd detection
     @static if Sys.islinux()
-        cgroup = readchomp("/proc/self/cgroup")
+        cgroup = try readchomp("/proc/self/cgroup") catch; "" end
         global SYSTEMD_SERVICE = startswith(cgroup, "0::") && endswith(cgroup, ".service")
         global SYSTEMD_DIRS = if SYSTEMD_SERVICE
             (runtime = first(eachsplit(get(ENV, "RUNTIME_DIRECTORY", ""), ':')),

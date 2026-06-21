@@ -252,12 +252,16 @@ elseif Sys.isunix()
                   an invalid line
                   XDG_DOWNLOAD_DIR=/tmp/Downloads
                   XDG_TEMPLATES_DIR=/=Templates=
+                  XDG_PICTURES_DIR="\$HOME/\\xZZ"
+                  XDG_VIDEOS_DIR="\$HOME/Films"
                   XDG_INVALID="???"
                   """)
             @test isnothing(BaseDirs.reload())
             @test BaseDirs.User.desktop() == "$usr/Workbench"
             @test BaseDirs.User.downloads() == "/tmp/Downloads"
             @test BaseDirs.User.templates() == "/=Templates="
+            @test BaseDirs.User.pictures() == "$usr/Pictures"
+            @test BaseDirs.User.videos() == "$usr/Films"
         finally
             rm("$usr/.config/user-dirs.dirs", force=true)
             isfile("$usr/.config/user-dirs.dirs.backup") &&
