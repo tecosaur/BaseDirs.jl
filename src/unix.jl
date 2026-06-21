@@ -40,9 +40,6 @@ end
 Parse the `user-dirs.dirs` file that lies under `configdir`.
 
 Returns a dict with all recognised entries of the file.
-
-!!! warning "Warning: Private"
-    This is _not_ part of the BaseDirs API.
 """
 function parseuserdirs(configdir::String)
     validnames = ("XDG_DESKTOP_DIR", "XDG_DOWNLOAD_DIR", "XDG_TEMPLATES_DIR",
