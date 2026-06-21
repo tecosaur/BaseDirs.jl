@@ -254,9 +254,8 @@ function reload()
         binmaybe = [joinpath(homedir(), "bin"),
                     joinpath(rf.RoamingAppData, "bin"),
                     joinpath(rf.LocalAppData, "bin")]
-        Iterators.flatten((Iterators.filter(p -> p in path,
-                                            binmaybe),
-                           (pwd(),))) |> first
+        Iterators.flatten((Iterators.filter(p -> p in path, binmaybe),
+                           (first(binmaybe),))) |> first
     end
     # User directories
     @setxdg DESKTOP_DIR rf.Desktop
