@@ -5,8 +5,9 @@ module BaseDirs
               :fonts, :applications, :cache, :runtime, :state, :DATA_HOME,
               :DATA_DIRS, :CONFIG_HOME, :CONFIG_DIRS, :BIN_HOME, :STATE_HOME,
               :CACHE_HOME, :RUNTIME_DIR, :DESKTOP_DIR, :DOWNLOAD_DIR,
-              :DOCUMENTS_DIR, :PICTURES_DIR, :PROJECTS_DIR, :VIDEO_DIR,
-              :TEMPLATE_DIR, :PUBLICSHARE_DIR, :APPLICATIONS_DIRS, :FONTS_DIRS,
+              :DOCUMENTS_DIR, :MUSIC_DIR, :PICTURES_DIR, :PROJECTS_DIR,
+              :VIDEOS_DIR, :TEMPLATES_DIR, :PUBLICSHARE_DIR,
+              :APPLICATIONS_DIRS, :FONTS_DIRS,
               Symbol("@promise_no_assign")))
 end
 
