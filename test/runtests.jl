@@ -203,6 +203,13 @@ elseif Sys.isunix()
         @test BaseDirs.applicationpath(BaseDirs.App("a"), "?") == "julia/a/"
         @test BaseDirs.applicationpath(BaseDirs.App("Hey There")) == "julia/heythere/"
     end
+    @testset "User directory names" begin
+        names = BaseDirs.USER_DIR_NAMES
+        @test sort([Int(BaseDirs.userdirhash(name)) for name in names]) == 0:length(names)-1
+        @test all(i -> BaseDirs.userdirindex(names[i]) == i, eachindex(names))
+        @test BaseDirs.userdirindex(SubString("XDG_MUSIC_DIR", 5, 9)) == BaseDirs.userdirindex("MUSIC")
+        @test all(isnothing ∘ BaseDirs.userdirindex, ("", "DESK", "Desktop", "DESKTOPS", "INVALID"))
+    end
     @testset "Directory existence" begin
         symloop = joinpath(usr, "loop")
         symlink(symloop, symloop)

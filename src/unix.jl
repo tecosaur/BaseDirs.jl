@@ -30,88 +30,123 @@ we take the first one for consistency with the non-systemd behaviour.
 SYSTEMD_DIRS::@NamedTuple{runtime::String, state::String, cache::String, logs::String, config::String} =
     (runtime = "", state = "", cache = "", logs = "", config = "")
 
-@static if VERSION < v"1.11-"
-    isreadable(path) = try open(Base.isreadable, path) catch; false end
+"""
+    userdirhash(name::AbstractString) -> UInt8
+
+Hash `name` by its fourth byte, which perfectly maps `USER_DIR_NAMES` onto `0:8`.
+"""
+userdirhash(name::AbstractString) = ((codeunit(name, 4) ⊻ 0x2a) * 0xec) >> 4
+
+"""
+The XDG user directories, as named in `user-dirs.defaults` (and, wrapped as
+`XDG_<name>_DIR`, `user-dirs.dirs`), ordered by `userdirhash`.
+"""
+const USER_DIR_NAMES = let names = ("DESKTOP", "DOWNLOAD", "TEMPLATES", "PUBLICSHARE",
+                                    "DOCUMENTS", "MUSIC", "PICTURES", "PROJECTS", "VIDEOS")
+    names[sortperm(collect(map(userdirhash, names)))]
 end
 
 """
-    parseuserdirs(configdir::String) -> Dict{Symbol, String}
+    userdirindex(name::AbstractString) -> Union{Int, Nothing}
 
-Parse the `user-dirs.dirs` file that lies under `configdir`.
-
-Returns a dict with all recognised entries of the file.
+Find the index of `name` in `USER_DIR_NAMES`, or `nothing` if it isn't one.
 """
-function parseuserdirs(configdir::String)
-    # As in xdg-user-dir-lookup.c, a backslash makes the next character literal
-    function shellunescape(value::AbstractString)
-        out = IOBuffer(sizehint=ncodeunits(value))
-        chars = Iterators.Stateful(value)
-        for char in chars
-            print(out, char == '\\' && !isempty(chars) ? popfirst!(chars) : char)
-        end
-        String(take!(out))
+function userdirindex(name::AbstractString)
+    ncodeunits(name) >= 4 || return nothing
+    index = userdirhash(name) + 1
+    index <= length(USER_DIR_NAMES) && USER_DIR_NAMES[index] == name ? Int(index) : nothing
+end
+
+"""
+    readfile(path::String) -> String
+
+Read the file at `path`, or return `""` if it's missing or unreadable.
+"""
+function readfile(path::String)
+    ispath(path) || return "" # Much cheaper than catching the error from `read`
+    try
+        read(path, String)
+    catch err
+        err isa Union{SystemError, Base.IOError} || rethrow()
+        ""
     end
-    validnames = ("XDG_DESKTOP_DIR", "XDG_DOWNLOAD_DIR", "XDG_TEMPLATES_DIR",
-                  "XDG_PUBLICSHARE_DIR", "XDG_DOCUMENTS_DIR", "XDG_MUSIC_DIR",
-                  "XDG_PICTURES_DIR", "XDG_PROJECTS_DIR", "XDG_VIDEOS_DIR")
-    userdirsfile = joinpath(configdir, "user-dirs.dirs")
-    entries = Dict{Symbol, String}()
-    if isreadable(userdirsfile) && isfile(userdirsfile)
-        for line in Iterators.map(strip, eachline(userdirsfile))
-            if !startswith(line, '#') && occursin('=', line)
-                key, value = split(line, '=', limit=2)
-                if key in validnames
-                    if startswith(value, '"') && endswith(value, '"')
-                        value = shellunescape(chop(value, head=1, tail=1))
-                    end
-                    if startswith(value, "\$HOME")
-                        value = string(homedir(), chopprefix(value, "\$HOME"))
-                    end
-                    if startswith(value, '/')
-                        entries[Symbol(key)] = value
-                    end
-                end
+end
+
+"""
+    parseuserdirs!(userdirs::Vector{String}, configdir::String) -> userdirs
+
+Update `userdirs` (ordered as `USER_DIR_NAMES`) with the entries of the
+`user-dirs.dirs` file that lies under `configdir`.
+"""
+function parseuserdirs!(userdirs::Vector{String}, configdir::String)
+    # As in xdg-user-dir-lookup.c, a backslash makes the next character literal
+    function shellunescape(value::SubString{String})
+        occursin('\\', value) || return value
+        out = IOBuffer(sizehint=ncodeunits(value))
+        escaped = false
+        for char in value
+            if char == '\\' && !escaped
+                escaped = true
+            else
+                print(out, char)
+                escaped = false
             end
         end
+        escaped && print(out, '\\')
+        SubString(String(take!(out)))
     end
-    entries
+    home = homedir()
+    for line in Iterators.map(strip, eachsplit(readfile(joinpath(configdir, "user-dirs.dirs")), '\n'))
+        startswith(line, '#') && continue
+        eq = findfirst('=', line)
+        isnothing(eq) && continue
+        key, value = SubString(line, 1, prevind(line, eq)), SubString(line, nextind(line, eq))
+        startswith(key, "XDG_") && endswith(key, "_DIR") || continue
+        index = userdirindex(chop(key, head=4, tail=4))
+        isnothing(index) && continue
+        if startswith(value, '"') && endswith(value, '"')
+            value = shellunescape(chop(value, head=1, tail=1))
+        end
+        path = if startswith(value, "\$HOME")
+            string(home, chopprefix(value, "\$HOME"))
+        else
+            String(value)
+        end
+        startswith(path, '/') && (userdirs[index] = path)
+    end
+    userdirs
 end
 
 """
-    parsesystemuserdirs(configdir::String) -> Dict{Symbol, String}
+    parsesystemuserdirs!(userdirs::Vector{String}, configdir::String) -> userdirs
 
-Parse the system `user-dirs.defaults` file that lies under `configdir`.
+Update `userdirs` (ordered as `USER_DIR_NAMES`) with the entries of the system
+`user-dirs.defaults` file that lies under `configdir`.
 
 This is the distribution-provided seed read by `xdg-user-dirs-update`. Unlike the
-per-user [`parseuserdirs`](@ref) file, lines take the form `<NAME>=<path>` with a
+per-user [`parseuserdirs!`](@ref) file, lines take the form `<NAME>=<path>` with a
 bare key (no `XDG_` prefix or `_DIR` suffix) and an unquoted path relative to the
 home directory, e.g. `DESKTOP=Desktop`.
-
-Returns a dict keyed by the corresponding `XDG_*_DIR` symbols, with values
-resolved to absolute paths, so the result merges directly with `parseuserdirs`.
 """
-function parsesystemuserdirs(configdir::String)
-    validnames = ("DESKTOP", "DOWNLOAD", "TEMPLATES", "PUBLICSHARE",
-                  "DOCUMENTS", "MUSIC", "PICTURES", "PROJECTS", "VIDEOS")
-    defaultsfile = joinpath(configdir, "user-dirs.defaults")
-    entries = Dict{Symbol, String}()
-    if isreadable(defaultsfile) && isfile(defaultsfile)
-        for line in Iterators.map(strip, eachline(defaultsfile))
-            if !startswith(line, '#') && occursin('=', line)
-                key, value = split(line, '=', limit=2)
-                if key in validnames && !isempty(value)
-                    entries[Symbol("XDG_", key, "_DIR")] = joinpath(homedir(), value)
-                end
-            end
+function parsesystemuserdirs!(userdirs::Vector{String}, configdir::String)
+    home = homedir()
+    for line in Iterators.map(strip, eachsplit(readfile(joinpath(configdir, "user-dirs.defaults")), '\n'))
+        startswith(line, '#') && continue
+        eq = findfirst('=', line)
+        isnothing(eq) && continue
+        index = userdirindex(SubString(line, 1, prevind(line, eq)))
+        value = SubString(line, nextind(line, eq))
+        if !isnothing(index) && !isempty(value)
+            userdirs[index] = joinpath(home, value)
         end
     end
-    entries
+    userdirs
 end
 
 function reload()
     # Systemd detection
     @static if Sys.islinux()
-        cgroup = try readchomp("/proc/self/cgroup") catch; "" end
+        cgroup = chomp(readfile("/proc/self/cgroup"))
         global SYSTEMD_SERVICE = startswith(cgroup, "0::") && endswith(cgroup, ".service")
         global SYSTEMD_DIRS = if SYSTEMD_SERVICE
             (runtime = first(eachsplit(get(ENV, "RUNTIME_DIRECTORY", ""), ':')),
@@ -134,27 +169,33 @@ function reload()
     @setxdg CACHE_HOME SYSTEMD_DIRS.cache "~/.cache"
     @setxdg RUNTIME_DIR SYSTEMD_DIRS.runtime joinpath("/run/user", string(Base.Libc.getuid()))
     # User directories
-    userdirs = Dict{Symbol, String}()
+    userdirs = fill("", length(USER_DIR_NAMES))
     for dir in Iterators.reverse(CONFIG_DIRS)
-        merge!(userdirs, parsesystemuserdirs(dir))
+        parsesystemuserdirs!(userdirs, dir)
     end
-    merge!(userdirs, parseuserdirs(CONFIG_HOME))
-    @setxdg DESKTOP_DIR     get(userdirs, :XDG_DESKTOP_DIR,     "~/Desktop")
-    @setxdg DOWNLOAD_DIR    get(userdirs, :XDG_DOWNLOAD_DIR,    "~/Downloads")
-    @setxdg DOCUMENTS_DIR   get(userdirs, :XDG_DOCUMENTS_DIR,   "~/Documents")
-    @setxdg PROJECTS_DIR    get(userdirs, :XDG_PROJECTS_DIR,    "~/Projects")
-    @setxdg MUSIC_DIR       get(userdirs, :XDG_MUSIC_DIR,       "~/Music")
-    @setxdg PICTURES_DIR    get(userdirs, :XDG_PICTURES_DIR,    "~/Pictures")
-    @setxdg VIDEOS_DIR      get(userdirs, :XDG_VIDEOS_DIR,      "~/Videos")
-    @setxdg TEMPLATES_DIR   get(userdirs, :XDG_TEMPLATES_DIR,   "~/Templates")
-    @setxdg PUBLICSHARE_DIR get(userdirs, :XDG_PUBLICSHARE_DIR, "~/Public")
+    parseuserdirs!(userdirs, CONFIG_HOME)
+    userdir(name, default) =
+        let path = userdirs[userdirindex(name)::Int]
+            if isempty(path) default else path end
+        end
+    @setxdg DESKTOP_DIR     userdir("DESKTOP",     "~/Desktop")
+    @setxdg DOWNLOAD_DIR    userdir("DOWNLOAD",    "~/Downloads")
+    @setxdg DOCUMENTS_DIR   userdir("DOCUMENTS",   "~/Documents")
+    @setxdg PROJECTS_DIR    userdir("PROJECTS",    "~/Projects")
+    @setxdg MUSIC_DIR       userdir("MUSIC",       "~/Music")
+    @setxdg PICTURES_DIR    userdir("PICTURES",    "~/Pictures")
+    @setxdg VIDEOS_DIR      userdir("VIDEOS",      "~/Videos")
+    @setxdg TEMPLATES_DIR   userdir("TEMPLATES",   "~/Templates")
+    @setxdg PUBLICSHARE_DIR userdir("PUBLICSHARE", "~/Public")
     # Other directories
-    global FONTS_DIRS =
-        append!([joinpath(DATA_HOME, "fonts"), expanduser("~/.fonts")],
-                [joinpath(d, "fonts") for d::String in DATA_DIRS]) |> unique
-    global APPLICATIONS_DIRS =
-        append!([joinpath(DATA_HOME, "applications")],
-                [joinpath(d, "applications") for d::String in DATA_DIRS]) |> unique
+    # Few enough paths that a linear scan beats hashing (in both time and code size)
+    distinct(paths) = foldl((seen, path) -> path in seen ? seen : push!(seen, path), paths; init=String[])
+    global FONTS_DIRS = distinct(Iterators.flatten((
+        (joinpath(DATA_HOME, "fonts"), expanduser("~/.fonts")),
+        (joinpath(d, "fonts") for d::String in DATA_DIRS))))
+    global APPLICATIONS_DIRS = distinct(Iterators.flatten((
+        (joinpath(DATA_HOME, "applications"),),
+        (joinpath(d, "applications") for d::String in DATA_DIRS))))
     nothing
 end
 
