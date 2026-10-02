@@ -37,10 +37,10 @@ if Sys.isapple()
             @test BaseDirs.DATA_DIRS == ["/Library/Application Support"]
             @test BaseDirs.CONFIG_HOME == "$usr/Library/Application Support"
             @test BaseDirs.CONFIG_DIRS == ["/Library/Application Support"]
-            if occursin("$usr/.local/bin", get(ENV, "PATH", ""))
-                @test BaseDirs.BIN_HOME == "$usr/.local/bin"
+            if "/opt/local/bin" in split(get(ENV, "PATH", ""), ':')
+                @test BaseDirs.BIN_HOME == "/opt/local/bin"
             else
-                @test BaseDirs.BIN_HOME == "/usr/local/bin"
+                @test BaseDirs.BIN_HOME == "$usr/.local/bin"
             end
             @test BaseDirs.STATE_HOME == "$usr/Library/Application Support"
             @test BaseDirs.CACHE_HOME == "$usr/Library/Caches"

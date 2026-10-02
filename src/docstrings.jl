@@ -195,13 +195,12 @@ written.
 
 | Linux          | MacOS\\*                         | Windows\\*             |
 |----------------|--------------------------------|----------------------|
-| `~/.local/bin` | `~/.local/bin`                 | `\\bin`               |
+| `~/.local/bin` | `~/.local/bin`                 | `~\\bin`              |
 |                | `/opt/local/bin`               | `RoamingAppData\\bin` |
-|                | `/usr/local/bin`               | `AppData\\bin`        |
-|                |                                | current working dir  |
+|                |                                | `LocalAppData\\bin`   |
 
 \\* The first of these directories present in `PATH` is used, falling back to
-the last entry otherwise.
+the first entry otherwise.
 
 !!! warning
     This is not yet standardised by the XDG, see

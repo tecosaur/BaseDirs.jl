@@ -11,13 +11,10 @@ function reload()
     @setxdg BIN_HOME let
         # There's no official convention for user-specific bin files on macos,
         # so let's check the two seemingly commonly used alternatives, then fall
-        # back on the system bin folder.
-        usrbin = split(get(ENV, "PATH", ""), ':') ∩ [expanduser("~/.local/bin"), "/opt/local/bin"]
-        if !isempty(usrbin)
-            first(usrbin)
-        else
-            "/usr/local/bin"
-        end
+        # back on the first (as it's user-writable).
+        candidates = [expanduser("~/.local/bin"), "/opt/local/bin"]
+        pathentries = split(get(ENV, "PATH", ""), ':')
+        candidates[something(findfirst(in(pathentries), candidates), 1)]
     end
     # User directories
     @setxdg DESKTOP_DIR "~/Desktop"
