@@ -569,7 +569,7 @@ elseif Sys.iswindows()
         if BaseDirs.CONFIG_HOME != BaseDirs.DATA_HOME
             @test BaseDirs.applicationpath(BaseDirs.App("a"), :config, BaseDirs.CONFIG_HOME) == "julia\\a\\config\\"
         end
-        @test BaseDirs.applicationpath(BaseDirs.App("a"), :cache, BaseDirs.CACHE_HOME) == "julia\\a\\cache\\"
+        @test BaseDirs.applicationpath(BaseDirs.App("a"), :cache, BaseDirs.CACHE_HOME) == "julia\\a\\"
         @test BaseDirs.applicationpath(BaseDirs.App("a"), :state, BaseDirs.STATE_HOME) == "julia\\a\\state\\"
     end
     @testset "XDG_*_DIRS parsing" begin

@@ -171,8 +171,6 @@ applicationpath(app::App, kind::Symbol, ::String) =
                  "data\\"
              elseif kind === :config
                  "config\\"
-             elseif kind === :cache
-                 "cache\\"
              elseif kind === :state
                  "state\\"
              else

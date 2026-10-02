@@ -66,7 +66,7 @@ The operating system specific application path is composed as follows:
 | System data   | =$(System data)/$App=   | =$(System data)/$App=   | =$(System data)\$App\data=     |
 | User config   | =$(User config)/$App=   | =$(User config)/$App=   | =$(User config)\$App\config=   |
 | System config | =$(System config)/$App= | =$(System config)/$App= | =$(System config)\$App\config= |
-| Cache         | =$(Cache)/$App=         | =$(Cache)/$App=         | =$(Cache)\$App\cache=          |
+| Cache         | =$(Cache)/$App=         | =$(Cache)/$App=         | =$(Cache)\$App=                |
 | State         | =$(State)/$App=         | =$(State)/$App=         | =$(State)\$App\state=          |
 
 * Extra directories
