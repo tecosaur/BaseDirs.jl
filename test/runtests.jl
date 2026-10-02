@@ -1,8 +1,13 @@
 using BaseDirs
 using Test
 
-# This test suite assumes it is running on a "default" system,
-# where no customisations apply.
+# Run against a fresh home with no `XDG_*` overrides, so results reflect the
+# platform defaults and file-creating tests never touch the real home. The
+# depot is pinned for child processes, as it would otherwise follow `HOME`.
+ENV["JULIA_DEPOT_PATH"] = join(DEPOT_PATH, Sys.iswindows() ? ';' : ':')
+Sys.iswindows() || (ENV["HOME"] = mktempdir())
+foreach(var -> delete!(ENV, var), filter(startswith("XDG_"), collect(keys(ENV))))
+BaseDirs.reload()
 
 usr = homedir()
 
@@ -145,22 +150,23 @@ elseif Sys.isunix()
         XDG_VIDEOS_DIR="$HOME/ビデオ"
         """
         userdirs_file = joinpath(BaseDirs.CONFIG_HOME, "user-dirs.dirs")
-        isfile(userdirs_file) &&
-            mv(userdirs_file, userdirs_file * ".backup")
+        mkpath(dirname(userdirs_file))
         write(userdirs_file, userdirs_jpn)
-        @test BaseDirs.reload() === nothing
-        @test BaseDirs.User.desktop() == "$usr/デスクトップ"
-        @test BaseDirs.User.downloads() == "$usr/ダウンロード"
-        @test BaseDirs.User.documents() == "$usr/ドキュメント"
-        @test BaseDirs.User.projects() == "$usr/プロジェクト"
-        @test BaseDirs.User.music() == "$usr/ミュージック"
-        @test BaseDirs.User.pictures() == "$usr/ピクチャ"
-        @test BaseDirs.User.videos() == "$usr/ビデオ"
-        @test BaseDirs.User.templates() == "$usr/テンプレート"
-        @test BaseDirs.User.public() == "$usr/公開"
-        rm(userdirs_file)
-        isfile(userdirs_file * ".backup") &&
-            mv(userdirs_file * ".backup", userdirs_file)
+        try
+            @test BaseDirs.reload() === nothing
+            @test BaseDirs.User.desktop() == "$usr/デスクトップ"
+            @test BaseDirs.User.downloads() == "$usr/ダウンロード"
+            @test BaseDirs.User.documents() == "$usr/ドキュメント"
+            @test BaseDirs.User.projects() == "$usr/プロジェクト"
+            @test BaseDirs.User.music() == "$usr/ミュージック"
+            @test BaseDirs.User.pictures() == "$usr/ピクチャ"
+            @test BaseDirs.User.videos() == "$usr/ビデオ"
+            @test BaseDirs.User.templates() == "$usr/テンプレート"
+            @test BaseDirs.User.public() == "$usr/公開"
+        finally
+            rm(userdirs_file)
+            BaseDirs.reload()
+        end
     end
     @testset "System" begin
         @test BaseDirs.System.data() == ["/usr/local/share", "/usr/share"]
@@ -194,6 +200,7 @@ elseif Sys.isunix()
             end
         end
         @testset "trailing separator stripped" begin
+            # Per-element, and including the multi-separator case.
             withenv("XDG_DATA_DIRS" => "/opt/a/:/opt/b//") do
                 BaseDirs.reload()
                 @test BaseDirs.System.data() == ["/opt/a", "/opt/b"]
@@ -242,8 +249,7 @@ elseif Sys.isunix()
     end
     @test isnothing(BaseDirs.reload())
     @testset "User dirs" begin
-        isfile("$usr/.config/user-dirs.dirs") &&
-            mv("$usr/.config/user-dirs.dirs", "$usr/.config/user-dirs.dirs.backup")
+        mkpath("$usr/.config")
         try
             write("$usr/.config/user-dirs.dirs",
                   """
@@ -264,8 +270,7 @@ elseif Sys.isunix()
             @test BaseDirs.User.videos() == "$usr/Films"
         finally
             rm("$usr/.config/user-dirs.dirs", force=true)
-            isfile("$usr/.config/user-dirs.dirs.backup") &&
-                mv("$usr/.config/user-dirs.dirs.backup", "$usr/.config/user-dirs.dirs")
+            BaseDirs.reload()
         end
     end
     @testset "System user-dirs.defaults" begin
@@ -279,8 +284,6 @@ elseif Sys.isunix()
               UNKNOWN=Nope
               EMPTY=
               """)
-        hadhome = isfile("$usr/.config/user-dirs.dirs")
-        hadhome && mv("$usr/.config/user-dirs.dirs", "$usr/.config/user-dirs.dirs.backup")
         try
             withenv("XDG_CONFIG_DIRS" => sysdir) do
                 @test isnothing(BaseDirs.reload())
@@ -299,7 +302,6 @@ elseif Sys.isunix()
             end
         finally
             rm("$usr/.config/user-dirs.dirs", force=true)
-            hadhome && mv("$usr/.config/user-dirs.dirs.backup", "$usr/.config/user-dirs.dirs")
             rm(sysdir, recursive=true, force=true)
             BaseDirs.reload()
         end
@@ -532,12 +534,14 @@ elseif Sys.iswindows()
     end
     @testset "XDG_*_DIRS parsing" begin
         @testset "separator" begin
+            # Semicolons, so drive letters survive a bare `:`.
             withenv("XDG_DATA_DIRS" => "C:\\A;D:\\B") do
                 BaseDirs.reload()
                 @test BaseDirs.System.data() == ["C:\\A", "D:\\B"]
             end
         end
         @testset "trailing separator stripped" begin
+            # Either separator kind, and the multi-separator case.
             withenv("XDG_DATA_DIRS" => "C:\\A\\;D:\\B/") do
                 BaseDirs.reload()
                 @test BaseDirs.System.data() == ["C:\\A", "D:\\B"]
