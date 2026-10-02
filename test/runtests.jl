@@ -296,6 +296,7 @@ elseif Sys.isunix()
                   XDG_DOWNLOAD_DIR=/tmp/Downloads
                   XDG_TEMPLATES_DIR=/=Templates=
                   XDG_PICTURES_DIR="\$HOME/\\xZZ"
+                  XDG_MUSIC_DIR="\$HOME/My \\"Music\\" \\\\ More"
                   XDG_VIDEOS_DIR="\$HOME/Films"
                   XDG_INVALID="???"
                   """)
@@ -303,7 +304,9 @@ elseif Sys.isunix()
             @test BaseDirs.User.desktop() == "$usr/Workbench"
             @test BaseDirs.User.downloads() == "/tmp/Downloads"
             @test BaseDirs.User.templates() == "/=Templates="
-            @test BaseDirs.User.pictures() == "$usr/Pictures"
+            # A backslash makes the next character literal, as in xdg-user-dirs.
+            @test BaseDirs.User.pictures() == "$usr/xZZ"
+            @test BaseDirs.User.music() == "$usr/My \"Music\" \\ More"
             @test BaseDirs.User.videos() == "$usr/Films"
         finally
             rm("$usr/.config/user-dirs.dirs", force=true)

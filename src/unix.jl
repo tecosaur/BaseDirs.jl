@@ -42,6 +42,15 @@ Parse the `user-dirs.dirs` file that lies under `configdir`.
 Returns a dict with all recognised entries of the file.
 """
 function parseuserdirs(configdir::String)
+    # As in xdg-user-dir-lookup.c, a backslash makes the next character literal
+    function shellunescape(value::AbstractString)
+        out = IOBuffer(sizehint=ncodeunits(value))
+        chars = Iterators.Stateful(value)
+        for char in chars
+            print(out, char == '\\' && !isempty(chars) ? popfirst!(chars) : char)
+        end
+        String(take!(out))
+    end
     validnames = ("XDG_DESKTOP_DIR", "XDG_DOWNLOAD_DIR", "XDG_TEMPLATES_DIR",
                   "XDG_PUBLICSHARE_DIR", "XDG_DOCUMENTS_DIR", "XDG_MUSIC_DIR",
                   "XDG_PICTURES_DIR", "XDG_PROJECTS_DIR", "XDG_VIDEOS_DIR")
@@ -53,11 +62,7 @@ function parseuserdirs(configdir::String)
                 key, value = split(line, '=', limit=2)
                 if key in validnames
                     if startswith(value, '"') && endswith(value, '"')
-                        value = try
-                            unescape_string(chop(value, head=1, tail=1))
-                        catch
-                            continue
-                        end
+                        value = shellunescape(chop(value, head=1, tail=1))
                     end
                     if startswith(value, "\$HOME")
                         value = string(homedir(), chopprefix(value, "\$HOME"))
