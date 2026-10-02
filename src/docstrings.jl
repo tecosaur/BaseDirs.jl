@@ -34,8 +34,9 @@ generate appropriate application-specific paths.
     - The [*Standard Directories*](https://developer.apple.com/library/content/documentation/FileManagement/Conceptual/FileSystemProgrammingGuide/FileSystemOverview/FileSystemOverview.html#//apple_ref/doc/uid/TP40010672-CH2-SW6)
       guidelines on macOS
 
-    Whenever the relevant `XDG_*` environment variable is set, it overrides the default
-    path on all platforms.
+    Whenever the relevant `XDG_*` environment variable is set to an absolute path, it
+    overrides the default path on all platforms. As per the XDG spec, relative paths
+    are ignored.
 
 # Guidelines for appropriate directories
 

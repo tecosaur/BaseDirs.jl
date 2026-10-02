@@ -210,6 +210,26 @@ elseif Sys.isunix()
                 @test BaseDirs.DATA_HOME == "/opt/home"
             end
         end
+        @testset "root kept" begin
+            withenv("XDG_CONFIG_HOME" => "/", "XDG_DATA_DIRS" => "/:/opt/a") do
+                BaseDirs.reload()
+                @test BaseDirs.CONFIG_HOME == "/"
+                @test BaseDirs.User.config("foo") == "/foo"
+                @test BaseDirs.DATA_DIRS == ["/", "/opt/a"]
+            end
+        end
+        @testset "relative paths ignored" begin
+            withenv("XDG_DATA_HOME" => "relative/path",
+                    "XDG_DATA_DIRS" => "rel:/opt/a:also/rel") do
+                BaseDirs.reload()
+                @test BaseDirs.DATA_HOME == "$usr/.local/share"
+                @test BaseDirs.DATA_DIRS == ["/opt/a"]
+            end
+            withenv("XDG_DATA_DIRS" => "rel:also/rel") do
+                BaseDirs.reload()
+                @test BaseDirs.DATA_DIRS == ["/usr/local/share", "/usr/share"]
+            end
+        end
         BaseDirs.reload()
     end
     @testset "File creation" begin
@@ -549,6 +569,26 @@ elseif Sys.iswindows()
             withenv("XDG_DATA_HOME" => "C:\\Home\\/") do
                 BaseDirs.reload()
                 @test BaseDirs.DATA_HOME == "C:\\Home"
+            end
+        end
+        @testset "root kept" begin
+            withenv("XDG_CONFIG_HOME" => "D:\\", "XDG_DATA_DIRS" => "D:\\;C:\\A") do
+                BaseDirs.reload()
+                @test BaseDirs.CONFIG_HOME == "D:\\"
+                @test BaseDirs.User.config("foo") == "D:\\foo"
+                @test BaseDirs.DATA_DIRS == ["D:\\", "C:\\A"]
+            end
+        end
+        @testset "relative paths ignored" begin
+            withenv("XDG_DATA_HOME" => "D:relative",
+                    "XDG_DATA_DIRS" => "rel;C:\\A;also\\rel") do
+                BaseDirs.reload()
+                @test BaseDirs.DATA_HOME == "$usr\\AppData\\Roaming"
+                @test BaseDirs.DATA_DIRS == ["C:\\A"]
+            end
+            withenv("XDG_DATA_DIRS" => "rel;also\\rel") do
+                BaseDirs.reload()
+                @test BaseDirs.DATA_DIRS == ["C:\\ProgramData"]
             end
         end
     end

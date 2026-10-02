@@ -7,7 +7,35 @@ using Base.Docs
 
 export @defaccessor, @setxdg, @setxdgs
 
-chopxdgsuffix(path::AbstractString) = String(rstrip(path, @static(if Sys.iswindows(); ('/', '\\') else '/' end)))
+const PATH_SEPARATORS = @static if Sys.iswindows(); ('/', '\\') else ('/',) end
+
+"""
+    xdgpath(path::AbstractString) -> Union{String, Nothing}
+
+Validate `path` as an XDG directory: `nothing` unless absolute (the spec deems
+relative paths invalid), and without trailing separators unless it is a root.
+"""
+function xdgpath(path::AbstractString)
+    isabspath(path) || return nothing
+    trimmed = rstrip(path, PATH_SEPARATORS)
+    # Roots (`/`, `C:\\`) must keep their separator
+    if ncodeunits(trimmed) < ncodeunits(path) && isabspath(trimmed)
+        String(trimmed)
+    else
+        String(path) # No copy when `path` is already a `String`
+    end
+end
+
+"""
+    xdgpaths(envvar::String) -> Union{Vector{String}, Nothing}
+
+Read the valid `xdgpath`s listed in `envvar`, or `nothing` if there are none.
+"""
+function xdgpaths(envvar::String)
+    pathlist = eachsplit(get(ENV, envvar, ""), @static if Sys.iswindows() ';' else ':' end)
+    paths = String[path for path in Iterators.map(xdgpath, pathlist) if !isnothing(path)]
+    isempty(paths) ? nothing : paths
+end
 
 @static if Sys.isunix()
     macro setxdg(envvar::Symbol, prioritydefault, default = nothing)
@@ -16,25 +44,19 @@ chopxdgsuffix(path::AbstractString) = String(rstrip(path, @static(if Sys.iswindo
         end
         quote global $(esc(envvar)) = if !isempty($(esc(prioritydefault)))
             $(esc(prioritydefault))
-        elseif haskey(ENV, $("XDG_$envvar")) && !isempty(ENV[$("XDG_$envvar")])
-            chopxdgsuffix(ENV[$("XDG_$envvar")])
-        else expanduser($(esc(default))) end
+        else
+            @something(xdgpath(get(ENV, $"XDG_$envvar", "")), expanduser($(esc(default))))
+        end
         end
     end
 else
     macro setxdg(envvar::Symbol, default)
-        quote global $(esc(envvar)) = if haskey(ENV, $("XDG_$envvar")) && !isempty(ENV[$("XDG_$envvar")])
-            chopxdgsuffix(ENV[$("XDG_$envvar")])
-        else $(esc(default)) end
-        end
+        :(global $(esc(envvar)) = @something(xdgpath(get(ENV, $"XDG_$envvar", "")), $(esc(default))))
     end
 end
 
 macro setxdgs(envvar::Symbol, defaults)
-    quote global $(esc(envvar)) = if haskey(ENV, $("XDG_$envvar")) && !isempty(ENV[$("XDG_$envvar")])
-        map(chopxdgsuffix, split(ENV[$("XDG_$envvar")], @static if Sys.iswindows() ';' else ':' end))
-    else $(esc(defaults)) end
-    end
+    :(global $(esc(envvar)) = @something(xdgpaths($"XDG_$envvar"), $(esc(defaults))))
 end
 
 const NEW_BASEDIR_MODE = 0o700
