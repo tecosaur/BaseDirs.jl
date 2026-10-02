@@ -199,10 +199,14 @@ elseif Sys.isunix()
         @test BaseDirs.applicationpath(BaseDirs.App("Hey There")) == "julia/heythere/"
     end
     @testset "Directory existence" begin
-        withenv("XDG_DATA_DIRS" => "/root/forbidden:/nonexistent:/usr/share") do
+        symloop = joinpath(usr, "loop")
+        symlink(symloop, symloop)
+        withenv("XDG_DATA_DIRS" => "/root/forbidden:/nonexistent:$symloop/sub:/usr/share") do
             BaseDirs.reload()
             @test BaseDirs.System.data(existent = true) == ["/usr/share"]
+            @test_throws ArgumentError BaseDirs.System.data("nul\0byte", existent = true)
         end
+        rm(symloop)
         BaseDirs.reload()
     end
     @testset "XDG_*_DIRS parsing" begin
