@@ -34,10 +34,10 @@ end
 @defaccessor runtime RUNTIME_DIR
 
 fonts(pathcomponents...; kwargs...) =
-    Internals.resolvedirpaths(filter(p -> startswith(p, homedir()), BaseDirs.FONTS_DIRS),
+    Internals.resolvedirpaths(filter(Internals.withinhome(), BaseDirs.FONTS_DIRS),
                               pathcomponents; kwargs...)
 applications(pathcomponents...; kwargs...) =
-    Internals.resolvedirpaths(filter(p -> startswith(p, homedir()), BaseDirs.APPLICATIONS_DIRS),
+    Internals.resolvedirpaths(filter(Internals.withinhome(), BaseDirs.APPLICATIONS_DIRS),
                               pathcomponents; kwargs...)
 
 desktop(pathcomponents...)     = joinpath(BaseDirs.DESKTOP_DIR,     pathcomponents...)
@@ -67,10 +67,10 @@ end
 @defaccessor config CONFIG_DIRS
 
 fonts(pathcomponents...; kwargs...) =
-    Internals.resolvedirpaths(filter(p -> !startswith(p, homedir()), BaseDirs.FONTS_DIRS),
+    Internals.resolvedirpaths(filter(!Internals.withinhome(), BaseDirs.FONTS_DIRS),
                               pathcomponents; kwargs...)
 applications(pathcomponents...; kwargs...) =
-    Internals.resolvedirpaths(filter(p -> !startswith(p, homedir()), BaseDirs.APPLICATIONS_DIRS),
+    Internals.resolvedirpaths(filter(!Internals.withinhome(), BaseDirs.APPLICATIONS_DIRS),
                               pathcomponents; kwargs...)
 
 end

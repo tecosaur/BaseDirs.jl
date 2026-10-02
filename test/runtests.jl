@@ -17,6 +17,19 @@ usr = homedir()
     @test BaseDirs.Project("foo", "org", "qual") == BaseDirs.App("foo", "org", "qual")
 end
 
+@testset "Home directory membership" begin
+    paths = ["/home/a/fonts", "/home/ab/fonts", "/home/a", "/usr/share/fonts"]
+    for home in ("/home/a", "/home/a/")
+        withenv("HOME" => home, "USERPROFILE" => home) do
+            @test filter(BaseDirs.Internals.withinhome(), paths) == ["/home/a/fonts", "/home/a"]
+            @test filter(!BaseDirs.Internals.withinhome(), paths) == ["/home/ab/fonts", "/usr/share/fonts"]
+        end
+    end
+    withenv("HOME" => "/", "USERPROFILE" => "/") do
+        @test filter(BaseDirs.Internals.withinhome(), paths) == paths
+    end
+end
+
 if Sys.isapple()
     @testset "Dirs" begin
         @testset "Base" begin

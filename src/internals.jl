@@ -10,6 +10,20 @@ export @defaccessor, @setxdg, @setxdgs
 const PATH_SEPARATORS = @static if Sys.iswindows(); ('/', '\\') else ('/',) end
 
 """
+    withinhome() -> Function
+
+Create a predicate testing whether a path lies within the current home
+directory, matching whole path components (`/home/ab` is not within `/home/a`).
+"""
+function withinhome()
+    home = rstrip(homedir(), PATH_SEPARATORS)
+    n = ncodeunits(home)
+    # `startswith` ensures `path` has at least `n` codeunits
+    path::AbstractString -> startswith(path, home) &&
+        (ncodeunits(path) == n || Char(@inbounds codeunit(path, n + 1)) in PATH_SEPARATORS)
+end
+
+"""
     xdgpath(path::AbstractString) -> Union{String, Nothing}
 
 Validate `path` as an XDG directory: `nothing` unless absolute (the spec deems
