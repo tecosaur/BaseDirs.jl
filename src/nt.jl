@@ -38,7 +38,7 @@ const FOLDERID = (
   # System                 = GUID(0x1ac14e77, 0x02e7, 0x4e5d, (0xb7, 0x44, 0x2e, 0xb1, 0xae, 0x51, 0x98, 0xb7)),
   # SystemX86              = GUID(0xd65231b0, 0xb2f1, 0x4857, (0xa4, 0xce, 0xa8, 0xe7, 0xc6, 0xea, 0x7d, 0x27)),
     Templates              = GUID(0xa63293e8, 0x664e, 0x48db, (0xa0, 0x79, 0xdf, 0x75, 0x9e, 0x05, 0x09, 0xf7)),
-  # UserProfiles           = GUID(0x0762d272, 0xc50a, 0x4bb0, (0xa3, 0x82, 0x69, 0x7d, 0xcd, 0x72, 0x9b, 0x80)),
+    UserProfiles           = GUID(0x0762d272, 0xc50a, 0x4bb0, (0xa3, 0x82, 0x69, 0x7d, 0xcd, 0x72, 0x9b, 0x80)),
   # UserProgramFiles       = GUID(0x5cd7aee2, 0x2219, 0x4a67, (0xb8, 0x5d, 0x6c, 0x9c, 0xe1, 0x56, 0x60, 0xcb)),
   # UserProgramFilesCommon = GUID(0xbcbd3057, 0xca5c, 0x4622, (0xb4, 0x2d, 0xbc, 0x56, 0xdb, 0x0a, 0xe5, 0x16)),
     Videos                 = GUID(0x18989b1d, 0x99b5, 0x455b, (0x84, 0x1c, 0xab, 0x7c, 0x74, 0xe4, 0xdd, 0xfc)),
@@ -105,8 +105,7 @@ function relevantfolders()
         FOLDERID.Windows, ["SystemRoot", "windir"], joinpath(rf.SystemDrive, "Windows"))
     rf.ProgramData = knownfolder(
         FOLDERID.ProgramData, ["ProgramData", "ALLUSERSPROFILE"], joinpath(rf.SystemDrive, "ProgramData"))
-    rf.Profile = knownfolder(
-        FOLDERID.Profile, joinpath(rf.SystemDrive, "Users"))
+    rf.Profile = knownfolder(FOLDERID.Profile, home)
     rf.RoamingAppData = knownfolder(
         FOLDERID.RoamingAppData, ["APPDATA"], joinpath(home, "AppData", "Roaming"))
     rf.LocalAppData = knownfolder(
@@ -119,7 +118,9 @@ function relevantfolders()
     rf.Videos = knownfolder(FOLDERID.Videos, joinpath(home, "Videos"))
     rf.Templates = knownfolder(
         FOLDERID.Templates, joinpath(rf.RoamingAppData, "Microsoft", "Windows", "Templates"))
-    rf.Public = knownfolder(FOLDERID.Public, ["Public"], joinpath(rf.Profile, "Public"))
+    rf.Public = knownfolder(
+        FOLDERID.Public, ["Public"],
+        joinpath(knownfolder(FOLDERID.UserProfiles, joinpath(rf.SystemDrive, "Users")), "Public"))
     rf.Fonts = knownfolder(FOLDERID.Fonts, joinpath(rf.SystemRoot, "Fonts"))
     rf.Programs = knownfolder(
         FOLDERID.Programs, joinpath(rf.RoamingAppData, "Microsoft", "Windows", "Start Menu", "Programs"))
