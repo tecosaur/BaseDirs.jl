@@ -12,7 +12,7 @@ Trying to take the best of those, these are the defaults that BaseDirs.jl uses.
 | User config      | =XDG_CONFIG_HOME=           | =~/.config=                    | =~/Library/Application Support=                    | =RoamingAppData=                                      |
 | System config    | =XDG_CONFIG_DIRS=           | =/etc/xdg=                     | =/Library/Application Support=                     | =ProgramData=                                         |
 | State            | =XDG_STATE_HOME=            | =~/.local/state=               | =~/Library/Application Support=                    | =LocalAppData=                                        |
-| User executables | =XDG_BIN_HOME= [fn:binhome] | =~/.local/bin=                 | =~/.local/bin= or =/opt/local/bin= or =/usr/local/bin= | =~\bin= or =RoamingAppData\bin= or =AppData\bin= or ~pwd()~ |
+| User executables | =XDG_BIN_HOME= [fn:binhome] | =~/.local/bin=                 | =~/.local/bin= or =/opt/local/bin=                  | =~\bin= or =RoamingAppData\bin= or =LocalAppData\bin=       |
 | Cache            | =XDG_CACHE_HOME=            | =~/.cache=                     | =~/Library/Caches/=                                | =LocalAppData\cache=                                  |
 | Runtime          | =XDG_RUNTIME_DIR=           | =/run/user/$UID=               | =~/Library/Application Support=                    | =LocalAppData=                                        |
 
@@ -66,7 +66,7 @@ The operating system specific application path is composed as follows:
 | System data   | =$(System data)/$App=   | =$(System data)/$App=   | =$(System data)\$App\data=     |
 | User config   | =$(User config)/$App=   | =$(User config)/$App=   | =$(User config)\$App\config=   |
 | System config | =$(System config)/$App= | =$(System config)/$App= | =$(System config)\$App\config= |
-| Cache         | =$(Cache)/$App=         | =$(Cache)/$App=         | =$(Cache)\$App\cache=          |
+| Cache         | =$(Cache)/$App=         | =$(Cache)/$App=         | =$(Cache)\$App=                |
 | State         | =$(State)/$App=         | =$(State)/$App=         | =$(State)\$App\state=          |
 
 * Extra directories
